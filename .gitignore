@@ -1,0 +1,26 @@
+*.pyc
+*.log
+*.pid
+*.DS_Store
+*.svn
+*.sqlite
+*.sqlite3
+*.sql
+*.mo
+.eggs
+id_rsa
+id_rsa.pub
+
+/.idea/
+/.vagrant/
+/public/
+build/
+/dist/
+logs/
+__pycache__/
+/cx_metrics.egg-info/
+
+# Unit test / coverage reports
+.coverage
+.coverage.*
+/htmlcov/
