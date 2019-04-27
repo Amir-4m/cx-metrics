@@ -1,0 +1,39 @@
+language: python
+
+python:
+  - 3.5
+
+env:
+  matrix:
+    - DJANGO=2.1
+    - DJANGO=2.2
+
+build:
+
+  ci:
+    - chmod a+x provision.sh
+    - sh provision.sh
+
+    - python -m pip install --upgrade pip
+    - pip install --upgrade setuptools virtualenv
+
+    - pip install -r "requirements/development.txt"
+    - pip install -r "requirements/django-$DJANGO.txt"
+
+    # Script
+    - flake8
+    - coverage run --branch --parallel-mode setup.py test
+    - coverage combine
+    - coverage xml -o shippable/codecoverage/coverage.xml
+
+integrations:
+    - integrationName: Slack
+      type: slack
+      recipients:
+        - "#ci"
+      branches:
+        only:
+          - master
+          - develop
+      on_success: change
+      on_failure: always

@@ -1,0 +1,60 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# 
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-04-27 03:02-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cx_metrics/surveys/admin.py:17
+#, python-format
+msgid "<a href=\"%(url)s\" target=\"_blank\">Open Survey</a>"
+msgstr ""
+
+#: cx_metrics/surveys/admin.py:18
+msgid "Survey Link"
+msgstr "لینک نظرسنجی"
+
+#: cx_metrics/surveys/models.py:13
+msgid "UUID"
+msgstr ""
+
+#: cx_metrics/surveys/models.py:14
+msgid "Name"
+msgstr "نام"
+
+#: cx_metrics/surveys/models.py:20
+msgid "Business"
+msgstr "کسب و کار"
+
+#: cx_metrics/surveys/models.py:22
+msgid "Created at"
+msgstr "تاریخ ایجاد"
+
+#: cx_metrics/surveys/models.py:23
+msgid "Updated at"
+msgstr "تاریخ بروزرسانی"
+
+#: cx_metrics/surveys/models.py:37
+msgid "Type"
+msgstr "نوع نظرسنجی"
+
+#: cx_metrics/surveys/models.py:41 cx_metrics/surveys/models.py:71
+msgid "Survey"
+msgstr "نظرسنجی"
+
+#: cx_metrics/surveys/models.py:42
+msgid "Surveys"
+msgstr "نظرسنجی ها"

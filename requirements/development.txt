@@ -1,0 +1,9 @@
+-r base.txt
+sphinx
+sphinx-rtd-theme
+coverage
+mock
+flake8
+pygraphviz
+django-extensions
+markdown       # Markdown support for the browsable API.

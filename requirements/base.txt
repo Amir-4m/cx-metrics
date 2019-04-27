@@ -1,0 +1,9 @@
+psycopg2-binary
+celery>=4.1.0
+django-celery-beat
+python-memcached
+
+# API
+djangorestframework
+django-cors-headers
+django-extra-fields
