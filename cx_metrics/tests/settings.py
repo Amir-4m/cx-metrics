@@ -232,7 +232,7 @@ INSTALLED_APPS = (
     'upkook_core.industries',
     'upkook_core.businesses',
     'upkook_core.teams',
-    'upkook_core.customers',
+    'upkook_core.users',
     'cx_metrics.surveys',
     'cx_metrics.surveys.tests',
     'cx_metrics.nps',
