@@ -56,6 +56,7 @@ class SurveyAPIViewTestCase(MemberPermissionTestMixin, TestCase):
         self.assertEqual(len(results), 1)
         self.assertDictEqual(results[0], {
             'id': str(survey.uuid),
+            'type': 'test',
             'name': survey.name,
             'url': survey.url,
         })
