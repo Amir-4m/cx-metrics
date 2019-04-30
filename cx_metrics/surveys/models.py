@@ -102,3 +102,13 @@ class SurveyModel(SurveyBase):
         with transaction.atomic(using):
             super(SurveyModel, self).delete(using, keep_parents)
             self.survey.delete(using, keep_parents)
+
+
+class SurveyResponseBase(models.Model):
+    survey_uuid = models.UUIDField(_('Survey UUID'), editable=False)
+    customer_uuid = models.UUIDField(_('Customer UUID'), editable=False)
+    created = models.DateTimeField(_('Created at'), auto_now_add=True)
+    updated = models.DateTimeField(_('Updated at'), auto_now=True)
+
+    class Meta:
+        abstract = True
