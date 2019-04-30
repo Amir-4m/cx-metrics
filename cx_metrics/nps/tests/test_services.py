@@ -1,22 +1,24 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from uuid import uuid4
 from django.test import TestCase
 
-from upkook_core.businesses.models import Business
-from upkook_core.industries.models import Industry
+from upkook_core.industries.services import IndustryService
+from upkook_core.businesses.services import BusinessService
+from upkook_core.customers.services import CustomerService
 from ..services.nps import NPSService
+from ..models import NPSSurvey
 
 
 class NPSSurveyServiceTestCase(TestCase):
 
     def setUp(self):
-        industry = Industry.objects.create(name="Industry_Name", icon="")
-        self.business = Business.objects.create(
+        industry = IndustryService.create_industry(name="Industry_Name", icon="")
+        self.business = BusinessService.create_business(
             size=5,
             name="Business_Name",
             domain="domain.com",
             industry=industry,
-            logo=""
         )
 
     def _create_survey(self, name):
@@ -33,7 +35,7 @@ class NPSSurveyServiceTestCase(TestCase):
 
     def test_create_nps(self):
         kwargs = dict(name="name", business=self.business, text="text", question="question", message="message")
-        nps_survey = self._create_survey('name')
+        nps_survey = NPSSurvey.objects.create(**kwargs)
 
         for (key, value) in kwargs.items():
             self.assertEqual(getattr(nps_survey, key), value)
@@ -56,24 +58,51 @@ class NPSSurveyServiceTestCase(TestCase):
 
     def test_respond_promoter(self):
         nps_survey = self._create_survey(self.id())
-        NPSService.respond(nps_survey.uuid, 10)
+        customer = CustomerService.create_customer()
+        score = 10
+        response = NPSService.respond(nps_survey.uuid, customer.uuid, score)
+
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 1)
         self.assertEqual(nps_survey.passive, 0)
         self.assertEqual(nps_survey.detractors, 0)
 
+        self.assertEqual(response.score, score)
+        self.assertEqual(response.survey_uuid, nps_survey.uuid)
+        self.assertEqual(response.customer_uuid, customer.uuid)
+
     def test_respond_passive(self):
         nps_survey = self._create_survey(self.id())
-        NPSService.respond(nps_survey.uuid, 8)
+        customer = CustomerService.create_customer()
+        score = 8
+        response = NPSService.respond(nps_survey.uuid, customer.uuid, score)
+
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 0)
         self.assertEqual(nps_survey.passive, 1)
         self.assertEqual(nps_survey.detractors, 0)
 
+        self.assertEqual(response.score, score)
+        self.assertEqual(response.survey_uuid, nps_survey.uuid)
+        self.assertEqual(response.customer_uuid, customer.uuid)
+
     def test_respond_detractor(self):
         nps_survey = self._create_survey(self.id())
-        NPSService.respond(nps_survey.uuid, 3)
+        customer = CustomerService.create_customer()
+        score = 3
+        response = NPSService.respond(nps_survey.uuid, customer.uuid, score)
+
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 0)
         self.assertEqual(nps_survey.passive, 0)
         self.assertEqual(nps_survey.detractors, 1)
+
+        self.assertEqual(response.score, score)
+        self.assertEqual(response.survey_uuid, nps_survey.uuid)
+        self.assertEqual(response.customer_uuid, customer.uuid)
+
+    def test_respond_survey_not_found(self):
+        survey_uuid = uuid4()
+        customer_uuid = uuid4()
+        response = NPSService.respond(survey_uuid, customer_uuid, 0)
+        self.assertIsNone(response)
