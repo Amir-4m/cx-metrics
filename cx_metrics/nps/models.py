@@ -16,7 +16,7 @@ class NPSSurvey(SurveyModel):
     question = models.TextField(_('Question'), max_length=256)
     message = models.TextField(_('Thank You Message'), max_length=256)
     promoters = models.BigIntegerField(_('Promoters'), default=0, validators=[MinValueValidator(0)])
-    passive = models.BigIntegerField(_('Passive'), default=0, validators=[MinValueValidator(0)])
+    passives = models.BigIntegerField(_('Passives'), default=0, validators=[MinValueValidator(0)])
     detractors = models.BigIntegerField(_('Detractors'), default=0, validators=[MinValueValidator(0)])
 
     class Meta:

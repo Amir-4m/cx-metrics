@@ -7,7 +7,7 @@ from ..models import NPSSurvey, NPSResponse
 
 class NPSService(object):
     PROMOTERS = 'promoters'
-    PASSIVE = 'passive'
+    PASSIVE = 'passives'
     DETRACTORS = 'detractors'
 
     @staticmethod

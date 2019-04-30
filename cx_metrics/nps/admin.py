@@ -9,3 +9,4 @@ from .models import NPSSurvey
 @admin.register(NPSSurvey)
 class NPSSurveyAdmin(SurveyAdminBase):
     exclude = ('survey',)
+    readonly_fields = ('promoters', 'passives', 'detractors')

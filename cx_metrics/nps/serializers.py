@@ -19,4 +19,4 @@ class NPSInsightsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = NPSSurvey
-        fields = ('id', 'promoters', 'passive', 'detractors')
+        fields = ('id', 'name', 'promoters', 'passives', 'detractors')

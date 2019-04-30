@@ -64,14 +64,14 @@ class NPSSurveyServiceTestCase(TestCase):
 
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 1)
-        self.assertEqual(nps_survey.passive, 0)
+        self.assertEqual(nps_survey.passives, 0)
         self.assertEqual(nps_survey.detractors, 0)
 
         self.assertEqual(response.score, score)
         self.assertEqual(response.survey_uuid, nps_survey.uuid)
         self.assertEqual(response.customer_uuid, customer.uuid)
 
-    def test_respond_passive(self):
+    def test_respond_passives(self):
         nps_survey = self._create_survey(self.id())
         customer = CustomerService.create_customer()
         score = 8
@@ -79,7 +79,7 @@ class NPSSurveyServiceTestCase(TestCase):
 
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 0)
-        self.assertEqual(nps_survey.passive, 1)
+        self.assertEqual(nps_survey.passives, 1)
         self.assertEqual(nps_survey.detractors, 0)
 
         self.assertEqual(response.score, score)
@@ -94,7 +94,7 @@ class NPSSurveyServiceTestCase(TestCase):
 
         nps_survey.refresh_from_db()
         self.assertEqual(nps_survey.promoters, 0)
-        self.assertEqual(nps_survey.passive, 0)
+        self.assertEqual(nps_survey.passives, 0)
         self.assertEqual(nps_survey.detractors, 1)
 
         self.assertEqual(response.score, score)

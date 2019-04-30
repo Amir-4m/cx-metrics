@@ -136,8 +136,9 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
 
         expected_data = {
             'id': str(nps.uuid),
+            'name': nps.name,
             'promoters': nps.promoters,
-            'passive': nps.passive,
+            'passives': nps.passives,
             'detractors': nps.detractors,
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)

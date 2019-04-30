@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
                 ('message', models.TextField(max_length=256, verbose_name='Thank You Message')),
                 ('promoters', models.BigIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Promoters')),
                 ('detractors', models.BigIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Detractors')),
-                ('passive', models.BigIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Passive')),
+                ('passives', models.BigIntegerField(default=0, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Passives')),
                 ('business', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='npssurveys', related_query_name='npssurveys', to='businesses.Business', verbose_name='Business')),
                 ('survey', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='npssurvey', related_query_name='npssurvey', to='surveys.Survey', verbose_name='Survey')),
             ],
