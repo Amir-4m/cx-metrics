@@ -12,3 +12,11 @@ class NPSSerializer(serializers.ModelSerializer):
     class Meta:
         model = NPSSurvey
         fields = ('id', 'name', 'text', 'text_enabled', 'question', 'message', 'url')
+
+
+class NPSInsightsSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(source='uuid', read_only=True)
+
+    class Meta:
+        model = NPSSurvey
+        fields = ('id', 'promoters', 'passive', 'detractors')

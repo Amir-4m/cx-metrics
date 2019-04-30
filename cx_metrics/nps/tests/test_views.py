@@ -14,11 +14,11 @@ from upkook_core.teams.tests import MemberPermissionTestMixin
 from ..services.nps import NPSService
 
 
-class NPSSurveyTestCase(MemberPermissionTestMixin, TestCase):
+class NPSViewTestBase(MemberPermissionTestMixin, TestCase):
     fixtures = ['users', 'industries', 'businesses', 'teams']
 
     def setUp(self):
-        super(NPSSurveyTestCase, self).setUp()
+        super(NPSViewTestBase, self).setUp()
         User = get_user_model()
         user = User.objects.first()
         self.member = MemberService.get_member_by_id(1)
@@ -38,6 +38,8 @@ class NPSSurveyTestCase(MemberPermissionTestMixin, TestCase):
     def tearDown(self):
         self.remove_member_permissions(self.member, self.group)
 
+
+class NPSSurveyTestCase(NPSViewTestBase):
     def test_post(self):
         data = {
             "name": "NPS_name",
@@ -115,3 +117,29 @@ class NPSSurveyTestCase(MemberPermissionTestMixin, TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(data, response_data)
+
+
+class NPSInsightsViewTestCase(NPSViewTestBase):
+    def test_get(self):
+        nps = NPSService.create_nps_survey(
+            name="name",
+            business=self.business,
+            text="text",
+            question="question",
+            message="message"
+        )
+        NPSService.change_overall_score(nps.uuid, 'promoters', 1)
+        nps.refresh_from_db()
+
+        url = reverse('cx-nps:insights', kwargs={'uuid': str(nps.uuid)})
+        response = self.client.get(url)
+
+        expected_data = {
+            'id': str(nps.uuid),
+            'promoters': nps.promoters,
+            'passive': nps.passive,
+            'detractors': nps.detractors,
+        }
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response_data = json.loads(force_text(response.content))
+        self.assertEqual(response_data, expected_data)
