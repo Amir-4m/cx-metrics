@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from uuid import uuid4
 from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
 from upkook_core.industries.services import IndustryService
@@ -34,3 +35,15 @@ class SurveyServiceTestCase(TestCase):
     def test_get_surveys_by_business_order_by_is_given(self):
         surveys = SurveyService.get_surveys_by_business(self.business, ('name',))
         self.assertIn('ORDER BY "surveys_survey"."name" ASC', str(surveys.query))
+
+    def test_survey_with_uuid_exists_true(self):
+        survey = Survey.objects.create(
+            type='test',
+            name='test_get_surveys_by_business',
+            business=self.business,
+        )
+
+        self.assertTrue(SurveyService.survey_with_uuid_exists(survey.uuid))
+
+    def test_survey_with_uuid_exists_false(self):
+        self.assertFalse(SurveyService.survey_with_uuid_exists(uuid4()))

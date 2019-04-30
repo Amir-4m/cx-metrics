@@ -55,7 +55,7 @@ class SurveyModelQuerySet(QuerySet):
     @transaction.atomic
     def update(self, **kwargs):
         sids = list(self.values_list('survey', flat=True))
-        super(SurveyModelQuerySet, self).update(**kwargs)
+        rows = super(SurveyModelQuerySet, self).update(**kwargs)
 
         survey_kwargs = {}
         for field_name in ['name', 'business']:
@@ -64,6 +64,8 @@ class SurveyModelQuerySet(QuerySet):
 
         if survey_kwargs:
             Survey.objects.filter(id__in=sids).update(**survey_kwargs)
+
+        return rows
 
 
 class SurveyModel(SurveyBase):

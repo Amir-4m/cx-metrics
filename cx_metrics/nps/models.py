@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
@@ -15,6 +15,9 @@ class NPSSurvey(SurveyModel):
     text_enabled = models.BooleanField(_('Is Intro Enabled'), default=True)
     question = models.TextField(_('Question'), max_length=256)
     message = models.TextField(_('Thank You Message'), max_length=256)
+    promoters = models.BigIntegerField(_('Promoters'), default=0, validators=[MinValueValidator(0)])
+    passive = models.BigIntegerField(_('Passive'), default=0, validators=[MinValueValidator(0)])
+    detractors = models.BigIntegerField(_('Detractors'), default=0, validators=[MinValueValidator(0)])
 
     class Meta:
         verbose_name = _('NPS Survey')

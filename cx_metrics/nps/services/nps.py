@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.db.models import F
 from ..models import NPSSurvey
 
 
 class NPSService(object):
+    PROMOTERS = 'promoters'
+    PASSIVE = 'passive'
+    DETRACTORS = 'detractors'
 
     @staticmethod
     def create_nps_survey(name, business, text, question, message, text_enabled=True):
@@ -37,3 +41,18 @@ class NPSService(object):
         if ordering is not None:
             nps_surveys = nps_surveys.order_by(*ordering)
         return nps_surveys
+
+    @staticmethod
+    def change_overall_score(survey_uuid, field_name, amount):
+        kwargs = {field_name: F(field_name) + amount}
+        return NPSSurvey.objects.filter(uuid=survey_uuid).update(**kwargs)
+
+    @staticmethod
+    def respond(survey_uuid, score):
+        field_name = NPSService.PROMOTERS
+        if score <= 6:
+            field_name = NPSService.DETRACTORS
+        elif score <= 8:
+            field_name = NPSService.PASSIVE
+
+        NPSService.change_overall_score(survey_uuid, field_name, 1)

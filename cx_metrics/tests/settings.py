@@ -220,6 +220,8 @@ INSTALLED_APPS = (
     'django_extensions',
     # To configure Celery tasks from admin panel
     'django_celery_beat',
+    'django_cleanup',
+    'colorfield',
     'cities_light',
     'django.contrib.sites',
     'rest_framework',

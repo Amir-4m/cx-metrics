@@ -10,3 +10,7 @@ class SurveyService(object):
         if ordering is not None:
             surveys = surveys.order_by(*ordering)
         return surveys
+
+    @staticmethod
+    def survey_with_uuid_exists(survey_uuid):
+        return Survey.objects.filter(uuid=survey_uuid).exists()
