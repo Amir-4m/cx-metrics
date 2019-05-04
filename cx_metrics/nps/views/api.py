@@ -6,7 +6,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from upkook_core.auth.permissions import BusinessMemberPermissions
 from ..services.nps import NPSService
-from ..serializers import NPSSerializer, NPSInsightsSerializer
+from ..serializers import NPSSerializer, NPSInsightsSerializer, NPSRespondSerializer
 
 
 class NPSAPIView(ModelViewSet):
@@ -35,3 +35,13 @@ class NPSInsightsView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
+
+
+class NPSResponseAPIView(generics.CreateAPIView):
+
+    serializer_class = NPSRespondSerializer
+    filter_backends = (OrderingFilter,)
+    ordering = ('-updated',)
+
+    def perform_create(self, serializer):
+        serializer.save(survey_uuid=self.kwargs['uuid'])

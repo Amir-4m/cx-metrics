@@ -1,0 +1,66 @@
+[
+  {
+    "model": "industries.industry",
+    "pk": 1,
+    "fields": {
+      "name": "Industry #1",
+      "icon": "inds/be4e2252a6e9424ca5c4afd3aad5e204.jpg"
+    }
+  },
+  {
+    "model": "businesses.business",
+    "pk": 1,
+    "fields": {
+      "name": "Upkook",
+      "username": "upkook",
+      "domain": "www.upkook.com",
+      "industry": 1,
+      "size": 15,
+      "color": "#FF0000",
+      "logo": "bizz/upkook.png"
+    }
+  },
+  {
+    "model": "surveys.survey",
+    "pk": 1,
+    "fields": {
+      "uuid": "f6fd2c9a-1e53-4722-a1c1-c2f79ffb8be5",
+      "name": "NPS Name",
+      "business": 1,
+      "created": "2019-05-01T08:44:16.109Z",
+      "updated": "2019-05-01T08:44:16.109Z",
+      "type": "NPS"
+    }
+  },
+  {
+    "model": "nps.npssurvey",
+    "pk": 1,
+    "fields": {
+      "uuid": "f6fd2c9a-1e53-4722-a1c1-c2f79ffb8be5",
+      "name": "NPS Name",
+      "business": 1,
+      "created": "2019-05-01T08:44:16.119Z",
+      "updated": "2019-05-01T08:44:16.119Z",
+      "survey": 1,
+      "text": "NPS Intro text",
+      "text_enabled": true,
+      "question": "NPS Question",
+      "message": "NPS Thank you message",
+      "promoters": 0,
+      "passives": 0,
+      "detractors": 9
+    }
+  },
+  {
+    "model": "nps.npsresponse",
+    "pk": 1,
+    "fields": {
+      "survey_uuid": "f6fd2c9a-1e53-4722-a1c1-c2f79ffb8be5",
+      "customer_uuid": "651873d1-4f36-496e-a383-d11b8ea2b013",
+      "created": "2019-05-02T06:06:34.091Z",
+      "updated": "2019-05-02T06:06:34.091Z",
+      "score": 1
+    }
+  }
+
+]

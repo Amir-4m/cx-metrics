@@ -8,9 +8,11 @@ from django.urls import reverse
 from django.utils.encoding import force_text
 from rest_framework import status
 from upkook_core.auth.tests.client import AuthClient
+from upkook_core.customers.models import Customer
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
 
+from cx_metrics.nps.models import NPSSurvey
 from ..services.nps import NPSService
 
 
@@ -144,3 +146,29 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(force_text(response.content))
         self.assertEqual(response_data, expected_data)
+
+
+class NPSResponseAPIViewTestCase(TestCase):
+    fixtures = ['nps']
+
+    def test_perform_create_save_object(self):
+        nps = NPSSurvey.objects.first()
+        customer = Customer.objects.create()
+        data = {
+            "score": 1,
+            "customer": {
+                "client_id": customer.client_id
+            }
+        }
+
+        url = reverse('cx-nps:responses-create', kwargs={'uuid': str(nps.uuid)})
+        response = self.client.post(url, data=json.dumps(data), content_type='application/json')
+
+        response_data = json.loads(force_text(response.content))
+        expected_data = {
+            "score": 1,
+            "client_id": customer.client_id
+
+        }
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertDictEqual(response_data, expected_data)
