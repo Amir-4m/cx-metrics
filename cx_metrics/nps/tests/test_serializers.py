@@ -1,10 +1,47 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.forms import model_to_dict
+from django.http import Http404
 from django.test import TestCase
 
-from cx_metrics.nps.models import NPSResponse, NPSSurvey
-from cx_metrics.nps.serializers import NPSRespondSerializer
 from upkook_core.customers.models import Customer
+from ..models import NPSResponse
+from ..serializers import NPSSerializer, NPSRespondSerializer
+from ..services import NPSService
+
+
+class NPSSerializerTestCase(TestCase):
+    fixtures = ['nps']
+
+    def test_to_representation_nps_survey_instance(self):
+        instance = NPSService.get_nps_survey_by_id(1)
+        serializer = NPSSerializer()
+        fields = ('name', 'text', 'text_enabled', 'question', 'message')
+        expected = model_to_dict(instance, fields=fields)
+        expected.update({
+            'id': str(instance.uuid),
+            'type': instance.type,
+            'url': instance.url,
+        })
+        self.assertDictEqual(serializer.to_representation(instance), expected)
+
+    def test_to_representation_survey_instance(self):
+        instance = NPSService.get_nps_survey_by_id(1)
+        serializer = NPSSerializer()
+        fields = ('name', 'text', 'text_enabled', 'question', 'message')
+        expected = model_to_dict(instance, fields=fields)
+        expected.update({
+            'id': str(instance.uuid),
+            'type': instance.type,
+            'url': instance.url,
+        })
+        self.assertDictEqual(serializer.to_representation(instance.survey), expected)
+
+    def test_to_representation_http_404(self):
+        instance = NPSService.get_nps_survey_by_id(1).survey
+        instance.id = 2
+        serializer = NPSSerializer()
+        self.assertRaises(Http404, serializer.to_representation, instance)
 
 
 class NPSRespondSerializerTestCase(TestCase):
@@ -31,7 +68,7 @@ class NPSRespondSerializerTestCase(TestCase):
         self.assertEqual(representation['score'], data['score'])
 
     def test_create_return_nps_object(self):
-        nps = NPSSurvey.objects.first()
+        nps = NPSService.get_nps_survey_by_id(1)
         data = {
             "survey_uuid": str(nps.uuid),
             "customer": self.customer,

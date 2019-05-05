@@ -7,6 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.encoding import force_text
 from rest_framework import status
+from rest_framework.test import APIClient
 from upkook_core.auth.tests.client import AuthClient
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
@@ -55,6 +56,34 @@ class SurveyAPIViewTestCase(MemberPermissionTestMixin, TestCase):
         self.assertIsNone(response_data['next'])
         self.assertEqual(len(results), 1)
         self.assertDictEqual(results[0], {
+            'id': str(survey.uuid),
+            'type': 'test',
+            'name': survey.name,
+            'url': survey.url,
+        })
+
+
+class SurveyFactoryAPIViewTestCase(TestCase):
+    fixtures = ['users', 'industries', 'businesses', 'teams']
+
+    def setUp(self):
+        super(SurveyFactoryAPIViewTestCase, self).setUp()
+        self.client = APIClient()
+        self.member = MemberService.get_member_by_id(1)
+
+    def test_get(self):
+        survey = Survey.objects.create(
+            type='test',
+            name='SurveyFactoryAPIViewTestCase.test_get',
+            business=self.member.business,
+        )
+
+        url = reverse('cx-surveys:retrieve', kwargs={'uuid': str(survey.uuid)})
+        response = self.client.get(url)
+        response_data = json.loads(force_text(response.content))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response_data, {
             'id': str(survey.uuid),
             'type': 'test',
             'name': survey.name,

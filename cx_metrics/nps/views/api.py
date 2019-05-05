@@ -38,7 +38,6 @@ class NPSInsightsView(generics.RetrieveAPIView):
 
 
 class NPSResponseAPIView(generics.CreateAPIView):
-
     serializer_class = NPSRespondSerializer
     filter_backends = (OrderingFilter,)
     ordering = ('-updated',)

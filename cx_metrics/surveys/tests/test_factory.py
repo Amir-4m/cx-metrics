@@ -4,12 +4,13 @@ from django.core.exceptions import ImproperlyConfigured
 from django.test import TestCase
 
 from upkook_core.businesses.services import BusinessService
-from ..factory import DefaultSurveyFactory, AlreadyRegistered, NotRegistered
+from ..factory import DefaultSurveyFactory, AlreadyRegistered, NotRegistered, DefaultSurveySerializerFactory
+from ..serializers import SurveySerializer
 from ..models import SurveyModel
 from .models import TestSurvey
 
 
-class FactoryTestCase(TestCase):
+class SurveyFactoryTestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses']
 
     def setUp(self):
@@ -51,3 +52,25 @@ class FactoryTestCase(TestCase):
             self.id(),
 
         )
+
+
+class SurveySerializerFactoryTestCase(TestCase):
+    fixtures = ['users', 'industries', 'businesses']
+
+    def setUp(self):
+        self.factory = DefaultSurveySerializerFactory()
+        self.business = BusinessService.get_business_by_id(1)
+
+    def test_register_already_registered(self):
+        self.factory.register(self.id(), SurveySerializer)
+        self.assertRaisesMessage(
+            AlreadyRegistered,
+            'The survey type %s is already registered' % self.id(),
+            self.factory.register,
+            self.id(),
+            SurveySerializer
+        )
+
+    def test_get_serializer_class(self):
+        self.factory.register(self.id(), SurveySerializer)
+        self.assertEqual(self.factory.get_serializer_class(self.id()), SurveySerializer)

@@ -3,6 +3,8 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.functional import LazyObject
 
+from .serializers import SurveySerializer
+
 
 class AlreadyRegistered(Exception):
     pass
@@ -57,3 +59,37 @@ class DefaultSurveyFactory(LazyObject):
 
 
 survey_factory = DefaultSurveyFactory()
+
+
+class SurveySerializerFactory:
+    """
+    A Survey Serializer Factory object encapsulates dynamic instantiation of survey serializer.
+    Survey serializers are registered with SurveySerializerFactory using the register() method.
+    """
+
+    def __init__(self):
+        self._registry = {}  # survey_model type -> survey serializer class
+
+    def register(self, survey_type, serializer_class):
+        """
+        Register the given survey serializer class with given survey type
+
+        Args:
+            survey_type (str): A survey model type
+            serializer_class: A survey serializer class, not instances.
+        """
+        if survey_type in self._registry:
+            raise AlreadyRegistered('The survey type %s is already registered' % survey_type)
+
+        self._registry[survey_type] = serializer_class
+
+    def get_serializer_class(self, survey_type):
+        return self._registry.get(survey_type, SurveySerializer)
+
+
+class DefaultSurveySerializerFactory(LazyObject):
+    def _setup(self):
+        self._wrapped = SurveySerializerFactory()
+
+
+survey_serializer_factory = DefaultSurveySerializerFactory()

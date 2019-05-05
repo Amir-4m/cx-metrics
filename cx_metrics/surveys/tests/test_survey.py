@@ -6,7 +6,7 @@ from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
 from ..models import Survey
 from ..factory import SurveyFactory
-from ..decorators import register_survey
+from ..decorators import register_survey, register_survey_serializer
 from .models import TestSurvey
 
 
@@ -31,6 +31,15 @@ class SurveyTestCase(TestCase):
         self.assertRaisesMessage(
             ValueError,
             'Wrapped model must be subclass of SurveyModel',
+            wrapper,
+            SurveyTestCase,
+        )
+
+    def test_register_survey_serializer_value_error(self):
+        wrapper = register_survey_serializer(self.id())
+        self.assertRaisesMessage(
+            ValueError,
+            'Wrapped serializer must be subclass of Serializer',
             wrapper,
             SurveyTestCase,
         )

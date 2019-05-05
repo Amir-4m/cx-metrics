@@ -55,7 +55,7 @@ class NPSSurveyTestCase(NPSViewTestBase):
 
         response_data = json.loads(force_text(response.content))
         nps = NPSService.get_nps_survey_by_uuid(response_data['id'])
-        data.update({'id': str(nps.uuid), 'url': nps.url})
+        data.update({'id': str(nps.uuid), 'url': nps.url, 'type': nps.type})
 
         self.assertEqual(nps.business.pk, self.business.pk)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -84,6 +84,7 @@ class NPSSurveyTestCase(NPSViewTestBase):
 
         expected_data = {
             'id': str(nps.uuid),
+            'type': nps.type,
             'name': 'name',
             'text': 'text',
             'text_enabled': True,
@@ -115,7 +116,7 @@ class NPSSurveyTestCase(NPSViewTestBase):
         response = self.client.put(url, data=json.dumps(data), content_type='application/json')
 
         response_data = json.loads(force_text(response.content))
-        data.update({'id': str(nps.uuid), 'url': nps.url})
+        data.update({'id': str(nps.uuid), 'url': nps.url, 'type': nps.type})
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(data, response_data)

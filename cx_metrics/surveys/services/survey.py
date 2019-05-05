@@ -14,3 +14,7 @@ class SurveyService(object):
     @staticmethod
     def survey_with_uuid_exists(survey_uuid):
         return Survey.objects.filter(uuid=survey_uuid).exists()
+
+    @staticmethod
+    def all():
+        return Survey.objects.all()
