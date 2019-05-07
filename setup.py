@@ -52,6 +52,6 @@ setup(
     dependency_links=[
         'git+ssh://git@github.com/nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield',
         'git+ssh://git@github.com/nargeel/django-contrib.git@master#egg=django-contrib',
-        'git+ssh://git@github.com/upkook/upkook-core.git@master#egg=upkook-core'
+        'git+ssh://git@bitbucket.org/upkook/upkook-core.git@develop#egg=upkook-core'
     ]
 )
