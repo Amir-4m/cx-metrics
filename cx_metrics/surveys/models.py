@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 from uuid import uuid4
+from django.conf import settings
 from django.db import models, transaction
 from django.db.models import QuerySet
 from django.utils.functional import cached_property
@@ -30,7 +31,7 @@ class SurveyBase(models.Model):
 
     @cached_property
     def url(self):
-        return 'https://www.upkook.com/bizz/s/%s/' % self.uuid
+        return '%s%s/' % (settings.SURVEY_PUBLIC_BASE_URL, self.uuid)
 
 
 class Survey(SurveyBase):
