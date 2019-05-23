@@ -6,7 +6,6 @@
 *.sqlite
 *.sqlite3
 *.sql
-*.mo
 .eggs
 id_rsa
 id_rsa.pub

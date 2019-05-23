@@ -1,17 +1,16 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# UPKOOK Core
+# Copyright (C) 2019 UPKOOK
+# Saeed Salehian <saeed@upkook.com>, 2019.
 # 
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-04-27 03:02-0500\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2019-05-23 01:54-0500\n"
+"PO-Revision-Date: 2019-05-23 01:54-0500\n"
+"Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
+"Language-Team: Upkook <info@upkook.com>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -21,40 +20,48 @@ msgstr ""
 #: cx_metrics/surveys/admin.py:17
 #, python-format
 msgid "<a href=\"%(url)s\" target=\"_blank\">Open Survey</a>"
-msgstr ""
+msgstr "<a href=\"%(url)s\" target=\"_blank\">باز کردن نظرسنجی</a>"
 
 #: cx_metrics/surveys/admin.py:18
 msgid "Survey Link"
 msgstr "لینک نظرسنجی"
 
-#: cx_metrics/surveys/models.py:13
+#: cx_metrics/surveys/apps.py:12 cx_metrics/surveys/models.py:43
+msgid "Surveys"
+msgstr "نظرسنجی ها"
+
+#: cx_metrics/surveys/models.py:14
 msgid "UUID"
 msgstr ""
 
-#: cx_metrics/surveys/models.py:14
+#: cx_metrics/surveys/models.py:15
 msgid "Name"
 msgstr "نام"
 
-#: cx_metrics/surveys/models.py:20
+#: cx_metrics/surveys/models.py:21
 msgid "Business"
 msgstr "کسب و کار"
 
-#: cx_metrics/surveys/models.py:22
+#: cx_metrics/surveys/models.py:23 cx_metrics/surveys/models.py:113
 msgid "Created at"
 msgstr "تاریخ ایجاد"
 
-#: cx_metrics/surveys/models.py:23
+#: cx_metrics/surveys/models.py:24 cx_metrics/surveys/models.py:114
 msgid "Updated at"
 msgstr "تاریخ بروزرسانی"
 
-#: cx_metrics/surveys/models.py:37
+#: cx_metrics/surveys/models.py:38
 msgid "Type"
 msgstr "نوع نظرسنجی"
 
-#: cx_metrics/surveys/models.py:41 cx_metrics/surveys/models.py:71
+#: cx_metrics/surveys/models.py:42 cx_metrics/surveys/models.py:74
 msgid "Survey"
 msgstr "نظرسنجی"
 
-#: cx_metrics/surveys/models.py:42
-msgid "Surveys"
-msgstr "نظرسنجی ها"
+#: cx_metrics/surveys/models.py:111
+msgid "Survey UUID"
+msgstr ""
+
+#: cx_metrics/surveys/models.py:112
+msgid "Customer UUID"
+msgstr ""
