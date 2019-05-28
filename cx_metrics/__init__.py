@@ -4,6 +4,6 @@
 from __future__ import absolute_import, unicode_literals
 
 __author__ = 'Upkook'
-__version__ = '1.0.1'
+__version__ = '1.0.x.dev1'
 
 DEFAULT_SETTINGS_MODULE = 'cx_metrics.tests.settings'
