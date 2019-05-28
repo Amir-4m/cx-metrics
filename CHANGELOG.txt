@@ -1,3 +1,7 @@
+=== 1.0.1 (2019-05-27) ===
+
+- Included compiled translation files in package
+
 === 1.0.0 (2019-05-07) ===
 
 - NPS Survey (Score Question)
