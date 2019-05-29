@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import never_cache, cache_control, cache_page
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ModelViewSet
@@ -9,6 +11,8 @@ from ..services.nps import NPSService
 from ..serializers import NPSSerializer, NPSInsightsSerializer, NPSRespondSerializer
 
 
+@method_decorator(cache_control(private=True), name='dispatch')
+@method_decorator(never_cache, name='dispatch')
 class NPSAPIView(ModelViewSet):
     lookup_field = 'uuid'
     serializer_class = NPSSerializer
@@ -26,6 +30,8 @@ class NPSAPIView(ModelViewSet):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
 
 
+@method_decorator(cache_control(private=True, max_age=1 * 60), name='get')  # 1 minute
+@method_decorator(cache_page(1 * 60), name='get')  # 1 minute
 class NPSInsightsView(generics.RetrieveAPIView):
     lookup_field = 'uuid'
     serializer_class = NPSInsightsSerializer
@@ -37,6 +43,8 @@ class NPSInsightsView(generics.RetrieveAPIView):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
 
 
+@method_decorator(cache_control(private=True), name='post')
+@method_decorator(never_cache, name='post')
 class NPSResponseAPIView(generics.CreateAPIView):
     serializer_class = NPSRespondSerializer
     filter_backends = (OrderingFilter,)
