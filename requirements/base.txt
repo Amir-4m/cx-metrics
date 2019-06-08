@@ -4,6 +4,6 @@ django-celery-beat
 python-memcached
 
 # API
-djangorestframework
-django-cors-headers
+djangorestframework>=3.9.4
+django-cors-headers>=3.0.2
 django-extra-fields
