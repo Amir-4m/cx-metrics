@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 import json
+from mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_text
 from rest_framework import status
@@ -13,6 +14,7 @@ from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
 
 from ..models import Survey
+from ..serializers import SurveySerializer
 
 
 class SurveyAPIViewTestCase(MemberPermissionTestMixin, TestCase):
@@ -80,6 +82,37 @@ class SurveyFactoryAPIViewTestCase(TestCase):
 
         url = reverse('cx-surveys:retrieve', kwargs={'uuid': str(survey.uuid)})
         response = self.client.get(url)
+        response_data = json.loads(force_text(response.content))
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response_data, {
+            'id': str(survey.uuid),
+            'type': 'test',
+            'name': survey.name,
+            'url': survey.url,
+        })
+
+    @override_settings(
+        CACHES={
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            }
+        }
+    )
+    def test_get_cached(self):
+        survey = Survey.objects.create(
+            type='test',
+            name='SurveyFactoryAPIViewTestCase.test_get_cache',
+            business=self.member.business,
+        )
+
+        url = reverse('cx-surveys:retrieve', kwargs={'uuid': str(survey.uuid)})
+        self.client.get(url)
+
+        with patch.object(SurveySerializer, 'to_representation') as mock_to_representation:
+            response = self.client.get(url)
+            self.assertFalse(mock_to_representation.called)
+
         response_data = json.loads(force_text(response.content))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)

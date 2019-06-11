@@ -12,6 +12,7 @@ urlpatterns = staticfiles_urlpatterns()
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
+    path('auth/', include('upkook_core.auth.urls', 'auth')),
     path('cx/surveys/', include('cx_metrics.surveys.urls.api', 'cx-surveys')),
     path('cx/surveys/nps/', include('cx_metrics.nps.urls.api', 'cx-nps')),
     path('', admin.site.urls),

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 01:54-0500\n"
+"POT-Creation-Date: 2019-06-11 01:09-0500\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -16,6 +16,10 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cx_metrics/nps/apps.py:12
+msgid "NPS"
+msgstr "NPS"
 
 #: cx_metrics/nps/models.py:14
 msgid "Intro Text"
