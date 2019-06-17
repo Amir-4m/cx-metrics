@@ -238,6 +238,7 @@ INSTALLED_APPS = (
     'upkook_core.customers',
     'cx_metrics.surveys',
     'cx_metrics.surveys.tests',
+    'cx_metrics.multiple_choices',
     'cx_metrics.nps',
 )
 
@@ -250,6 +251,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
     'PAGE_SIZE': 24,
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
+    'DEFAULT_VERSION': '1.0',
+    'ALLOWED_VERSIONS': ['1.0', '1.1'],
+    'VERSION_PARAM': 'version',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
@@ -270,8 +275,8 @@ CORS_ALLOW_CREDENTIALS = True
 
 SIMPLE_JWT = {
     # 5 minutes
-    'ACCESS_TOKEN_LIFETIME': timedelta(seconds=60),
-    'REFRESH_TOKEN_LIFETIME': timedelta(seconds=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(minutes=10),
     'ROTATE_REFRESH_TOKENS': False,
     'BLACKLIST_AFTER_ROTATION': True,
 

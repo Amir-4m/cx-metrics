@@ -7,11 +7,15 @@ from .models import Survey
 
 
 class SurveyAdminBase(admin.ModelAdmin):
-    list_display = ('name', 'uuid', 'open_survey')
+    list_display = ('name', 'uuid', 'promoters', 'passives', 'detractors', 'updated', 'created', 'open_survey')
+    list_display_links = ('name', 'uuid')
     list_filter = ('business',)
     ordering = ('-updated',)
     search_fields = ('name', 'uuid')
+    autocomplete_fields = ('business',)
     readonly_fields = ('updated', 'created', 'uuid', 'open_survey')
+    date_hierarchy = 'created'
+    sortable_by = ('name', 'promoters', 'passives', 'detractors', 'updated')
 
     def open_survey(self, obj):
         return mark_safe(_('<a href="%(url)s" target="_blank">Open Survey</a>') % {'url': obj.url})
@@ -21,6 +25,7 @@ class SurveyAdminBase(admin.ModelAdmin):
 @admin.register(Survey)
 class SurveyAdmin(SurveyAdminBase):
     list_display = ('name', 'type', 'uuid', 'open_survey')
+    list_filter = ('type', 'business')
 
     def has_add_permission(self, request):
         return False

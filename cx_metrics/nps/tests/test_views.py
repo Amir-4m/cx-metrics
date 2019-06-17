@@ -2,11 +2,13 @@
 # vim: ai ts=4 sts=4 et sw=4
 import json
 
-from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.encoding import force_text
+from django.contrib.auth import get_user_model
+from django.forms import model_to_dict
 from rest_framework import status
+
 from upkook_core.auth.tests.client import AuthClient
 from upkook_core.customers.models import Customer
 from upkook_core.teams.services import MemberService
@@ -55,7 +57,12 @@ class NPSSurveyTestCase(NPSViewTestBase):
 
         response_data = json.loads(force_text(response.content))
         nps = NPSService.get_nps_survey_by_uuid(response_data['id'])
-        data.update({'id': str(nps.uuid), 'url': nps.url, 'type': nps.type})
+        data.update({
+            'id': str(nps.uuid),
+            'url': nps.url,
+            'type': nps.type,
+            'contra_reason': None,
+        })
 
         self.assertEqual(nps.business.pk, self.business.pk)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -69,6 +76,44 @@ class NPSSurveyTestCase(NPSViewTestBase):
         response_data = json.loads(force_text(response.content))
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(['This field is required.'], response_data['text'])
+
+    def test_post_v11(self):
+        data = {
+            "name": "NPS_name",
+            "text": "NPS_text",
+            "text_enabled": True,
+            "question": "NPS_question",
+            "contra_reason": {
+                "text": "Why not?",
+            },
+            "message": "NPS_message"
+        }
+
+        url = reverse('cx-nps:create')
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type='application/json',
+            HTTP_ACCEPT='application/json; version=1.1',
+        )
+
+        response_data = json.loads(force_text(response.content))
+        nps = NPSService.get_nps_survey_by_uuid(response_data['id'])
+
+        contra_data = model_to_dict(
+            nps.contra,
+            ('text', 'enabled', 'required', 'type', 'other_enabled')
+        )
+        data.update({
+            'id': str(nps.uuid),
+            'url': nps.url,
+            'type': nps.type,
+            'contra_reason': contra_data,
+        })
+
+        self.assertEqual(nps.business.pk, self.business.pk)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertDictEqual(data, response_data)
 
     def test_get(self):
         nps = NPSService.create_nps_survey(
@@ -89,6 +134,7 @@ class NPSSurveyTestCase(NPSViewTestBase):
             'text': 'text',
             'text_enabled': True,
             'question': 'question',
+            'contra_reason': None,
             'message': 'message',
             'url': nps.url,
         }
@@ -116,7 +162,12 @@ class NPSSurveyTestCase(NPSViewTestBase):
         response = self.client.put(url, data=json.dumps(data), content_type='application/json')
 
         response_data = json.loads(force_text(response.content))
-        data.update({'id': str(nps.uuid), 'url': nps.url, 'type': nps.type})
+        data.update({
+            'id': str(nps.uuid),
+            'url': nps.url,
+            'type': nps.type,
+            'contra_reason': None,
+        })
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(data, response_data)

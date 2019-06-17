@@ -1,0 +1,82 @@
+# UPKOOK CX Metrics
+# Copyright (C) 2019 UPKOOK
+# Saeed Salehian <saeed@upkook.com>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-17 07:34-0500\n"
+"PO-Revision-Date: 2019-06-17 02:07-0500\n"
+"Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
+"Language-Team: Upkook <info@upkook.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cx_metrics/multiple_choices/models.py:16
+msgid "Radio"
+msgstr ""
+
+#: cx_metrics/multiple_choices/models.py:17
+msgid "Dropdown"
+msgstr ""
+
+#: cx_metrics/multiple_choices/models.py:18
+msgid "Checkboxes"
+msgstr ""
+
+#: cx_metrics/multiple_choices/models.py:19
+msgid "Multi Dropdown"
+msgstr ""
+
+#: cx_metrics/multiple_choices/models.py:22
+msgid "Type"
+msgstr "نوع"
+
+#: cx_metrics/multiple_choices/models.py:23
+msgid "Is Other Option Enabled"
+msgstr "گزینه سایر فعال است؟"
+
+#: cx_metrics/multiple_choices/models.py:27
+msgid "Multiple Choice Question"
+msgstr "سوال چند گزینه ای"
+
+#: cx_metrics/multiple_choices/models.py:28
+msgid "Multiple Choice Questions"
+msgstr "سوالات چند گزینه ای"
+
+#: cx_metrics/multiple_choices/models.py:33
+msgid "Multiple Choice"
+msgstr "چند گزینه ای"
+
+#: cx_metrics/multiple_choices/models.py:36
+msgid "Text"
+msgstr "متن"
+
+#: cx_metrics/multiple_choices/models.py:37
+msgid "Is Enabled"
+msgstr "فعال"
+
+#: cx_metrics/multiple_choices/models.py:38
+msgid "Order"
+msgstr "ترتیب"
+
+#: cx_metrics/multiple_choices/models.py:39
+msgid "Created at"
+msgstr "ایجاد شده در"
+
+#: cx_metrics/multiple_choices/models.py:40
+msgid "Updated at"
+msgstr "بروزرسانی در"
+
+#: cx_metrics/multiple_choices/models.py:43
+msgid "Option"
+msgstr "گزینه"
+
+#: cx_metrics/multiple_choices/models.py:44
+msgid "Options"
+msgstr "گزینه ها"

@@ -8,7 +8,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from upkook_core.auth.permissions import BusinessMemberPermissions
 from ..services.nps import NPSService
-from ..serializers import NPSSerializer, NPSInsightsSerializer, NPSRespondSerializer
+from ..serializers import (
+    NPSSerializer, NPSSerializerV11,
+    NPSInsightsSerializer, NPSRespondSerializer,
+)
 
 
 @method_decorator(cache_control(private=True), name='dispatch')
@@ -22,6 +25,11 @@ class NPSAPIView(ModelViewSet):
     permission_classes = (
         BusinessMemberPermissions('nps', 'npssurvey'),
     )
+
+    def get_serializer_class(self):
+        if self.request.version == '1.1':
+            return NPSSerializerV11
+        return self.serializer_class
 
     def perform_create(self, serializer):
         serializer.save(business_id=self.request.user.business_id)

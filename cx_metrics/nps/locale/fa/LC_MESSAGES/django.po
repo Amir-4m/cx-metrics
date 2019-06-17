@@ -1,13 +1,13 @@
-# UPKOOK Core
+# UPKOOK CX Metrics
 # Copyright (C) 2019 UPKOOK
 # Saeed Salehian <saeed@upkook.com>, 2019.
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-11 01:09-0500\n"
+"POT-Creation-Date: 2019-06-17 07:34-0500\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -17,50 +17,62 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
+#: cx_metrics/nps/admin.py:20
+msgid "Advanced options"
+msgstr ""
+
+#: cx_metrics/nps/admin.py:33 cx_metrics/nps/tests/test_admin.py:30
+msgid "More..."
+msgstr ""
+
+#: cx_metrics/nps/admin.py:37 cx_metrics/nps/models.py:24
+msgid "Contra"
+msgstr "اعتراض"
+
 #: cx_metrics/nps/apps.py:12
 msgid "NPS"
 msgstr "NPS"
 
-#: cx_metrics/nps/models.py:14
+#: cx_metrics/nps/models.py:15
 msgid "Intro Text"
 msgstr "متن پیام نظرسنجی"
 
-#: cx_metrics/nps/models.py:15
+#: cx_metrics/nps/models.py:16
 msgid "Is Intro Enabled"
 msgstr "فعال بودن یا نبودن متن پیام نظرسنجی"
 
-#: cx_metrics/nps/models.py:16
+#: cx_metrics/nps/models.py:17
 msgid "Question"
 msgstr "سوال"
 
-#: cx_metrics/nps/models.py:17
+#: cx_metrics/nps/models.py:18
 msgid "Thank You Message"
 msgstr "پیام تشکر"
 
-#: cx_metrics/nps/models.py:18
+#: cx_metrics/nps/models.py:19
 msgid "Promoters"
 msgstr "مروجان"
 
-#: cx_metrics/nps/models.py:19
+#: cx_metrics/nps/models.py:20
 msgid "Passives"
 msgstr "منفعل"
 
-#: cx_metrics/nps/models.py:20
+#: cx_metrics/nps/models.py:21
 msgid "Detractors"
 msgstr "معترضان"
 
-#: cx_metrics/nps/models.py:23
+#: cx_metrics/nps/models.py:28
 msgid "NPS Survey"
 msgstr "نظرسنجی NPS"
 
-#: cx_metrics/nps/models.py:24
+#: cx_metrics/nps/models.py:29
 msgid "NPS Surveys"
 msgstr "نظرسنجی های NPS"
 
-#: cx_metrics/nps/models.py:35
+#: cx_metrics/nps/models.py:40
 msgid "NPS Response"
 msgstr "پاسخ NPS"
 
-#: cx_metrics/nps/models.py:36
+#: cx_metrics/nps/models.py:41
 msgid "NPS Responses"
 msgstr "پاسخ های NPS"

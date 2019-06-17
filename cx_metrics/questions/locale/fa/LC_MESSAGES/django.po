@@ -1,0 +1,46 @@
+# UPKOOK CX Metrics
+# Copyright (C) 2019 UPKOOK
+# Saeed Salehian <saeed@upkook.com>, 2019.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-06-17 07:34-0500\n"
+"PO-Revision-Date: 2019-06-17 02:07-0500\n"
+"Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
+"Language-Team: Upkook <info@upkook.com>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: cx_metrics/questions/models.py:8
+msgid "Text"
+msgstr "متن"
+
+#: cx_metrics/questions/models.py:9
+msgid "Is Enabled"
+msgstr "فعال"
+
+#: cx_metrics/questions/models.py:10
+msgid "Is Required"
+msgstr "اجباری"
+
+#: cx_metrics/questions/models.py:11
+msgid "Created at"
+msgstr "ایجاد شده در"
+
+#: cx_metrics/questions/models.py:12
+msgid "Updated at"
+msgstr "بروزرسانی در"
+
+#: cx_metrics/questions/models.py:16
+msgid "Question"
+msgstr "سوال"
+
+#: cx_metrics/questions/models.py:17
+msgid "Questions"
+msgstr "سوالات"

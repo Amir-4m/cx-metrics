@@ -9,7 +9,7 @@ class NPSSurveyTestCase(TestCase):
     def test_type(self):
         self.assertEqual(NPSSurvey().type, 'NPS')
 
-    def testURL(self):
+    def test_url(self):
         uuid_ = uuid4()
         expected_url = 'https://www.upkook.com/bizz/s/%s/' % uuid_
         self.assertEqual(NPSSurvey(uuid=uuid_).url, expected_url)

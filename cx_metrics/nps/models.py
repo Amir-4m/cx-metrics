@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
 
+from cx_metrics.multiple_choices.models import MultipleChoice
 from cx_metrics.surveys.models import SurveyModel, SurveyResponseBase
 from cx_metrics.surveys.decorators import register_survey
 
@@ -18,6 +19,10 @@ class NPSSurvey(SurveyModel):
     promoters = models.BigIntegerField(_('Promoters'), default=0, validators=[MinValueValidator(0)])
     passives = models.BigIntegerField(_('Passives'), default=0, validators=[MinValueValidator(0)])
     detractors = models.BigIntegerField(_('Detractors'), default=0, validators=[MinValueValidator(0)])
+    contra = models.OneToOneField(
+        MultipleChoice, related_name='nps_survey', on_delete=models.PROTECT,
+        verbose_name=_('Contra'), null=True, default=None,
+    )
 
     class Meta:
         verbose_name = _('NPS Survey')

@@ -4,9 +4,12 @@ from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
 
+from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.models import Customer
-from ..models import NPSResponse
-from ..serializers import NPSSerializer, NPSRespondSerializer
+
+from cx_metrics.multiple_choices.services import MultipleChoiceService
+from ..models import NPSSurvey, NPSResponse
+from ..serializers import NPSSerializer, NPSSerializerV11, NPSRespondSerializer
 from ..services import NPSService
 
 
@@ -22,6 +25,7 @@ class NPSSerializerTestCase(TestCase):
             'id': str(instance.uuid),
             'type': instance.type,
             'url': instance.url,
+            'contra_reason': None,
         })
         self.assertDictEqual(serializer.to_representation(instance), expected)
 
@@ -34,6 +38,7 @@ class NPSSerializerTestCase(TestCase):
             'id': str(instance.uuid),
             'type': instance.type,
             'url': instance.url,
+            'contra_reason': None,
         })
         self.assertDictEqual(serializer.to_representation(instance.survey), expected)
 
@@ -42,6 +47,93 @@ class NPSSerializerTestCase(TestCase):
         instance.id = 2
         serializer = NPSSerializer()
         self.assertRaises(Http404, serializer.to_representation, instance)
+
+
+class NPSSerializerV11TestCase(TestCase):
+    fixtures = ['nps']
+
+    def setUp(self):
+        self.business = BusinessService.get_business_by_id(1)
+
+    def test_create(self):
+        v_data = {
+            'name': 'NPS Survey',
+            'text': 'Welcome',
+            'text_enabled': True,
+            'question': 'How do you rate us?',
+            'contra': {
+                'text': 'Hello World!',
+            },
+            'message': 'Thanks you',
+            'business': self.business,
+        }
+        serializer = NPSSerializerV11()
+
+        nps_survey = serializer.create(v_data)
+
+        self.assertIsInstance(nps_survey, NPSSurvey)
+        self.assertEqual(nps_survey.name, v_data['name'])
+        self.assertEqual(nps_survey.text, v_data['text'])
+        self.assertEqual(nps_survey.text_enabled, v_data['text_enabled'])
+        self.assertEqual(nps_survey.question, v_data['question'])
+        self.assertEqual(nps_survey.contra.text, v_data['contra']['text'])
+        self.assertEqual(nps_survey.message, v_data['message'])
+        self.assertEqual(nps_survey.business, v_data['business'])
+
+    def test_update(self):
+        v_data = {
+            'name': 'NPS Survey',
+            'text': 'Welcome',
+            'text_enabled': True,
+            'question': 'How do you rate us?',
+            'contra': {
+                'text': 'Hello World!',
+                'required': False,
+            },
+            'message': 'Thanks you',
+        }
+        instance = NPSService.get_nps_survey_by_id(1)
+        instance.contra = MultipleChoiceService.create(text=self.id())
+        serializer = NPSSerializerV11()
+
+        nps_survey = serializer.update(instance, v_data)
+
+        self.assertIsInstance(nps_survey, NPSSurvey)
+        self.assertEqual(nps_survey.name, v_data['name'])
+        self.assertEqual(nps_survey.text, v_data['text'])
+        self.assertEqual(nps_survey.text_enabled, v_data['text_enabled'])
+        self.assertEqual(nps_survey.question, v_data['question'])
+        self.assertEqual(nps_survey.contra.text, v_data['contra']['text'])
+        self.assertFalse(nps_survey.contra.required)
+        self.assertEqual(nps_survey.message, v_data['message'])
+        self.assertEqual(nps_survey.business, instance.business)
+
+    def test_update_contra_is_none(self):
+        v_data = {
+            'name': 'NPS Survey',
+            'text': 'Welcome',
+            'text_enabled': True,
+            'question': 'How do you rate us?',
+            'contra': {
+                'text': 'Hello World!',
+                'required': False,
+            },
+            'message': 'Thanks you',
+        }
+        instance = NPSService.get_nps_survey_by_id(1)
+        serializer = NPSSerializerV11()
+
+        nps_survey = serializer.update(instance, v_data)
+
+        self.assertIsInstance(nps_survey, NPSSurvey)
+        self.assertEqual(nps_survey.name, v_data['name'])
+        self.assertEqual(nps_survey.text, v_data['text'])
+        self.assertEqual(nps_survey.text_enabled, v_data['text_enabled'])
+        self.assertEqual(nps_survey.question, v_data['question'])
+        self.assertEqual(nps_survey.contra.text, v_data['contra']['text'])
+        self.assertFalse(nps_survey.contra.required)
+        self.assertEqual(nps_survey.message, v_data['message'])
+        self.assertEqual(nps_survey.business, instance.business)
 
 
 class NPSRespondSerializerTestCase(TestCase):

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-05-23 01:54-0500\n"
+"POT-Creation-Date: 2019-06-17 07:34-0500\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -17,12 +17,12 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: cx_metrics/surveys/admin.py:17
+#: cx_metrics/surveys/admin.py:21
 #, python-format
 msgid "<a href=\"%(url)s\" target=\"_blank\">Open Survey</a>"
 msgstr "<a href=\"%(url)s\" target=\"_blank\">باز کردن نظرسنجی</a>"
 
-#: cx_metrics/surveys/admin.py:18
+#: cx_metrics/surveys/admin.py:22
 msgid "Survey Link"
 msgstr "لینک نظرسنجی"
 
