@@ -60,12 +60,15 @@ class MultipleChoiceSerializerTestCase(TestCase):
         serializer = MultipleChoiceSerializer()
         attrs = {
             'enabled': True,
-            'options': [{'text': 'Option 1', 'order': 1}]
+            'options': [
+                {'text': 'Option 1', 'order': 1},
+                {'text': 'Option 2', 'order': 2, 'enabled': False}
+            ]
         }
 
         self.assertRaisesMessage(
             ValidationError,
-            'You should provide at least 2 options.',
+            'You should provide at least 2 enabled options.',
             serializer.validate,
             attrs,
         )

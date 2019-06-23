@@ -41,7 +41,7 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
         enabled = attrs.get('enabled', True)
         options = attrs.get('options', [])
 
-        if enabled and len(options) < 2:
-            raise ValidationError(_('You should provide at least 2 options.'))
+        if enabled and sum([1 for option in options if option.get('enabled', True)]) < 2:
+            raise ValidationError(_('You should provide at least 2 enabled options.'))
 
         return attrs

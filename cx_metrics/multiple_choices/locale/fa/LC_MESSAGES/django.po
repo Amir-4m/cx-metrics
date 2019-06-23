@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-17 07:34-0500\n"
+"POT-Creation-Date: 2019-06-23 07:16-0500\n"
 "PO-Revision-Date: 2019-06-17 02:07-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -80,3 +80,15 @@ msgstr "گزینه"
 #: cx_metrics/multiple_choices/models.py:44
 msgid "Options"
 msgstr "گزینه ها"
+
+#: cx_metrics/multiple_choices/serializers.py:29
+msgid "You should not have duplicate option texts"
+msgstr "نباید گزینه تکراری داشته باشید."
+
+#: cx_metrics/multiple_choices/serializers.py:45
+msgid "You should provide at least 2 enabled options."
+msgstr "حداقل 2 گزینه فعال تعریف نمایید."
+
+#: cx_metrics/multiple_choices/services/multiple_choice.py:46
+msgid "Failed to create options"
+msgstr "خطا در ساخت گزینه ها"
