@@ -35,7 +35,7 @@ class Option(models.Model):
     )
     text = models.CharField(_('Text'), max_length=256)
     enabled = models.BooleanField(_('Is Enabled'), default=True)
-    order = models.PositiveSmallIntegerField(_('Order'))
+    order = models.PositiveSmallIntegerField(_('Order'), default=0, db_index=True)
     created = models.DateTimeField(_('Created at'), auto_now_add=True)
     updated = models.DateTimeField(_('Updated at'), auto_now=True)
 
@@ -44,8 +44,8 @@ class Option(models.Model):
         verbose_name_plural = _('Options')
         unique_together = (
             ('multiple_choice', 'text'),
-            ('multiple_choice', 'order'),
         )
+        ordering = ('order',)
 
     def __str__(self):
         return self.text

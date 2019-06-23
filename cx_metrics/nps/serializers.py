@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 from copy import copy
+from django.db import transaction
 from django.http import Http404
 from rest_framework import serializers
 
@@ -42,6 +43,7 @@ class NPSSerializer(serializers.ModelSerializer):
 class NPSSerializerV11(NPSSerializer):
     contra_reason = MultipleChoiceSerializer(source='contra')
 
+    @transaction.atomic()
     def create(self, validated_data):
         v_data = copy(validated_data)
         contra_data = v_data.pop('contra', {})

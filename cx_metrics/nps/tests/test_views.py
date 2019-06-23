@@ -85,6 +85,10 @@ class NPSSurveyTestCase(NPSViewTestBase):
             "question": "NPS_question",
             "contra_reason": {
                 "text": "Why not?",
+                "options": [
+                    {"text": "Option 1", "order": 1},
+                    {"text": "Option 2", "order": 2},
+                ]
             },
             "message": "NPS_message"
         }
@@ -104,6 +108,11 @@ class NPSSurveyTestCase(NPSViewTestBase):
             nps.contra,
             ('text', 'enabled', 'required', 'type', 'other_enabled')
         )
+        contra_data.update({'options': []})
+        for option in nps.contra.options.order_by('order'):
+            option_data = model_to_dict(option, ('id', 'text', 'enabled', 'order'))
+            contra_data['options'].append(option_data)
+
         data.update({
             'id': str(nps.uuid),
             'url': nps.url,
