@@ -240,6 +240,7 @@ INSTALLED_APPS = (
     'cx_metrics.surveys.tests',
     'cx_metrics.multiple_choices',
     'cx_metrics.nps',
+    'cx_metrics.surveys_defaults',
 )
 
 # Set model for using in authentication
