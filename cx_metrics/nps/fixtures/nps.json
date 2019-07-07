@@ -17,7 +17,9 @@
       "industry": 1,
       "size": 15,
       "color": "#FF0000",
-      "logo": "bizz/upkook.png"
+      "logo": "bizz/upkook.png",
+      "created":"2011-09-01T13:20:30+03:00",
+      "updated":"2011-09-01T13:20:30+03:00"
     }
   },
   {

@@ -7,8 +7,10 @@ from django.test import TestCase
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from upkook_core.businesses.models import Business
 
 from cx_metrics.multiple_choices.services import MultipleChoiceService
+from cx_metrics.nps.services import NPSService
 from cx_metrics.surveys.models import Survey
 from ..admin import NPSSurveyAdmin, NPSResponseAdmin
 from ..models import NPSSurvey, NPSResponse
@@ -26,13 +28,12 @@ class NPSForm(forms.ModelForm):
 
 
 class NPSSurveyAdminTestCase(TestCase):
-    fixtures = ['nps']
+    fixtures = ['users', 'nps']
 
     def setUp(self):
         self.survey = Survey.objects.first()
         User = get_user_model()
-        user = User()
-        user.save()
+        user = User.objects.first()
         self.admin = NPSSurveyAdmin(model=NPSSurvey, admin_site=AdminSite())
         self.request = MockRequest(user)
 
@@ -54,11 +55,17 @@ class NPSSurveyAdminTestCase(TestCase):
         self.assertIsNone(value)
 
     def test_save_model(self):
-        nps = NPSSurvey.objects.first()
+        nps = NPSService.create_nps_survey(
+            name="name",
+            business=Business.objects.first(),
+            text="text",
+            question="question",
+            message="message"
+        )
         data = {
             "name": "name",
-            "business": self.survey.business.id,
-            "survey": self.survey.id,
+            "business": Business.objects.first().id,
+            "survey": nps.survey.id,
             "text": "text",
             "question": "question",
             "message": "message",
