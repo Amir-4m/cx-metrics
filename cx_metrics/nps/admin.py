@@ -12,10 +12,13 @@ from .models import NPSSurvey, NPSResponse
 @admin.register(NPSSurvey)
 class NPSSurveyAdmin(SurveyAdminBase):
     exclude = ('survey', 'contra',)
-    readonly_fields = ('contra_question', 'promoters', 'passives', 'detractors', 'updated', 'created', 'uuid')
+    readonly_fields = (
+        'contra_question', 'promoters', 'passives', 'detractors', 'updated', 'created', 'uuid', 'author'
+    )
     fieldsets = (
         (None, {
-            'fields': ('uuid', 'name', 'business', 'promoters', 'passives', 'detractors', 'updated', 'created')
+            'fields': (
+                'uuid', 'name', 'business', 'promoters', 'passives', 'detractors', 'updated', 'created', 'author')
         }),
         (_('Advanced options'), {
             'classes': ('collapse',),
@@ -35,6 +38,10 @@ class NPSSurveyAdmin(SurveyAdminBase):
         return None
 
     contra_question.short_description = _('Contra')
+
+    def save_model(self, request, obj, form, change):
+        obj.author = request.user
+        super(NPSSurveyAdmin, self).save_model(request, obj, form, change)
 
 
 @admin.register(NPSResponse)

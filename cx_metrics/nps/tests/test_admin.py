@@ -1,24 +1,40 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django import forms
 from django.contrib.admin.sites import AdminSite
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from cx_metrics.multiple_choices.services import MultipleChoiceService
+from cx_metrics.surveys.models import Survey
 from ..admin import NPSSurveyAdmin, NPSResponseAdmin
 from ..models import NPSSurvey, NPSResponse
 
 
 class MockRequest(object):
-    def __init__(self):
-        pass
+    def __init__(self, user=None):
+        self.user = user
+
+
+class NPSForm(forms.ModelForm):
+    class Meta:
+        model = NPSSurvey
+        fields = "__all__"
 
 
 class NPSSurveyAdminTestCase(TestCase):
+    fixtures = ['nps']
+
     def setUp(self):
+        self.survey = Survey.objects.first()
+        User = get_user_model()
+        user = User()
+        user.save()
         self.admin = NPSSurveyAdmin(model=NPSSurvey, admin_site=AdminSite())
+        self.request = MockRequest(user)
 
     def test_contra_reason(self):
         contra = MultipleChoiceService.create(text=self.id())
@@ -36,6 +52,25 @@ class NPSSurveyAdminTestCase(TestCase):
         nps_survey = NPSSurvey(contra=None)
         value = self.admin.contra_question(nps_survey)
         self.assertIsNone(value)
+
+    def test_save_model(self):
+        nps = NPSSurvey.objects.first()
+        data = {
+            "name": "name",
+            "business": self.survey.business.id,
+            "survey": self.survey.id,
+            "text": "text",
+            "question": "question",
+            "message": "message",
+        }
+
+        self.assertIsNone(nps.author)
+        form = NPSForm(instance=nps, data=data)
+        form.is_valid()
+        self.admin.save_model(self.request, nps, form, False)
+
+        self.assertIsNotNone(nps.author)
+        self.assertEqual(nps.author.id, self.request.user.id)
 
 
 class NPSResponseAdminTestCase(TestCase):

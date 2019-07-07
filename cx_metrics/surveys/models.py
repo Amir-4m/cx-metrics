@@ -6,7 +6,6 @@ from django.db import models, transaction
 from django.db.models import QuerySet
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
-
 from upkook_core.businesses.models import Business
 
 
@@ -75,6 +74,15 @@ class SurveyModel(SurveyBase):
         related_name='%(class)s',
         related_query_name='%(class)s',
         on_delete=models.CASCADE,
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        verbose_name=_('Author'),
+        related_name='%(class)ss',
+        related_query_name='%(class)ss',
+        on_delete=models.PROTECT,
+        null=True,
+        default=None
     )
 
     objects = SurveyModelQuerySet.as_manager()

@@ -32,7 +32,13 @@ class NPSAPIView(ModelViewSet):
         return self.serializer_class
 
     def perform_create(self, serializer):
-        serializer.save(business_id=self.request.user.business_id)
+        serializer.save(
+            business_id=self.request.user.business_id,
+            author=self.request.user.instance
+        )
+
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user.instance)
 
     def get_queryset(self):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
