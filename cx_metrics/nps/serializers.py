@@ -3,15 +3,18 @@
 from copy import copy
 from django.db import transaction
 from django.http import Http404
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+from rest_framework.fields import empty
 
 from upkook_core.customers.serializers import CustomerSerializer
-from cx_metrics.surveys.models import Survey
-from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.multiple_choices.serializers import MultipleChoiceSerializer
+from cx_metrics.surveys.decorators import register_survey_serializer
+from cx_metrics.surveys.models import Survey
 
-from .services import NPSService
 from .models import NPSSurvey, NPSResponse
+from .services import NPSService
 
 
 @register_survey_serializer('NPS')
@@ -81,6 +84,11 @@ class NPSRespondSerializer(serializers.ModelSerializer):
         model = NPSResponse
         fields = ('score', 'customer')
 
+    def __init__(self, instance=None, data=empty, **kwargs):
+        c_kwargs = copy(kwargs)
+        self.survey = c_kwargs.pop('survey')
+        super(NPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
+
     def to_representation(self, instance):
         return {
             'score': instance.score,
@@ -88,11 +96,38 @@ class NPSRespondSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
-        survey_uuid = validated_data['survey_uuid']
         customer = validated_data['customer']
         score = validated_data['score']
         return NPSService.respond(
-            survey_uuid=survey_uuid,
+            survey=self.survey,
             customer_uuid=customer.uuid,
-            score=score
+            score=score,
+        )
+
+
+class NPSRespondSerializerV11(NPSRespondSerializer):
+    options = serializers.ListField(child=serializers.IntegerField())
+
+    class Meta:
+        model = NPSResponse
+        fields = ('score', 'customer', 'options', 'survey_uuid')
+
+    def validate_options(self, value):
+        if value and self.survey.contra is None:
+            raise ValidationError(_("survey han no contra questions!"))
+        for option_id in value:
+            if not self.survey.contra.options.filter(id=option_id).exists():
+                raise ValidationError(_("Contra Option and Survey not related!"))
+        return value
+
+    def create(self, validated_data):
+        customer = validated_data['customer']
+        score = validated_data['score']
+        options = validated_data['options']
+
+        return NPSService.respond(
+            survey=self.survey,
+            customer_uuid=customer.uuid,
+            score=score,
+            option_ids=options
         )

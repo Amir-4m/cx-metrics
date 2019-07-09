@@ -44,3 +44,14 @@ class MultipleChoiceService(object):
             return Option.objects.bulk_create(options)
         except IntegrityError:
             raise ValidationError(_('Failed to create options'))
+
+    @staticmethod
+    def get_option(*args, **kwargs):
+        try:
+            return Option.objects.get(*args, **kwargs)
+        except Option.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_option_by_id(id_):
+        return MultipleChoiceService.get_option(id=id_)

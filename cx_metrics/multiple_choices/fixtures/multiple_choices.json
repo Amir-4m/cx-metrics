@@ -1,0 +1,27 @@
+[
+  {
+    "model": "multiple_choices.multiplechoice",
+    "pk": 1,
+    "fields": {
+      "text": "Multiple Choice",
+      "enabled": true,
+      "required": true,
+      "created": "2019-07-02T12:00:51.325Z",
+      "updated": "2019-07-02T12:00:51.325Z",
+      "type": "R",
+      "other_enabled": false
+    }
+  },
+  {
+    "model": "multiple_choices.option",
+    "pk": 1,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "Option",
+      "enabled": true,
+      "order": 1,
+      "created": "2019-07-02T12:01:00.036Z",
+      "updated": "2019-07-02T12:01:00.036Z"
+    }
+  }
+]

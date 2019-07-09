@@ -8,6 +8,8 @@ from ..services import MultipleChoiceService
 
 
 class MultipleChoiceServiceTestCase(TestCase):
+    fixtures = ['multiple_choices']
+
     def test_create_default_values(self):
         mc = MultipleChoiceService.create(text=self.id())
         self.assertIsInstance(mc, MultipleChoice)
@@ -70,3 +72,13 @@ class MultipleChoiceServiceTestCase(TestCase):
             mc,
             options_kwargs,
         )
+
+    def test_get_option_by_id(self):
+        option = Option.objects.first()
+        other = MultipleChoiceService.get_option_by_id(option.pk)
+        self.assertIsInstance(other, Option)
+        self.assertEqual(other.pk, option.pk)
+        self.assertEqual(option.text, other.text)
+
+    def test_get_option_by_id_none(self):
+        self.assertIsNone(MultipleChoiceService.get_option_by_id(0))

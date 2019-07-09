@@ -10,8 +10,8 @@ from django.utils.translation import ugettext_lazy as _
 from upkook_core.businesses.models import Business
 
 from cx_metrics.multiple_choices.services import MultipleChoiceService
-from cx_metrics.nps.services import NPSService
 from cx_metrics.surveys.models import Survey
+from ..services import NPSService
 from ..admin import NPSSurveyAdmin, NPSResponseAdmin
 from ..models import NPSSurvey, NPSResponse
 
@@ -28,7 +28,7 @@ class NPSForm(forms.ModelForm):
 
 
 class NPSSurveyAdminTestCase(TestCase):
-    fixtures = ['users', 'nps']
+    fixtures = ['users', 'multiple_choices', 'nps']
 
     def setUp(self):
         self.survey = Survey.objects.first()

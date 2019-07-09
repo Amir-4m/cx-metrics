@@ -2,19 +2,18 @@
 # vim: ai ts=4 sts=4 et sw=4
 import json
 
+from django.contrib.auth import get_user_model
+from django.forms import model_to_dict
 from django.test import TestCase
 from django.urls import reverse
 from django.utils.encoding import force_text
-from django.contrib.auth import get_user_model
-from django.forms import model_to_dict
 from rest_framework import status
-
 from upkook_core.auth.tests.client import AuthClient
-from upkook_core.customers.models import Customer
+from upkook_core.customers.services import CustomerService
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
 
-from cx_metrics.nps.models import NPSSurvey
+from cx_metrics.multiple_choices.services import MultipleChoiceService
 from ..services.nps import NPSService
 
 
@@ -210,11 +209,11 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
 
 
 class NPSResponseAPIViewTestCase(TestCase):
-    fixtures = ['nps']
+    fixtures = ['multiple_choices', 'nps']
 
-    def test_perform_create_save_object(self):
-        nps = NPSSurvey.objects.first()
-        customer = Customer.objects.create()
+    def test_post(self):
+        nps = NPSService.get_nps_survey_by_id(1)
+        customer = CustomerService.create_customer()
         data = {
             "score": 1,
             "customer": {
@@ -233,3 +232,43 @@ class NPSResponseAPIViewTestCase(TestCase):
         }
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertDictEqual(response_data, expected_data)
+
+    def test_post_v11(self):
+        customer = CustomerService.create_customer()
+        data = {
+            "score": 3,
+            "customer": {
+                "client_id": customer.client_id
+            },
+            "options": [1]
+        }
+        contra = MultipleChoiceService.get_by_id(1)
+        nps = NPSService.get_nps_survey_by_id(1)
+        nps.contra = contra
+        nps.save()
+        url = reverse('cx-nps:responses-create', kwargs={'uuid': nps.uuid})
+        response = self.client.post(
+            url,
+            data=json.dumps(data),
+            content_type='application/json',
+            HTTP_ACCEPT='application/json; version=1.1',
+        )
+
+        response_data = json.loads(force_text(response.content))
+
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response_data['score'], data['score'])
+        self.assertEqual((response_data['client_id']), data['customer']['client_id'])
+
+    def test_get_survey(self):
+        none_uuid = "76440add-0243-4eb0-a985-7c573bb2d101"
+        data = {
+            "score": 1,
+            "customer": {
+                "client_id": 1
+            }
+        }
+
+        url = reverse('cx-nps:responses-create', kwargs={'uuid': none_uuid})
+        response = self.client.post(url, data=json.dumps(data), content_type='application/json')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

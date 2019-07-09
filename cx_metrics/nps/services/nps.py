@@ -2,6 +2,8 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.db.models import F
 from django.db import transaction
+
+from ..services import ContraService
 from ..models import NPSSurvey, NPSResponse
 
 
@@ -49,7 +51,7 @@ class NPSService(object):
         return NPSSurvey.objects.filter(uuid=survey_uuid).update(**kwargs)
 
     @staticmethod
-    def respond(survey_uuid, customer_uuid, score):
+    def respond(survey, customer_uuid, score, option_ids=None):
         field_name = NPSService.PROMOTERS
         if score <= 6:
             field_name = NPSService.DETRACTORS
@@ -57,11 +59,15 @@ class NPSService(object):
             field_name = NPSService.PASSIVE
 
         with transaction.atomic():
-            rows = NPSService.change_overall_score(survey_uuid, field_name, 1)
+            rows = NPSService.change_overall_score(survey.uuid, field_name, 1)
             if rows > 0:
-                return NPSResponse.objects.create(
-                    survey_uuid=survey_uuid,
+                nps_response = NPSResponse.objects.create(
+                    survey_uuid=survey.uuid,
                     customer_uuid=customer_uuid,
                     score=score
                 )
+
+                if option_ids:
+                    ContraService.store_contra_response(survey, nps_response, option_ids)
+                return nps_response
             return None

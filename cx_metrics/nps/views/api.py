@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache, cache_control
 from rest_framework import generics
@@ -10,7 +11,8 @@ from upkook_core.auth.permissions import BusinessMemberPermissions
 from ..services.nps import NPSService
 from ..serializers import (
     NPSSerializer, NPSSerializerV11,
-    NPSInsightsSerializer, NPSRespondSerializer,
+    NPSInsightsSerializer,
+    NPSRespondSerializer, NPSRespondSerializerV11
 )
 
 
@@ -63,5 +65,19 @@ class NPSResponseAPIView(generics.CreateAPIView):
     filter_backends = (OrderingFilter,)
     ordering = ('-updated',)
 
-    def perform_create(self, serializer):
-        serializer.save(survey_uuid=self.kwargs['uuid'])
+    def get_survey(self):
+        survey = NPSService.get_nps_survey_by_uuid(self.kwargs['uuid'])
+        if survey is None:
+            raise Http404
+        return survey
+
+    def get_serializer(self, *args, **kwargs):
+        survey = self.get_survey()
+        default_kwargs = {'survey': survey}
+        default_kwargs.update(kwargs)
+        return super(NPSResponseAPIView, self).get_serializer(*args, **default_kwargs)
+
+    def get_serializer_class(self):
+        if self.request.version == '1.1':
+            return NPSRespondSerializerV11
+        return self.serializer_class
