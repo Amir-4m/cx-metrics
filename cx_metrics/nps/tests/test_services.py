@@ -155,11 +155,14 @@ class ContraServiceTestCase(TestCase):
         )
         self.customer = CustomerService.create_customer()
 
-    def test_create_contra_response(self):
-        contra_option = ContraOption.objects.create(
+    def _create_contra_option(self, text='text'):
+        return ContraOption.objects.create(
             nps_survey=self.nps,
-            text='text'
+            text=text
         )
+
+    def test_create_contra_response(self):
+        contra_option = self._create_contra_option()
         response = NPSResponse.objects.create(
             survey_uuid=self.nps.uuid,
             customer_uuid=self.customer.uuid,
@@ -180,21 +183,14 @@ class ContraServiceTestCase(TestCase):
         self.assertEqual(contra_option.text, 'default_text')
 
     def test_get_or_create_contra_option_exists(self):
-        contra_option = ContraOption.objects.create(
-            nps_survey=self.nps,
-            text='text',
-        )
+        contra_option = self._create_contra_option()
         defaults = {'nps_survey': self.nps}
         other, created = ContraService.get_or_create_contra_option(defaults=defaults, text="text")
         self.assertFalse(created)
         self.assertEqual(contra_option.id, other.id)
 
     def test_update_contra_option_count(self):
-        contra_option = ContraOption.objects.create(
-            nps_survey=self.nps,
-            text='text'
-        )
-
+        contra_option = self._create_contra_option()
         count = ContraService.change_contra_option_count(contra_option, 'count', 1)
         self.assertEqual(count, 1)
         contra_option.refresh_from_db()

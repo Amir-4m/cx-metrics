@@ -82,3 +82,49 @@ class MultipleChoiceServiceTestCase(TestCase):
 
     def test_get_option_by_id_none(self):
         self.assertIsNone(MultipleChoiceService.get_option_by_id(0))
+
+    def test_option_exists_true(self):
+        option = Option.objects.first()
+        self.assertTrue(MultipleChoiceService.option_exists(option.multiple_choice, option.pk))
+
+    def test_option_exists_false(self):
+        option = Option.objects.first()
+        self.assertFalse(MultipleChoiceService.option_exists(option.multiple_choice, 0))
+
+    def test_option_text_exists_true(self):
+        option = Option.objects.first()
+        value = MultipleChoiceService.option_text_exists(option.multiple_choice, option.text)
+        self.assertTrue(value)
+
+    def test_option_text_exists_false(self):
+        option = Option.objects.first()
+        value = MultipleChoiceService.option_text_exists(
+            option.multiple_choice, option.text, option.pk
+        )
+        self.assertFalse(value)
+
+    def test_update_options(self):
+        mc = MultipleChoiceService.create(text=self.id())
+        option = MultipleChoiceService.create_option(mc, 'Option', 1)
+        options_kwargs = [{'id': option.pk, 'text': 'Option 1', 'order': 1}]
+
+        MultipleChoiceService.update_options(mc, options_kwargs)
+
+        option.refresh_from_db()
+        self.assertEqual(option.text, options_kwargs[0].get('text'))
+        self.assertEqual(option.order, options_kwargs[0].get('order'))
+
+    def test_update_options_with_new_options(self):
+        mc = MultipleChoiceService.create(text=self.id())
+        option = MultipleChoiceService.create_option(mc, 'Option', 1)
+        options_kwargs = [
+            {'id': option.pk, 'text': 'Option 1', 'order': 1},
+            {'text': 'Option 2', 'order': 2}
+        ]
+
+        MultipleChoiceService.update_options(mc, options_kwargs)
+
+        self.assertEqual(mc.options.count(), 2)
+        qs = mc.options.all()
+        self.assertEqual(qs[1].text, options_kwargs[1].get('text'))
+        self.assertEqual(qs[1].order, options_kwargs[1].get('order'))

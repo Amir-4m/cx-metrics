@@ -44,13 +44,17 @@ class NPSSerializer(serializers.ModelSerializer):
 
 
 class NPSSerializerV11(NPSSerializer):
-    contra_reason = MultipleChoiceSerializer(source='contra')
+
+    def __init__(self, instance=None, data=empty, **kwargs):
+        super(NPSSerializerV11, self).__init__(instance, data, **kwargs)
+        contra = instance and instance.contra
+        self.fields['contra_reason'] = MultipleChoiceSerializer(source='contra', instance=contra)
 
     @transaction.atomic()
     def create(self, validated_data):
         v_data = copy(validated_data)
         contra_data = v_data.pop('contra', {})
-        contra_serializer = MultipleChoiceSerializer()
+        contra_serializer = self.fields['contra_reason']
         contra = contra_serializer.create(contra_data)
         v_data.update({'contra': contra})
         return super(NPSSerializerV11, self).create(v_data)
@@ -58,7 +62,7 @@ class NPSSerializerV11(NPSSerializer):
     def update(self, instance, validated_data):
         v_data = copy(validated_data)
         contra_data = v_data.pop('contra', {})
-        contra_serializer = MultipleChoiceSerializer()
+        contra_serializer = self.fields['contra_reason']
 
         if instance.contra and instance.contra.pk:
             contra = contra_serializer.update(instance.contra, contra_data)

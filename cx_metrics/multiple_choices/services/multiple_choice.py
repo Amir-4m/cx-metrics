@@ -55,3 +55,35 @@ class MultipleChoiceService(object):
     @staticmethod
     def get_option_by_id(id_):
         return MultipleChoiceService.get_option(id=id_)
+
+    @staticmethod
+    def option_exists(multiple_choice, id_):
+        return multiple_choice.options.filter(id=id_).exists()
+
+    @staticmethod
+    def option_text_exists(multiple_choice, text, option_id=None):
+        qs = multiple_choice.options.filter(text=text)
+        if option_id:
+            qs = qs.exclude(id=option_id)
+        return qs.exists()
+
+    @staticmethod
+    def create_option(multiple_choice, text, order, enabled=True):
+        return Option.objects.create(
+            multiple_choice=multiple_choice,
+            text=text,
+            order=order,
+            enabled=enabled,
+        )
+
+    @staticmethod
+    def update_options(multiple_choice, options_kwargs):
+        new_options = []
+        for kwargs in options_kwargs:
+            option_id = kwargs.pop('id', None)
+            if option_id:
+                multiple_choice.options.filter(id=option_id).update(**kwargs)
+            else:
+                new_options.append(kwargs)
+
+        MultipleChoiceService.create_options(multiple_choice, new_options)
