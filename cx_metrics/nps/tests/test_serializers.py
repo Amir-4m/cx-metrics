@@ -234,6 +234,8 @@ class NPSRespondSerializerV11TestCase(TestCase):
 
     def test_validate_options_raise_validation_error_survey_has_no_contra(self):
         nps_survey = NPSSurvey.objects.first()
+        nps_survey.contra = None
+        nps_survey.save()
         option = Option.objects.first()
         data = {
             'score': 1,
@@ -243,4 +245,21 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'options': [option.id],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate_options_contra_not_enabled(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        contra.enabled = False
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1],
+        }
+
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        self.assertIsNone(serializer.validate_options(data['options']))

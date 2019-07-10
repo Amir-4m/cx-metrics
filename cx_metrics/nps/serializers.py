@@ -106,24 +106,26 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
 
 class NPSRespondSerializerV11(NPSRespondSerializer):
-    options = serializers.ListField(child=serializers.IntegerField())
+    options = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class Meta:
         model = NPSResponse
         fields = ('score', 'customer', 'options', 'survey_uuid')
 
     def validate_options(self, value):
-        if value and self.survey.contra is None:
-            raise ValidationError(_("survey han no contra questions!"))
+        survey = self.survey
+        if survey.contra is None or not survey.contra.enabled:
+            return None
+
         for option_id in value:
-            if not self.survey.contra.options.filter(id=option_id).exists():
+            if not survey.contra.options.filter(id=option_id).exists():
                 raise ValidationError(_("Contra Option and Survey not related!"))
         return value
 
     def create(self, validated_data):
         customer = validated_data['customer']
         score = validated_data['score']
-        options = validated_data['options']
+        options = validated_data.get('options')
 
         return NPSService.respond(
             survey=self.survey,
