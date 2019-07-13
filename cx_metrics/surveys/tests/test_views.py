@@ -12,6 +12,9 @@ from rest_framework.test import APIClient
 from upkook_core.auth.tests.client import AuthClient
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
+from upkook_core.industries.services import IndustryService
+from upkook_core.businesses.services.business import BusinessService
+from upkook_core.businesses.models import Business
 
 from ..models import Survey
 from ..serializers import SurveySerializer
@@ -122,3 +125,26 @@ class SurveyFactoryAPIViewTestCase(TestCase):
             'name': survey.name,
             'url': survey.url,
         })
+
+    def test_get_business_is_not_active(self):
+        new_industry = IndustryService.create_industry('Industry', '')
+        new_business = BusinessService.create_business(
+            username=self.id(),
+            name='business',
+            industry=new_industry,
+            size=Business.SIZE_1_TO_5,
+            domain='domain',
+            is_active=False,
+        )
+        survey = Survey.objects.create(
+            type='test',
+            name='SurveyFactoryAPIViewTestCase.test_get',
+            business=new_business,
+        )
+
+        url = reverse('cx-surveys:retrieve', kwargs={'uuid': str(survey.uuid)})
+        response = self.client.get(url)
+        response_data = json.loads(force_text(response.content))
+
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertDictEqual(response_data, {'detail': 'Not found.'})
