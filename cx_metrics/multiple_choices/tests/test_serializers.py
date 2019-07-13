@@ -154,7 +154,7 @@ class MultipleChoiceSerializerTestCase(TestCase):
             'other_enabled': False,
             'options': [
                 {'id': option.pk, 'text': 'Changed Option', 'order': 3},
-                {'text': 'New Option', 'order': 2},
+                {'text': 'New Option', 'order': 4},
             ]
         }
 

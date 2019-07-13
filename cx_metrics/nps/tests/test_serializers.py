@@ -263,3 +263,50 @@ class NPSRespondSerializerV11TestCase(TestCase):
 
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate_options_none_value(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        contra.enabled = True
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': None
+        }
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+
+    def test_validate_options_empty_list(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        contra.enabled = True
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': []
+        }
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+
+    def test_validate_raise_validation_error(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        contra.enabled = True
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            }
+        }
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        self.assertRaises(ValidationError, serializer.validate, data)

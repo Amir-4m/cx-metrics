@@ -117,14 +117,22 @@ class NPSRespondSerializerV11(NPSRespondSerializer):
         fields = ('score', 'customer', 'options', 'survey_uuid')
 
     def validate_options(self, value):
-        survey = self.survey
-        if survey.contra is None or not survey.contra.enabled:
-            return None
 
-        for option_id in value:
-            if not survey.contra.options.filter(id=option_id).exists():
-                raise ValidationError(_("Contra Option and Survey not related!"))
-        return value
+        if value and self.survey.contra and self.survey.contra.enabled:
+            for option_id in value:
+                if not self.survey.contra.options.filter(id=option_id).exists():
+                    raise ValidationError(_("Contra option and Survey not related!"))
+            return value
+
+        if not value and self.survey.contra and self.survey.contra.required:
+            raise ValidationError(_("Contra is required!"))
+
+    def validate(self, attrs):
+        options = attrs.get('options')
+        if self.survey.contra.required and not options:
+            raise ValidationError(_("Contra is required!"))
+
+        return attrs
 
     def create(self, validated_data):
         customer = validated_data['customer']
