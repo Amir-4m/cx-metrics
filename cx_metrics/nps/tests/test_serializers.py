@@ -278,7 +278,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'options': None
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertRaises(ValidationError, serializer.validate, data)
 
     def test_validate_options_empty_list(self):
         nps_survey = NPSSurvey.objects.first()
@@ -294,7 +294,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'options': []
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertRaises(ValidationError, serializer.validate, data)
 
     def test_validate_raise_validation_error(self):
         nps_survey = NPSSurvey.objects.first()
@@ -310,3 +310,16 @@ class NPSRespondSerializerV11TestCase(TestCase):
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
+
+    def test_to_internal_value(self):
+        nps_survey = NPSSurvey.objects.first()
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        data = {
+            'score': 10,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1, 2, 3]
+        }
+        v_data = serializer.to_internal_value(data)
+        self.assertIsNone(v_data['options'])
