@@ -28,6 +28,10 @@ class SurveyBase(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def active(self):
+        return self.business_id and self.business.is_active
+
     @cached_property
     def url(self):
         return '%s%s/' % (settings.SURVEY_PUBLIC_BASE_URL, self.uuid)
