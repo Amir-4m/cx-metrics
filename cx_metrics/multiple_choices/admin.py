@@ -2,6 +2,8 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.contrib import admin
 
+from .serializers import MultipleChoiceSerializer
+from .services import MultipleChoiceService
 from .models import MultipleChoice, Option
 
 
@@ -20,3 +22,18 @@ class MultipleChoiceAdmin(admin.ModelAdmin):
     inlines = [
         OptionInline
     ]
+
+    @staticmethod
+    def to_representation(mc):
+        serializer = MultipleChoiceSerializer(mc)
+        representation = serializer.to_representation(mc)
+        return representation
+
+    def save_model(self, request, obj, form, change):
+        super(MultipleChoiceAdmin, self).save_model(request, obj, form, change)
+        self.saved_obj = obj
+
+    def save_related(self, request, form, formsets, change):
+        super(MultipleChoiceAdmin, self).save_related(request, form, formsets, change)
+        representation = self.to_representation(self.saved_obj)
+        MultipleChoiceService.cache_representation(self.saved_obj.id, representation)

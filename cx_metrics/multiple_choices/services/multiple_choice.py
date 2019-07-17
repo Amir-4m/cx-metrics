@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.core.cache import cache
 from django.db import IntegrityError
 from django.utils.translation import ugettext_lazy as _
 from rest_framework.exceptions import ValidationError
@@ -32,6 +33,21 @@ class MultipleChoiceService(object):
             type=type_,
             other_enabled=other_enabled,
         )
+
+    @staticmethod
+    def cache_representation(mc_id, representation):
+        key = MultipleChoiceService.representation_cache_key(mc_id)
+        cache.set(key=key, value=representation, timeout=1 * 60 * 60)  # 1hour
+
+    @staticmethod
+    def representation_from_cache(mc_id):
+        key = MultipleChoiceService.representation_cache_key(mc_id)
+        return cache.get(key=key)
+
+    @staticmethod
+    def representation_cache_key(mc_id):
+        key = "multiple-choice-%d" % mc_id
+        return key
 
     @staticmethod
     def create_options(multiple_choice, options_kwargs):

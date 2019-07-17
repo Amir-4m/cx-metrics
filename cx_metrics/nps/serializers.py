@@ -9,10 +9,10 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
 from upkook_core.customers.serializers import CustomerSerializer
-from cx_metrics.multiple_choices.serializers import MultipleChoiceSerializer
+
+from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
-
 from .models import NPSSurvey, NPSResponse, ContraOption
 from .services import NPSService
 from .services.cache import NPSInsightCacheService
@@ -22,7 +22,7 @@ from .services.cache import NPSInsightCacheService
 class NPSSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
     url = serializers.URLField(read_only=True)
-    contra_reason = MultipleChoiceSerializer(source='contra', read_only=True)
+    contra_reason = CachedMultipleChoiceSerializer(source='contra', read_only=True)
 
     class Meta:
         model = NPSSurvey
@@ -49,7 +49,7 @@ class NPSSerializerV11(NPSSerializer):
     def __init__(self, instance=None, data=empty, **kwargs):
         super(NPSSerializerV11, self).__init__(instance, data, **kwargs)
         contra = instance and instance.contra
-        self.fields['contra_reason'] = MultipleChoiceSerializer(source='contra', instance=contra)
+        self.fields['contra_reason'] = CachedMultipleChoiceSerializer(source='contra', instance=contra)
 
     @transaction.atomic()
     def create(self, validated_data):
