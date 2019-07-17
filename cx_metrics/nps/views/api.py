@@ -6,9 +6,11 @@ from django.views.decorators.cache import never_cache, cache_control
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
 
 from upkook_core.auth.permissions import BusinessMemberPermissions
 from ..services.nps import NPSService
+from ..services.cache import NPSInsightCacheService
 from ..serializers import (
     NPSSerializer, NPSSerializerV11,
     NPSInsightsSerializer,
@@ -56,6 +58,19 @@ class NPSInsightsView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
+
+    def retrieve(self, request, *args, **kwargs):
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        cache_key = self.kwargs[lookup_url_kwarg]
+        data = NPSInsightCacheService.get(cache_key)
+
+        if data is None:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            data = serializer.data
+            NPSInsightCacheService.set(cache_key, data)
+
+        return Response(data)
 
 
 @method_decorator(cache_control(private=True), name='post')

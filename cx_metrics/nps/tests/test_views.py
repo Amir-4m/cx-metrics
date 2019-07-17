@@ -4,7 +4,8 @@ import json
 
 from django.contrib.auth import get_user_model
 from django.forms import model_to_dict
-from django.test import TestCase
+from mock import patch
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.encoding import force_text
 from rest_framework import status
@@ -15,6 +16,7 @@ from upkook_core.teams.tests import MemberPermissionTestMixin
 
 from cx_metrics.multiple_choices.services import MultipleChoiceService
 from ..services.nps import NPSService
+from ..serializers import NPSInsightsSerializer
 
 
 class NPSViewTestBase(MemberPermissionTestMixin, TestCase):
@@ -202,9 +204,46 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
             'promoters': nps.promoters,
             'passives': nps.passives,
             'detractors': nps.detractors,
+            'contra_options': list(nps.contra_options.all())
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(force_text(response.content))
+        self.assertEqual(response_data, expected_data)
+
+    @override_settings(
+        CACHES={
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            }
+        }
+    )
+    def test_get_cached(self):
+        nps = NPSService.create_nps_survey(
+            name="name",
+            business=self.business,
+            text="text",
+            question="question",
+            message="message"
+        )
+
+        url = reverse('cx-nps:insights', kwargs={'uuid': str(nps.uuid)})
+        self.client.get(url)
+
+        with patch.object(NPSInsightsSerializer, 'to_representation') as mock_to_representation:
+            response = self.client.get(url)
+            self.assertFalse(mock_to_representation.called)
+
+        response_data = json.loads(force_text(response.content))
+        expected_data = {
+            'id': str(nps.uuid),
+            'name': nps.name,
+            'promoters': nps.promoters,
+            'passives': nps.passives,
+            'detractors': nps.detractors,
+            'contra_options': list(nps.contra_options.all())
+        }
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response_data, expected_data)
 
 

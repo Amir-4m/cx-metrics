@@ -13,8 +13,9 @@ from cx_metrics.multiple_choices.serializers import MultipleChoiceSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
 
-from .models import NPSSurvey, NPSResponse
+from .models import NPSSurvey, NPSResponse, ContraOption
 from .services import NPSService
+from .services.cache import NPSInsightCacheService
 
 
 @register_survey_serializer('NPS')
@@ -73,12 +74,19 @@ class NPSSerializerV11(NPSSerializer):
         return super(NPSSerializerV11, self).update(instance, v_data)
 
 
+class ContraOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContraOption
+        fields = ('text', 'count')
+
+
 class NPSInsightsSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
+    contra_options = ContraOptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = NPSSurvey
-        fields = ('id', 'name', 'promoters', 'passives', 'detractors')
+        fields = ('id', 'name', 'promoters', 'passives', 'detractors', 'contra_options',)
 
 
 class NPSRespondSerializer(serializers.ModelSerializer):
@@ -107,6 +115,10 @@ class NPSRespondSerializer(serializers.ModelSerializer):
             customer_uuid=customer.uuid,
             score=score,
         )
+
+    def save(self, **kwargs):
+        NPSInsightCacheService.delete(self.survey.uuid)
+        return super(NPSRespondSerializer, self).save()
 
 
 class NPSRespondSerializerV11(NPSRespondSerializer):
