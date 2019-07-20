@@ -28,7 +28,7 @@ class CSATForm(forms.ModelForm):
 
 
 class CSATSurveyAdminTestCase(TestCase):
-    fixtures = ['users', 'multiple_choices', 'csat']
+    fixtures = ['users', 'industries', 'businesses', 'multiple_choices', 'csat']
 
     def setUp(self):
         self.survey = Survey.objects.first()
