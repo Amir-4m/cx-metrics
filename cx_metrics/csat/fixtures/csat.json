@@ -1,0 +1,56 @@
+[
+  {
+    "model": "industries.industry",
+    "pk": 1,
+    "fields": {
+      "name": "Industry #1",
+      "icon": "inds/be4e2252a6e9424ca5c4afd3aad5e204.jpg"
+    }
+  },
+  {
+    "model": "businesses.business",
+    "pk": 1,
+    "fields": {
+      "name": "Upkook",
+      "username": "upkook",
+      "domain": "www.upkook.com",
+      "industry": 1,
+      "size": 15,
+      "color": "#FF0000",
+      "logo": "bizz/upkook.png",
+      "created": "2011-09-01T13:20:30+03:00",
+      "updated": "2011-09-01T13:20:30+03:00"
+    }
+  },
+  {
+    "model": "surveys.survey",
+    "pk": 1,
+    "fields": {
+      "uuid": "f6fd2c9a-1e53-4722-a1c1-c2f79ffb8be5",
+      "name": "NPS Name",
+      "business": 1,
+      "created": "2019-05-01T08:44:16.109Z",
+      "updated": "2019-05-01T08:44:16.109Z",
+      "type": "NPS"
+    }
+  },
+  {
+    "model": "csat.csatsurvey",
+    "pk": 1,
+    "fields": {
+      "uuid": "ce6cd3b2-5a12-4d6f-9f61-c05c8919bca8",
+      "name": "Apple",
+      "business": 1,
+      "created": "2019-07-20T00:00:49.131Z",
+      "updated": "2019-07-20T00:14:14.540Z",
+      "survey": 1,
+      "author": 1,
+      "text": "Intro",
+      "text_enabled": true,
+      "question": "question",
+      "message": "tnx",
+      "contra": 1,
+      "scale": "3"
+    }
+  }
+]
