@@ -6,11 +6,11 @@ from django.http import Http404
 from rest_framework import serializers
 from rest_framework.fields import empty
 
+from .models import CSATSurvey
+from .services import CSATService
 from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
-from cx_metrics.csat.services.csat import CSATService
-from cx_metrics.csat.models import CSATSurvey
 
 
 @register_survey_serializer('CSAT')
@@ -52,3 +52,16 @@ class CSATSerializer(serializers.ModelSerializer):
         contra = contra_serializer.create(contra_data)
         v_data.update({'contra': contra})
         return super(CSATSerializer, self).create(v_data)
+
+    def update(self, instance, validated_data):
+        v_data = copy(validated_data)
+        contra_data = v_data.pop('contra', {})
+        contra_serializer = self.fields['contra_reason']
+
+        if instance.contra and instance.contra.pk:
+            contra = contra_serializer.update(instance.contra, contra_data)
+        else:
+            contra = contra_serializer.create(contra_data)
+
+        v_data.update({'contra': contra})
+        return super(CSATSerializer, self).update(instance, v_data)

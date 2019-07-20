@@ -12,11 +12,13 @@ from upkook_core.auth.tests.client import AuthClient
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
 
-from ..services.csat import CSATService, CSATSurvey
+from ..services.csat import CSATSurvey
+
+from cx_metrics.csat.services.csat import CSATService
 
 
 class CSATViewTestBase(MemberPermissionTestMixin, TestCase):
-    fixtures = ['users', 'industries', 'businesses', 'teams']
+    fixtures = ['users', 'industries', 'businesses', 'teams', 'multiple_choices', 'csat']
 
     def setUp(self):
         super(CSATViewTestBase, self).setUp()
@@ -129,3 +131,46 @@ class CSATSurveyTestCase(CSATViewTestBase):
         response_data = json.loads(force_text(response.content))
 
         self.assertDictEqual(response_data, expected_data)
+
+    def test_put(self):
+        csat = CSATService.get_csat_survey_by_id(1)
+
+        data = {
+            'id': self.id(),
+            'type': self.id(),
+            "name": "Changed-name",
+            "text": "Changed-text",
+            "text_enabled": False,
+            "question": "Changed-question",
+            "contra_reason": {
+                "text": "Changed",
+                "options": [
+                    {"text": "Option 1", "order": 1},
+                    {"text": "Option 2", "order": 2},
+                ]
+            },
+            "message": "Changed Message",
+            "scale": CSATSurvey.SCALE_1_TO_3,
+        }
+        url = reverse('cx-csat:detail', kwargs={'uuid': str(csat.uuid)})
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json')
+
+        response_data = json.loads(force_text(response.content))
+        contra_data = model_to_dict(
+            csat.contra,
+            ('type', 'text', 'enabled', 'required', 'other_enabled')
+        )
+        contra_data.update({'options': []})
+        for option in csat.contra.options.order_by('order'):
+            option_data = model_to_dict(option, ('id', 'text', 'enabled', 'order'))
+            contra_data['options'].append(option_data)
+
+        data.update({
+            'id': str(csat.uuid),
+            'url': csat.url,
+            'type': csat.type,
+            'contra_reason': contra_data,
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(data, response_data)

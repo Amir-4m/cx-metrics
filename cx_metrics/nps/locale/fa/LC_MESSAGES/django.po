@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 04:58-0500\n"
+"POT-Creation-Date: 2019-07-21 01:53-0500\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -109,10 +109,10 @@ msgstr ""
 msgid "Contra Responses"
 msgstr ""
 
-#: cx_metrics/nps/serializers.py:124
+#: cx_metrics/nps/serializers.py:141
 msgid "Contra option and Survey not related!"
 msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."
 
-#: cx_metrics/nps/serializers.py:128 cx_metrics/nps/serializers.py:133
+#: cx_metrics/nps/serializers.py:149
 msgid "Contra is required!"
 msgstr "لطفا یکی از گزینه های زیر را انتخاب کنید."

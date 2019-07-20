@@ -5,6 +5,7 @@ from django.http import Http404
 from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
 
+from cx_metrics.multiple_choices.services import MultipleChoiceService
 from ..services.csat import CSATService, CSATSurvey
 from ..serializers import CSATSerializer
 
@@ -94,3 +95,30 @@ class CSATSerializerTestCase(TestCase):
         self.assertEqual(csat_survey.contra.text, v_data['contra']['text'])
         self.assertEqual(csat_survey.message, v_data['message'])
         self.assertEqual(csat_survey.business, v_data['business'])
+
+    def test_update(self):
+        v_data = {
+            'name': 'Changed-Name',
+            'text': 'Changed-Text',
+            'text_enabled': True,
+            'question': 'Changed-Question',
+            'contra': {
+                'text': 'test_contra_text',
+                'required': False,
+            },
+            'message': 'test_message',
+        }
+        instance = CSATService.get_csat_survey_by_id(1)
+        instance.contra = MultipleChoiceService.create(text=self.id())
+        serializer = CSATSerializer()
+
+        csat_survey = serializer.update(instance, v_data)
+
+        self.assertIsInstance(csat_survey, CSATSurvey)
+        self.assertEqual(csat_survey.name, v_data['name'])
+        self.assertEqual(csat_survey.text, v_data['text'])
+        self.assertEqual(csat_survey.text_enabled, v_data['text_enabled'])
+        self.assertEqual(csat_survey.question, v_data['question'])
+        self.assertEqual(csat_survey.contra.text, v_data['contra']['text'])
+        self.assertFalse(csat_survey.contra.required)
+        self.assertEqual(csat_survey.message, v_data['message'])
