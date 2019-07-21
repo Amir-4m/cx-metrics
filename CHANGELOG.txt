@@ -1,3 +1,7 @@
+=== 1.0.2 (2019-07-21) ===
+
+- Updated bug in Survey Public API for retrieving related NPS Survey
+
 === 1.0.1 (2019-05-27) ===
 
 - Included compiled translation files in package
