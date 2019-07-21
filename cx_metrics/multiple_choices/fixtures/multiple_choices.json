@@ -23,5 +23,17 @@
       "created": "2019-07-02T12:01:00.036Z",
       "updated": "2019-07-02T12:01:00.036Z"
     }
+  },
+   {
+    "model": "multiple_choices.option",
+    "pk": 2,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "Option2",
+      "enabled": true,
+      "order": 2,
+      "created": "2019-07-02T12:01:00.036Z",
+      "updated": "2019-07-02T12:01:00.036Z"
+    }
   }
 ]

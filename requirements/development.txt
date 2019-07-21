@@ -4,6 +4,7 @@ sphinx-rtd-theme
 coverage
 mock
 flake8
+flake8-print
 pygraphviz
 django-extensions
 markdown       # Markdown support for the browsable API.

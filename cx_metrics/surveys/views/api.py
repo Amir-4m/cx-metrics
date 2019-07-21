@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache, cache_control
 from rest_framework import generics
@@ -31,6 +32,12 @@ class SurveyAPIView(generics.ListAPIView):
 class SurveyFactoryAPIView(generics.RetrieveAPIView):
     lookup_field = 'uuid'
     queryset = SurveyService.all()
+
+    def get_object(self):
+        obj = super(SurveyFactoryAPIView, self).get_object()
+        if not obj.active:
+            raise Http404
+        return obj
 
     def get_serializer(self, instance, *args, **kwargs):
         serializer_class = survey_serializer_factory.get_serializer_class(instance.type)

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
 from copy import copy
+from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
-from django.utils.translation import ugettext_lazy as _
 
 from .models import MultipleChoice, Option
 from .services import MultipleChoiceService
@@ -27,7 +27,7 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
     def validate_options(self, options):
         for option in options:
             option_id = option.get('id')
-            if option_id and not(self.instance and MultipleChoiceService.option_exists(self.instance, option_id)):
+            if option_id and not (self.instance and MultipleChoiceService.option_exists(self.instance, option_id)):
                 raise ValidationError(_('Option %(id)s does not exists') % {'id': option_id})
 
         texts = [option['text'] for option in options]
@@ -41,6 +41,9 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
         options = v_data.pop('options', [])
         instance = super(MultipleChoiceSerializer, self).create(v_data)
         MultipleChoiceService.create_options(instance, options)
+        serializer = MultipleChoiceSerializer(instance)
+        representation = serializer.to_representation(instance)
+        MultipleChoiceService.cache_representation(instance.id, representation)
         return instance
 
     def update(self, instance, validated_data):
@@ -48,6 +51,9 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
         options = v_data.pop('options', [])
         instance = super(MultipleChoiceSerializer, self).update(instance, v_data)
         MultipleChoiceService.update_options(instance, options)
+        serializer = MultipleChoiceSerializer(instance)
+        representation = serializer.to_representation(instance)
+        MultipleChoiceService.cache_representation(instance.id, representation)
         return instance
 
     def validate(self, attrs):
@@ -65,3 +71,13 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
             raise ValidationError(_('You should provide at least 2 enabled options.'))
 
         return attrs
+
+
+class CachedMultipleChoiceSerializer(MultipleChoiceSerializer):
+    def to_representation(self, instance):
+        representation = MultipleChoiceService.representation_from_cache(instance.id)
+
+        if not representation:
+            representation = super(CachedMultipleChoiceSerializer, self).to_representation(instance)
+            MultipleChoiceService.cache_representation(instance.id, representation)
+        return representation

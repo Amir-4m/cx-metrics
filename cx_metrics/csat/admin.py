@@ -1,25 +1,27 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-
 from django.contrib import admin
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 
 from cx_metrics.surveys.admin import SurveyAdminBase
-from .models import NPSSurvey, NPSResponse
+from .models import CSATSurvey
 
 
-@admin.register(NPSSurvey)
-class NPSSurveyAdmin(SurveyAdminBase):
-    exclude = ('survey', 'contra',)
+@admin.register(CSATSurvey)
+class CSATSurveyAdmin(SurveyAdminBase):
+    list_display = ('name', 'uuid', 'scale', 'updated', 'created', 'open_survey')
+    sortable_by = ('name', 'scale', 'updated')
+
+    exclude = ('survey', 'contra')
     readonly_fields = (
-        'contra_question', 'promoters', 'passives', 'detractors', 'updated', 'created', 'uuid', 'author'
+        'author', 'uuid', 'created', 'updated', 'contra_question'
     )
     fieldsets = (
         (None, {
             'fields': (
-                'uuid', 'name', 'business', 'promoters', 'passives', 'detractors', 'updated', 'created', 'author')
+                'uuid', 'name', 'business', 'updated', 'created', 'author', 'scale',)
         }),
         (_('Advanced options'), {
             'classes': ('collapse',),
@@ -39,23 +41,3 @@ class NPSSurveyAdmin(SurveyAdminBase):
         return None
 
     contra_question.short_description = _('Contra')
-
-
-@admin.register(NPSResponse)
-class NPSResponseAdmin(admin.ModelAdmin):
-    list_display = ('survey_uuid', 'customer_uuid', 'score', 'created')
-    list_display_links = ('survey_uuid', 'customer_uuid')
-    list_filter = ('score',)
-    ordering = ('-created',)
-    search_fields = ('survey_uuid', 'customer_uuid')
-    date_hierarchy = 'created'
-    sortable_by = ('score', 'created')
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return False

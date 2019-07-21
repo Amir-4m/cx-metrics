@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from rest_framework.exceptions import ValidationError
 
 from ..models import MultipleChoice, Option
@@ -128,3 +128,27 @@ class MultipleChoiceServiceTestCase(TestCase):
         qs = mc.options.all()
         self.assertEqual(qs[1].text, options_kwargs[1].get('text'))
         self.assertEqual(qs[1].order, options_kwargs[1].get('order'))
+
+    @override_settings(
+        CACHES={
+            'default': {
+                'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+            }
+        }
+    )
+    def test_cache_representation(self):
+        expected_repr = {
+            "test": "test"
+        }
+        MultipleChoiceService.cache_representation(1, expected_repr)
+
+        representation = MultipleChoiceService.representation_from_cache(1)
+
+        self.assertEqual(representation, expected_repr)
+
+    def test_generate_cache_key(self):
+        expected_key = "multiple-choice-1"
+
+        key = MultipleChoiceService.representation_cache_key(1)
+
+        self.assertEqual(expected_key, key)

@@ -16,5 +16,6 @@ urlpatterns += [
     path('surveys/defaults/', include('cx_metrics.surveys_defaults.urls.api', 'survey-defaults')),
     path('cx/surveys/', include('cx_metrics.surveys.urls.api', 'cx-surveys')),
     path('cx/surveys/nps/', include('cx_metrics.nps.urls.api', 'cx-nps')),
+    path('cx/surveys/csat/', include('cx_metrics.csat.urls.api', 'cx-csat')),
     path('', admin.site.urls),
 ]

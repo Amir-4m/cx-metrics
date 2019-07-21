@@ -1,0 +1,33 @@
+[
+  {
+    "model": "surveys.survey",
+    "pk": 1,
+    "fields": {
+      "uuid": "ce6cd3b2-5a12-4d6f-9f61-c05c8919bca8",
+      "name": "CSAT Name",
+      "business": 1,
+      "created": "2019-05-01T08:44:16.109Z",
+      "updated": "2019-05-01T08:44:16.109Z",
+      "type": "CSAT"
+    }
+  },
+  {
+    "model": "csat.csatsurvey",
+    "pk": 1,
+    "fields": {
+      "uuid": "ce6cd3b2-5a12-4d6f-9f61-c05c8919bca8",
+      "name": "Apple",
+      "business": 1,
+      "created": "2019-07-20T00:00:49.131Z",
+      "updated": "2019-07-20T00:14:14.540Z",
+      "survey": 1,
+      "author": 1,
+      "text": "Intro",
+      "text_enabled": true,
+      "question": "question",
+      "message": "tnx",
+      "contra": 1,
+      "scale": "3"
+    }
+  }
+]

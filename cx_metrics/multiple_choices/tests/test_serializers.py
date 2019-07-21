@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.test import TestCase
+from django.test import TestCase, override_settings
+from mock import patch
 from rest_framework.exceptions import ValidationError
 
 from ..models import MultipleChoice
 from ..services import MultipleChoiceService
-from ..serializers import MultipleChoiceSerializer
+from ..serializers import MultipleChoiceSerializer, CachedMultipleChoiceSerializer
 
 
 class MultipleChoiceSerializerTestCase(TestCase):
@@ -154,7 +155,7 @@ class MultipleChoiceSerializerTestCase(TestCase):
             'other_enabled': False,
             'options': [
                 {'id': option.pk, 'text': 'Changed Option', 'order': 3},
-                {'text': 'New Option', 'order': 2},
+                {'text': 'New Option', 'order': 4},
             ]
         }
 
@@ -175,3 +176,36 @@ class MultipleChoiceSerializerTestCase(TestCase):
             self.assertEqual(option.enabled, v_data['options'][i].get('enabled', True))
             self.assertEqual(option.text, v_data['options'][i]['text'])
             self.assertEqual(option.order, v_data['options'][i]['order'])
+
+
+@override_settings(
+    CACHES={
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
+    }
+)
+class CachedMultipleChoiceSerializerTestCase(TestCase):
+    fixtures = ['multiple_choices']
+
+    def test_to_representation_cached(self):
+        mc = MultipleChoiceService.get_by_id(1)
+        expected = MultipleChoiceSerializer().to_representation(mc)
+        MultipleChoiceService.cache_representation(mc.id, expected)
+
+        serializer = CachedMultipleChoiceSerializer(mc)
+
+        with patch.object(MultipleChoiceSerializer, 'to_representation') as mock_to_representation:
+            representation = serializer.to_representation(mc)
+            self.assertFalse(mock_to_representation.called)
+        self.assertEqual(representation, expected)
+
+    def test_to_representation_not_cached(self):
+        mc = MultipleChoiceService.create(text=self.id())
+        serializer = MultipleChoiceSerializer()
+        cache_serializer = CachedMultipleChoiceSerializer(mc)
+        expected_representation = serializer.to_representation(mc)
+
+        representation = cache_serializer.to_representation(mc)
+
+        self.assertEqual(representation, expected_representation)

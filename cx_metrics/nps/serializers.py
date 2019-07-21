@@ -9,19 +9,20 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 
 from upkook_core.customers.serializers import CustomerSerializer
-from cx_metrics.multiple_choices.serializers import MultipleChoiceSerializer
+
+from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
-
-from .models import NPSSurvey, NPSResponse
+from .models import NPSSurvey, NPSResponse, ContraOption
 from .services import NPSService
+from .services.cache import NPSInsightCacheService
 
 
 @register_survey_serializer('NPS')
 class NPSSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
     url = serializers.URLField(read_only=True)
-    contra_reason = MultipleChoiceSerializer(source='contra', read_only=True)
+    contra_reason = CachedMultipleChoiceSerializer(source='contra', read_only=True)
 
     class Meta:
         model = NPSSurvey
@@ -48,7 +49,7 @@ class NPSSerializerV11(NPSSerializer):
     def __init__(self, instance=None, data=empty, **kwargs):
         super(NPSSerializerV11, self).__init__(instance, data, **kwargs)
         contra = instance and instance.contra
-        self.fields['contra_reason'] = MultipleChoiceSerializer(source='contra', instance=contra)
+        self.fields['contra_reason'] = CachedMultipleChoiceSerializer(source='contra', instance=contra)
 
     @transaction.atomic()
     def create(self, validated_data):
@@ -73,12 +74,19 @@ class NPSSerializerV11(NPSSerializer):
         return super(NPSSerializerV11, self).update(instance, v_data)
 
 
+class ContraOptionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContraOption
+        fields = ('text', 'count')
+
+
 class NPSInsightsSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
+    contra_options = ContraOptionSerializer(many=True, read_only=True)
 
     class Meta:
         model = NPSSurvey
-        fields = ('id', 'name', 'promoters', 'passives', 'detractors')
+        fields = ('id', 'name', 'promoters', 'passives', 'detractors', 'contra_options',)
 
 
 class NPSRespondSerializer(serializers.ModelSerializer):
@@ -108,6 +116,10 @@ class NPSRespondSerializer(serializers.ModelSerializer):
             score=score,
         )
 
+    def save(self, **kwargs):
+        NPSInsightCacheService.delete(self.survey.uuid)
+        return super(NPSRespondSerializer, self).save()
+
 
 class NPSRespondSerializerV11(NPSRespondSerializer):
     options = serializers.ListField(child=serializers.IntegerField(), required=False)
@@ -116,15 +128,26 @@ class NPSRespondSerializerV11(NPSRespondSerializer):
         model = NPSResponse
         fields = ('score', 'customer', 'options', 'survey_uuid')
 
-    def validate_options(self, value):
-        survey = self.survey
-        if survey.contra is None or not survey.contra.enabled:
-            return None
+    def to_internal_value(self, data):
+        c_data = copy(data)
+        if c_data['score'] >= 9:
+            c_data.update({'options': []})
+        return super(NPSRespondSerializerV11, self).to_internal_value(c_data)
 
-        for option_id in value:
-            if not survey.contra.options.filter(id=option_id).exists():
-                raise ValidationError(_("Contra Option and Survey not related!"))
-        return value
+    def validate_options(self, value):
+        if value and self.survey.contra and self.survey.contra.enabled:
+            for option_id in value:
+                if not self.survey.contra.options.filter(id=option_id).exists():
+                    raise ValidationError(_("Contra option and Survey not related!"))
+            return value
+        return None
+
+    def validate(self, attrs):
+        options = attrs.get('options')
+        score = attrs['score']
+        if score < 9 and self.survey.contra.required and not options:
+            raise ValidationError(_("Contra is required!"))
+        return attrs
 
     def create(self, validated_data):
         customer = validated_data['customer']

@@ -21,6 +21,10 @@ class SurveyAdminBase(admin.ModelAdmin):
         return mark_safe(_('<a href="%(url)s" target="_blank">Open Survey</a>') % {'url': obj.url})
     open_survey.short_description = _('Survey Link')
 
+    def save_model(self, request, obj, form, change):
+        obj.author = request.user
+        super(SurveyAdminBase, self).save_model(request, obj, form, change)
+
 
 @admin.register(Survey)
 class SurveyAdmin(SurveyAdminBase):

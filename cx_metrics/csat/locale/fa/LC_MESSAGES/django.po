@@ -1,0 +1,70 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-21 01:53-0500\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+#: cx_metrics/csat/admin.py:26
+msgid "Advanced options"
+msgstr ""
+
+#: cx_metrics/csat/admin.py:39 cx_metrics/csat/tests/test_admin.py:47
+msgid "More..."
+msgstr ""
+
+#: cx_metrics/csat/admin.py:43 cx_metrics/csat/models.py:28
+msgid "Contra"
+msgstr "اعتراض"
+
+#: cx_metrics/csat/models.py:18
+msgid "3 Choices"
+msgstr ""
+
+#: cx_metrics/csat/models.py:19
+msgid "5 Choices"
+msgstr ""
+
+#: cx_metrics/csat/models.py:20
+msgid "7 Choices"
+msgstr ""
+
+#: cx_metrics/csat/models.py:22
+msgid "Intro Text"
+msgstr "متن پیام نظرسنجی"
+
+#: cx_metrics/csat/models.py:23
+msgid "Is Intro Enabled"
+msgstr "فعال بودن یا نبودن متن پیام نظرسنجی"
+
+#: cx_metrics/csat/models.py:24
+msgid "Question"
+msgstr "سوال"
+
+#: cx_metrics/csat/models.py:25
+msgid "Thank You Message"
+msgstr "پیام تشکر"
+
+#: cx_metrics/csat/models.py:30
+msgid "Scale"
+msgstr ""
+
+#: cx_metrics/csat/models.py:33
+msgid "CSAT Survey"
+msgstr "نطرسنجی CSAT"
+
+#: cx_metrics/csat/models.py:34
+msgid "CSAT Surveys"
+msgstr "نطرسنجی های CSAT"
