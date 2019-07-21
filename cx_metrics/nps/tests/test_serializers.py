@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from uuid import uuid4
 from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
@@ -39,7 +40,7 @@ class NPSSerializerTestCase(TestCase):
 
     def test_to_representation_http_404(self):
         instance = NPSService.get_nps_survey_by_id(1).survey
-        instance.id = 2
+        instance.uuid = uuid4()
         serializer = NPSSerializer()
         self.assertRaises(Http404, serializer.to_representation, instance)
 
