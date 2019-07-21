@@ -248,7 +248,7 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
 
 
 class NPSResponseAPIViewTestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def test_post(self):
         nps = NPSService.get_nps_survey_by_id(1)

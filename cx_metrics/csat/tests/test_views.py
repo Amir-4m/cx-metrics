@@ -18,7 +18,7 @@ from cx_metrics.csat.services.csat import CSATService
 
 
 class CSATViewTestBase(MemberPermissionTestMixin, TestCase):
-    fixtures = ['users', 'industries', 'businesses', 'teams', 'multiple_choices', 'csat']
+    fixtures = ['users', 'industries', 'businesses', 'teams', 'csat']
 
     def setUp(self):
         super(CSATViewTestBase, self).setUp()

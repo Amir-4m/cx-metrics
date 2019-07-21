@@ -28,7 +28,7 @@ class NPSForm(forms.ModelForm):
 
 
 class NPSSurveyAdminTestCase(TestCase):
-    fixtures = ['users', 'multiple_choices', 'nps']
+    fixtures = ['users', 'businesses', 'industries', 'nps']
 
     def setUp(self):
         self.survey = Survey.objects.first()

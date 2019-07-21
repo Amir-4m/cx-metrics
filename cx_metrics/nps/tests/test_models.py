@@ -8,7 +8,7 @@ from ..models import ContraOption, NPSSurvey, NPSResponse, ContraResponse
 
 
 class ContraOptionTestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def test_str(self):
         contra_option = ContraOption(

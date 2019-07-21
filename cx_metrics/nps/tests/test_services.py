@@ -14,7 +14,7 @@ from ..services import NPSService, ContraService
 
 
 class NPSSurveyServiceTestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def setUp(self):
         industry = IndustryService.create_industry(name="Industry_Name", icon="")
@@ -131,7 +131,7 @@ class NPSSurveyServiceTestCase(TestCase):
 
 
 class ContraServiceTestCase(TestCase):
-    fixtures = ['nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def setUp(self):
         industry = IndustryService.create_industry(name="Industry_Name", icon="")

@@ -122,3 +122,55 @@ class CSATSerializerTestCase(TestCase):
         self.assertEqual(csat_survey.contra.text, v_data['contra']['text'])
         self.assertFalse(csat_survey.contra.required)
         self.assertEqual(csat_survey.message, v_data['message'])
+
+    def test_serializer_with_survey_object(self):
+        instance = CSATService.get_csat_survey_by_id(1)
+        serializer = CSATSerializer(instance=instance.survey)
+        fields = ('id', 'type', 'name', 'text', 'text_enabled', 'question', 'contra_reason', 'message', 'scale')
+        expected = model_to_dict(instance, fields=fields)
+        expected.update({
+            'id': str(instance.uuid),
+            'type': instance.type,
+            'url': instance.url,
+            'contra_reason': {
+                "text": "Multiple Choice",
+                "type": "R",
+                'enabled': True,
+                'required': True,
+                "other_enabled": False,
+                "options": [
+                    {"id": 1, "text": "Option", 'enabled': True, "order": 1},
+                    {'id': 2, "text": "Option2", 'enabled': True, "order": 2},
+                ]
+            },
+            'scale': instance.scale
+        })
+
+        self.assertDictEqual(serializer.to_representation(instance), expected)
+
+    def test_update_csat_without_contra(self):
+        v_data = {
+            'name': 'Changed-Name',
+            'text': 'Changed-Text',
+            'text_enabled': True,
+            'question': 'Changed-Question',
+            'contra': {
+                'text': 'test_contra_text',
+                'required': False,
+            },
+            'message': 'test_message',
+        }
+        instance = CSATService.get_csat_survey_by_id(1)
+        instance.contra = None
+        serializer = CSATSerializer()
+
+        csat_survey = serializer.update(instance, v_data)
+
+        self.assertIsInstance(csat_survey, CSATSurvey)
+        self.assertEqual(csat_survey.name, v_data['name'])
+        self.assertEqual(csat_survey.text, v_data['text'])
+        self.assertEqual(csat_survey.text_enabled, v_data['text_enabled'])
+        self.assertEqual(csat_survey.question, v_data['question'])
+        self.assertEqual(csat_survey.contra.text, v_data['contra']['text'])
+        self.assertFalse(csat_survey.contra.required)
+        self.assertEqual(csat_survey.message, v_data['message'])

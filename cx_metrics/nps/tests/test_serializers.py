@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from uuid import uuid4
 from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
@@ -11,13 +10,14 @@ from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.models import Option, MultipleChoice
 from cx_metrics.multiple_choices.services import MultipleChoiceService
+from cx_metrics.surveys.models import Survey
 from ..models import NPSSurvey, NPSResponse
 from ..serializers import NPSSerializer, NPSSerializerV11, NPSRespondSerializer, NPSRespondSerializerV11
 from ..services import NPSService
 
 
 class NPSSerializerTestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def test_to_representation_nps_survey_instance(self):
         instance = NPSService.get_nps_survey_by_id(1)
@@ -47,14 +47,17 @@ class NPSSerializerTestCase(TestCase):
         self.assertDictEqual(serializer.to_representation(instance.survey), expected)
 
     def test_to_representation_http_404(self):
-        instance = NPSService.get_nps_survey_by_id(1).survey
-        instance.uuid = uuid4()
+        survey = Survey(
+            type='TEST',
+            name='name',
+            business=BusinessService.get_business_by_id(1)
+        )
         serializer = NPSSerializer()
-        self.assertRaises(Http404, serializer.to_representation, instance)
+        self.assertRaises(Http404, serializer.to_representation, survey)
 
 
 class NPSSerializerV11TestCase(TestCase):
-    fixtures = ['nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def setUp(self):
         self.business = BusinessService.get_business_by_id(1)
@@ -139,9 +142,22 @@ class NPSSerializerV11TestCase(TestCase):
         self.assertEqual(nps_survey.message, v_data['message'])
         self.assertEqual(nps_survey.business, instance.business)
 
+    def test_serializer_with_survey_instance(self):
+        instance = NPSService.get_nps_survey_by_id(1)
+        serializer = NPSSerializerV11(instance.survey)
+        fields = ('name', 'text', 'text_enabled', 'question', 'message')
+        expected = model_to_dict(instance, fields=fields)
+        expected.update({
+            'id': str(instance.uuid),
+            'type': instance.type,
+            'url': instance.url,
+            'contra_reason': None,
+        })
+        self.assertDictEqual(serializer.to_representation(instance.survey), expected)
+
 
 class NPSRespondSerializerTestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def setUp(self):
         nps = NPSService.get_nps_survey_by_id(1)
@@ -198,7 +214,7 @@ class NPSRespondSerializerTestCase(TestCase):
 
 
 class NPSRespondSerializerV11TestCase(TestCase):
-    fixtures = ['multiple_choices', 'nps']
+    fixtures = ['industries', 'businesses', 'nps']
 
     def test_create(self):
         nps_survey = NPSSurvey.objects.first()

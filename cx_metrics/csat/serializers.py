@@ -20,6 +20,8 @@ class CSATSerializer(serializers.ModelSerializer):
     contra_reason = CachedMultipleChoiceSerializer(source='contra')
 
     def __init__(self, instance=None, data=empty, **kwargs):
+        if isinstance(instance, Survey):
+            instance = CSATService.get_csat_survey(survey_id=instance.id)
         super(CSATSerializer, self).__init__(instance, data, **kwargs)
         contra = instance and instance.contra
         self.fields['contra_reason'] = CachedMultipleChoiceSerializer(source='contra', instance=contra)
@@ -39,7 +41,7 @@ class CSATSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         obj = instance
         if isinstance(instance, Survey):
-            obj = CSATService.get_csat_survey_by_id(instance.id)
+            obj = CSATService.get_csat_survey(survey_id=instance.id)
             if obj is None:
                 raise Http404
         return super(CSATSerializer, self).to_representation(obj)

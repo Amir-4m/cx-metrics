@@ -38,7 +38,7 @@ class NPSSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         obj = instance
         if isinstance(instance, Survey):
-            obj = NPSService.get_nps_survey_by_uuid(instance.uuid)
+            obj = NPSService.get_nps_survey(survey_id=instance.id)
             if obj is None:
                 raise Http404
         return super(NPSSerializer, self).to_representation(obj)
@@ -47,6 +47,8 @@ class NPSSerializer(serializers.ModelSerializer):
 class NPSSerializerV11(NPSSerializer):
 
     def __init__(self, instance=None, data=empty, **kwargs):
+        if isinstance(instance, Survey):
+            instance = NPSService.get_nps_survey(survey_id=instance.id)
         super(NPSSerializerV11, self).__init__(instance, data, **kwargs)
         contra = instance and instance.contra
         self.fields['contra_reason'] = CachedMultipleChoiceSerializer(source='contra', instance=contra)

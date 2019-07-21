@@ -1,27 +1,5 @@
 [
-  {
-    "model": "industries.industry",
-    "pk": 1,
-    "fields": {
-      "name": "Industry #1",
-      "icon": "inds/be4e2252a6e9424ca5c4afd3aad5e204.jpg"
-    }
-  },
-  {
-    "model": "businesses.business",
-    "pk": 1,
-    "fields": {
-      "name": "Upkook",
-      "username": "upkook",
-      "domain": "www.upkook.com",
-      "industry": 1,
-      "size": 15,
-      "color": "#FF0000",
-      "logo": "bizz/upkook.png",
-      "created":"2011-09-01T13:20:30+03:00",
-      "updated":"2011-09-01T13:20:30+03:00"
-    }
-  },
+
   {
     "model": "surveys.survey",
     "pk": 1,
@@ -62,6 +40,43 @@
       "created": "2019-05-02T06:06:34.091Z",
       "updated": "2019-05-02T06:06:34.091Z",
       "score": 1
+    }
+  },
+   {
+    "model": "multiple_choices.multiplechoice",
+    "pk": 1,
+    "fields": {
+      "text": "Multiple Choicee",
+      "enabled": true,
+      "required": true,
+      "created": "2019-07-02T12:00:51.325Z",
+      "updated": "2019-07-02T12:00:51.325Z",
+      "type": "R",
+      "other_enabled": false
+    }
+  },
+  {
+    "model": "multiple_choices.option",
+    "pk": 1,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "Option",
+      "enabled": true,
+      "order": 1,
+      "created": "2019-07-02T12:01:00.036Z",
+      "updated": "2019-07-02T12:01:00.036Z"
+    }
+  },
+   {
+    "model": "multiple_choices.option",
+    "pk": 2,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "Option2",
+      "enabled": true,
+      "order": 2,
+      "created": "2019-07-02T12:01:00.036Z",
+      "updated": "2019-07-02T12:01:00.036Z"
     }
   }
 

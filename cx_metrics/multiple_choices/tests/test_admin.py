@@ -30,7 +30,7 @@ class OptionForm(forms.ModelForm):
 
 
 class MultipleChoiceAdminTestCase(TestCase):
-    fixtures = ['users', 'multiple_choices', 'nps']
+    fixtures = ['users', 'multiple_choices']
 
     def setUp(self):
         User = get_user_model()
