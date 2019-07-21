@@ -37,7 +37,7 @@ class NPSSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         obj = instance
         if isinstance(instance, Survey):
-            obj = NPSService.get_nps_survey_by_id(instance.id)
+            obj = NPSService.get_nps_survey_by_uuid(instance.uuid)
             if obj is None:
                 raise Http404
         return super(NPSSerializer, self).to_representation(obj)
