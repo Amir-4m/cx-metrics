@@ -12,9 +12,11 @@ class ActiveDefaultOptionManager(models.Manager):
 
 
 class DefaultOption(models.Model):
+    SURVEY_TYPE_CSAT = 'csat'
     SURVEY_TYPE_NPS = 'nps'
     SURVEY_TYPE_CHOICES = (
         (SURVEY_TYPE_NPS, _('NPS')),
+        (SURVEY_TYPE_CSAT, _('CSAT'))
     )
 
     QUESTION_TYPE_CONTRA = 'contra'
