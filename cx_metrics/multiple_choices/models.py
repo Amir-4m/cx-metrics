@@ -49,3 +49,38 @@ class Option(models.Model):
 
     def __str__(self):
         return self.text
+
+
+class OptionText(models.Model):
+    multiple_choice = models.ForeignKey(
+        MultipleChoice, verbose_name=_('Multiple Choice'),
+        related_name='option_texts', on_delete=models.PROTECT,
+    )
+    text = models.CharField(_('Text'), max_length=256)
+    count = models.PositiveIntegerField(_('Count'), default=0)
+    created = models.DateTimeField(_('Created at'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Option Text')
+        verbose_name_plural = _('Option Texts')
+        unique_together = ('multiple_choice', 'text')
+
+    def __str__(self):
+        return self.text
+
+
+class OptionResponse(models.Model):
+    option_text = models.ForeignKey(
+        OptionText, verbose_name=_('Option Response'),
+        related_name='option_response', on_delete=models.PROTECT
+    )
+    customer_uuid = models.UUIDField(_('Customer UUID'), editable=False)
+    updated = models.DateTimeField(_('Updated at'), auto_now=True)
+    created = models.DateTimeField(_('Created at'), auto_now_add=True)
+
+    class Meta:
+        verbose_name = _('Option Response')
+        verbose_name_plural = _('Option Responses')
+
+    def __str__(self):
+        return str(self.option_text)

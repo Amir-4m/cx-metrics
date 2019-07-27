@@ -214,10 +214,13 @@ class NPSRespondSerializerTestCase(TestCase):
 
 
 class NPSRespondSerializerV11TestCase(TestCase):
-    fixtures = ['industries', 'businesses', 'nps']
+    fixtures = ['users', 'industries', 'businesses', 'multiple_choices', 'nps']
 
     def test_create(self):
         nps_survey = NPSSurvey.objects.first()
+        mc = MultipleChoice.objects.first()
+        nps_survey.contra = mc
+        nps_survey.save()
         customer = CustomerService.create_customer()
         option = Option.objects.first()
         v_data = {

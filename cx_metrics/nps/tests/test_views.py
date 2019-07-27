@@ -14,13 +14,15 @@ from upkook_core.customers.services import CustomerService
 from upkook_core.teams.services import MemberService
 from upkook_core.teams.tests import MemberPermissionTestMixin
 
+from cx_metrics.multiple_choices.models import MultipleChoice
 from cx_metrics.multiple_choices.services import MultipleChoiceService
+from cx_metrics.multiple_choices.services.multiple_choice import OptionResponseService
 from ..services.nps import NPSService
 from ..serializers import NPSInsightsSerializer
 
 
 class NPSViewTestBase(MemberPermissionTestMixin, TestCase):
-    fixtures = ['users', 'industries', 'businesses', 'teams']
+    fixtures = ['users', 'industries', 'businesses', 'teams', 'multiple_choices', 'nps']
 
     def setUp(self):
         super(NPSViewTestBase, self).setUp()
@@ -184,6 +186,7 @@ class NPSSurveyTestCase(NPSViewTestBase):
 
 
 class NPSInsightsViewTestCase(NPSViewTestBase):
+
     def test_get(self):
         nps = NPSService.create_nps_survey(
             name="name",
@@ -192,9 +195,11 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
             question="question",
             message="message"
         )
+        mc = MultipleChoice.objects.first()
+        nps.contra = mc
+        nps.save()
         NPSService.change_overall_score(nps.uuid, 'promoters', 1)
         nps.refresh_from_db()
-
         url = reverse('cx-nps:insights', kwargs={'uuid': str(nps.uuid)})
         response = self.client.get(url)
 
@@ -204,11 +209,17 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
             'promoters': nps.promoters,
             'passives': nps.passives,
             'detractors': nps.detractors,
-            'contra_options': list(nps.contra_options.all())
+            'contra_options': nps.contra_response_option_texts
         }
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         response_data = json.loads(force_text(response.content))
-        self.assertEqual(response_data, expected_data)
+        for item in response_data['contra_options']:
+            option = OptionResponseService.get_option_text_by_text(item['text'])
+            self.assertEqual(option.text, item['text'])
+
+        expected_data.pop('contra_options')
+        response_data.pop('contra_options')
+        self.assertDictEqual(expected_data, response_data)
 
     @override_settings(
         CACHES={
@@ -225,6 +236,9 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
             question="question",
             message="message"
         )
+        contra = MultipleChoice.objects.first()
+        nps.contra = contra
+        nps.save()
 
         url = reverse('cx-nps:insights', kwargs={'uuid': str(nps.uuid)})
         self.client.get(url)
@@ -240,11 +254,18 @@ class NPSInsightsViewTestCase(NPSViewTestBase):
             'promoters': nps.promoters,
             'passives': nps.passives,
             'detractors': nps.detractors,
-            'contra_options': list(nps.contra_options.all())
+            'contra_options': nps.contra_response_option_texts
         }
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response_data, expected_data)
+
+        for item in response_data['contra_options']:
+            option = OptionResponseService.get_option_text_by_text(item['text'])
+            self.assertEqual(option.text, item['text'])
+
+        expected_data.pop('contra_options')
+        response_data.pop('contra_options')
+        self.assertDictEqual(expected_data, response_data)
 
 
 class NPSResponseAPIViewTestCase(TestCase):

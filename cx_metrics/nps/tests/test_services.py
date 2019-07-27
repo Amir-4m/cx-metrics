@@ -8,9 +8,9 @@ from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.services import CustomerService
 from upkook_core.industries.services import IndustryService
 
-from cx_metrics.multiple_choices.models import Option
-from ..models import NPSSurvey, ContraOption, NPSResponse
-from ..services import NPSService, ContraService
+from cx_metrics.multiple_choices.models import MultipleChoice
+from ..models import NPSSurvey
+from ..services import NPSService
 
 
 class NPSSurveyServiceTestCase(TestCase):
@@ -118,80 +118,15 @@ class NPSSurveyServiceTestCase(TestCase):
         self.assertIsNone(response)
 
     def test_respond_with_options(self):
-        nps_survey = self._create_survey(self.id())
+        nps_survey = NPSSurvey.objects.first()
+        mc = MultipleChoice.objects.first()
+        nps_survey.contra = mc
+        nps_survey.save()
         customer = CustomerService.create_customer()
         score = 5
-        option = Option.objects.first()
-        response = NPSService.respond(nps_survey, customer.uuid, score, [option.id])
+        response = NPSService.respond(nps_survey, customer.uuid, score, [1])
 
         self.assertIsNotNone(response)
         self.assertEqual(response.score, score)
         self.assertEqual(response.customer_uuid, customer.uuid)
         self.assertEqual(response.survey_uuid, nps_survey.uuid)
-
-
-class ContraServiceTestCase(TestCase):
-    fixtures = ['industries', 'businesses', 'nps']
-
-    def setUp(self):
-        industry = IndustryService.create_industry(name="Industry_Name", icon="")
-        self.business = BusinessService.create_business(
-            size=5,
-            name="Business_Name",
-            domain="domain.com",
-            industry=industry,
-        )
-        self.nps = NPSService.create_nps_survey(
-            name='nps',
-            business=self.business,
-            text="text",
-            question="question",
-            message="message"
-        )
-        self.response = NPSResponse.objects.create(
-            survey_uuid=self.nps.uuid,
-            customer_uuid=self.nps.uuid,
-            score=10
-        )
-        self.customer = CustomerService.create_customer()
-
-    def _create_contra_option(self, text='text'):
-        return ContraOption.objects.create(
-            nps_survey=self.nps,
-            text=text
-        )
-
-    def test_create_contra_response(self):
-        contra_option = self._create_contra_option()
-        response = NPSResponse.objects.create(
-            survey_uuid=self.nps.uuid,
-            customer_uuid=self.customer.uuid,
-            score=10
-        )
-        kwargs = dict(nps_response=response, contra_option=contra_option)
-        contra_response = ContraService.create_contra_response(
-            nps_response=response,
-            contra_option=contra_option
-        )
-        for (key, value) in kwargs.items():
-            self.assertEqual(getattr(contra_response, key), value)
-
-    def test_get_or_create_contra_option_new(self):
-        defaults = {'nps_survey': self.nps}
-        contra_option, created = ContraService.get_or_create_contra_option(defaults=defaults, text="default_text")
-        self.assertTrue(created)
-        self.assertEqual(contra_option.text, 'default_text')
-
-    def test_get_or_create_contra_option_exists(self):
-        contra_option = self._create_contra_option()
-        defaults = {'nps_survey': self.nps}
-        other, created = ContraService.get_or_create_contra_option(defaults=defaults, text="text")
-        self.assertFalse(created)
-        self.assertEqual(contra_option.id, other.id)
-
-    def test_update_contra_option_count(self):
-        contra_option = self._create_contra_option()
-        count = ContraService.change_contra_option_count(contra_option, 'count', 1)
-        self.assertEqual(count, 1)
-        contra_option.refresh_from_db()
-        self.assertEqual(contra_option.count, 1)

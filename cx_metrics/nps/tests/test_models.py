@@ -1,37 +1,14 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from uuid import uuid4
-
 from django.test import TestCase
 
-from ..models import ContraOption, NPSSurvey, NPSResponse, ContraResponse
+from cx_metrics.nps.services import NPSService
 
 
-class ContraOptionTestCase(TestCase):
-    fixtures = ['industries', 'businesses', 'nps']
+class NPSSurveyTestCase(TestCase):
+    fixtures = ['users', 'industries', 'businesses', 'nps']
 
-    def test_str(self):
-        contra_option = ContraOption(
-            nps_survey=NPSSurvey.objects.first(),
-            text="text",
-        )
-        self.assertEqual(str(contra_option), "text")
+    def test_get_contra_response_texts(self):
+        nps = NPSService.get_nps_survey_by_id(1)
 
-
-class ContraResponseTestCase(TestCase):
-    def test_str(self):
-        nps_response = NPSResponse(
-            survey_uuid=uuid4(),
-            customer_uuid=uuid4(),
-            score=1
-        )
-        contra_option = ContraOption(
-            nps_survey=NPSSurvey.objects.first(),
-            text="text",
-        )
-        contra_response = ContraResponse(
-            nps_response=nps_response,
-            contra_option=contra_option
-        )
-
-        self.assertEqual(str(contra_response), "text")
+        self.assertListEqual(nps.contra_response_option_texts, [])

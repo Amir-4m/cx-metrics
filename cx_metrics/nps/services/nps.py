@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.db.models import F
 from django.db import transaction
+from django.db.models import F
 
-from ..services import ContraService
+from cx_metrics.multiple_choices.services.multiple_choice import OptionResponseService
 from ..models import NPSSurvey, NPSResponse
 
 
@@ -68,6 +68,6 @@ class NPSService(object):
                 )
 
                 if option_ids:
-                    ContraService.store_contra_response(survey, nps_response, option_ids)
+                    OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
                 return nps_response
             return None

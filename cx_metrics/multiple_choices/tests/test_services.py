@@ -3,6 +3,7 @@
 from django.test import TestCase, override_settings
 from rest_framework.exceptions import ValidationError
 
+from cx_metrics.multiple_choices.services.multiple_choice import OptionResponseService
 from ..models import MultipleChoice, Option
 from ..services import MultipleChoiceService
 
@@ -152,3 +153,9 @@ class MultipleChoiceServiceTestCase(TestCase):
         key = MultipleChoiceService.representation_cache_key(1)
 
         self.assertEqual(expected_key, key)
+
+
+class OptionResponseServiceTestCase(TestCase):
+
+    def test_get_option_text_not_exist(self):
+        self.assertIsNone(OptionResponseService.get_option_text(id=1000))

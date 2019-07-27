@@ -5,7 +5,7 @@ from django.utils.translation import ugettext_lazy as _
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
-from .models import MultipleChoice, Option
+from .models import MultipleChoice, Option, OptionText
 from .services import MultipleChoiceService
 
 
@@ -81,3 +81,9 @@ class CachedMultipleChoiceSerializer(MultipleChoiceSerializer):
             representation = super(CachedMultipleChoiceSerializer, self).to_representation(instance)
             MultipleChoiceService.cache_representation(instance.id, representation)
         return representation
+
+
+class OptionTextSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OptionText
+        fields = ('text', 'count')
