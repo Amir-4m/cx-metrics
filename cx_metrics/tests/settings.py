@@ -242,6 +242,7 @@ INSTALLED_APPS = (
     'cx_metrics.nps',
     'cx_metrics.surveys_defaults',
     'cx_metrics.csat',
+    'cx_metrics.ces',
 )
 
 # Set model for using in authentication

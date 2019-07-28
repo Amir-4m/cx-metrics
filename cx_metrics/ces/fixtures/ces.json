@@ -1,0 +1,33 @@
+[
+  {
+    "model": "surveys.survey",
+    "pk": 1,
+    "fields": {
+      "uuid": "afbade25-4774-46b4-973b-4f220d5f6d19",
+      "name": "CES Name",
+      "business": 1,
+      "created": "2019-05-01T08:44:16.109Z",
+      "updated": "2019-05-01T08:44:16.109Z",
+      "type": "CES"
+    }
+  },
+  {
+    "model": "ces.cessurvey",
+    "pk": 1,
+    "fields": {
+      "uuid": "afbade25-4774-46b4-973b-4f220d5f6d19",
+      "name": "CES",
+      "business": 1,
+      "created": "2019-07-28T06:14:37.778Z",
+      "updated": "2019-07-28T06:14:37.778Z",
+      "survey": 1,
+      "author": 1,
+      "text": "Intro Test.",
+      "text_enabled": true,
+      "question": "Question Test.",
+      "message": "Thanks.",
+      "scale": "3",
+      "contra": null
+    }
+  }
+]
