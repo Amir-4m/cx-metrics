@@ -28,5 +28,8 @@ class CESAPIView(ModelViewSet):
             author=self.request.user.instance
         )
 
+    def perform_update(self, serializer):
+        serializer.save(author=self.request.user.instance)
+
     def get_queryset(self):
         return CESService.get_ces_surveys_by_business(self.request.user.business_id)

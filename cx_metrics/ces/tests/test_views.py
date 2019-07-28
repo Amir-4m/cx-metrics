@@ -130,3 +130,46 @@ class CESSurveyTestCase(CESViewTestBase):
         response_data = json.loads(force_text(response.content))
 
         self.assertDictEqual(response_data, expected_data)
+
+    def test_put(self):
+        ces = CESService.get_ces_survey_by_id(1)
+
+        data = {
+            'id': self.id(),
+            'type': self.id(),
+            "name": "Changed-name",
+            "text": "Changed-text",
+            "text_enabled": False,
+            "question": "Changed-question",
+            "contra_reason": {
+                "text": "Changed",
+                "options": [
+                    {"text": "Option 1", "order": 1},
+                    {"text": "Option 2", "order": 2},
+                ]
+            },
+            "message": "Changed Message",
+            "scale": CESSurvey.SCALE_1_TO_3,
+        }
+        url = reverse('cx-ces:detail', kwargs={'uuid': str(ces.uuid)})
+        response = self.client.put(url, data=json.dumps(data), content_type='application/json')
+
+        response_data = json.loads(force_text(response.content))
+        contra_data = model_to_dict(
+            ces.contra,
+            ('type', 'text', 'enabled', 'required', 'other_enabled')
+        )
+        contra_data.update({'options': []})
+        for option in ces.contra.options.order_by('order'):
+            option_data = model_to_dict(option, ('id', 'text', 'enabled', 'order'))
+            contra_data['options'].append(option_data)
+
+        data.update({
+            'id': str(ces.uuid),
+            'url': ces.url,
+            'type': ces.type,
+            'contra_reason': contra_data,
+        })
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(data, response_data)

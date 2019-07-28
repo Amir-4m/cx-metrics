@@ -55,3 +55,16 @@ class CESSerializer(serializers.ModelSerializer):
         contra = contra_serializer.create(contra_data)
         v_data.update({'contra': contra})
         return super(CESSerializer, self).create(v_data)
+
+    def update(self, instance, validated_data):
+        v_data = copy(validated_data)
+        contra_data = v_data.pop('contra', {})
+        contra_serializer = self.fields['contra_reason']
+
+        if instance.contra and instance.contra.pk:
+            contra = contra_serializer.update(instance.contra, contra_data)
+        else:
+            contra = contra_serializer.create(contra_data)
+
+        v_data.update({'contra': contra})
+        return super(CESSerializer, self).update(instance, v_data)
