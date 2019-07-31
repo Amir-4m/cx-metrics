@@ -110,6 +110,12 @@ class CSATRespondSerializer(serializers.ModelSerializer):
             return value
         return None
 
+    def validate_rate(self, value):
+        scale = int(self.survey.scale)
+        if value > scale:
+            raise ValidationError(_("Rate is out of range!"))
+        return value
+
     def validate(self, attrs):
         scale = int(self.survey.scale)
         options = attrs.get('options')

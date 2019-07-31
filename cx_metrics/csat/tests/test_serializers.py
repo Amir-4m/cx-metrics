@@ -351,3 +351,16 @@ class CSATRespondSerializerTestCase(TestCase):
         instance = CSATResponse(rate=3, customer_uuid=customer.uuid)
         representation = serializer.to_representation(instance)
         self.assertEqual(data['customer']['client_id'], representation['client_id'])
+
+    def test_validate_rate(self):
+        csat_survey = CSATSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        data = {
+            'rate': 4,
+            'customer': {
+                'client_id': customer.client_id
+            }
+        }
+        serializer = CSATRespondSerializer(data=data, survey=csat_survey)
+
+        self.assertRaises(ValidationError, serializer.validate_rate, data['rate'])

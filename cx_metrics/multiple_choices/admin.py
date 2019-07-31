@@ -2,9 +2,9 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.contrib import admin
 
+from .models import MultipleChoice, Option
 from .serializers import MultipleChoiceSerializer
 from .services import MultipleChoiceService
-from .models import MultipleChoice, Option
 
 
 class OptionInline(admin.TabularInline):

@@ -1,9 +1,13 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.test import TestCase
+from django.core.cache import cache
+from django.test import TestCase, override_settings
 from upkook_core.businesses.services import BusinessService
+from upkook_core.customers.services import CustomerService
 from upkook_core.industries.services import IndustryService
 
+from cx_metrics.ces.models import CESSurvey
+from cx_metrics.ces.services import CESInsightCacheService
 from cx_metrics.ces.services.ces import CESService
 
 
@@ -46,3 +50,45 @@ class CESServiceTestCase(TestCase):
 
         for (key, value) in kwargs.items():
             self.assertEqual(getattr(ces_survey, key), value)
+
+    def test_respond_with_options(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        rate = 1
+        response = CESService.respond(ces_survey, customer.uuid, rate, [1])
+
+        self.assertIsNotNone(response)
+        self.assertEqual(response.rate, rate)
+        self.assertEqual(response.customer_uuid, customer.uuid)
+        self.assertEqual(response.survey_uuid, ces_survey.uuid)
+
+    def test_respond_no_options(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        rate = 1
+        response = CESService.respond(ces_survey, customer.uuid, rate)
+
+        self.assertIsNotNone(response)
+        self.assertEqual(response.rate, rate)
+        self.assertEqual(response.customer_uuid, customer.uuid)
+        self.assertEqual(response.survey_uuid, ces_survey.uuid)
+
+
+@override_settings(
+    CACHES={
+        'default': {
+            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        }
+    }
+)
+class CESInsightCacheServiceTestCase(TestCase):
+
+    def test_set(self):
+        data = {'name': self.id()}
+        CESInsightCacheService.set(self.id(), data)
+        self.assertEqual(cache.get('ces_insight-%s' % self.id()), data)
+
+    def test_get(self):
+        data = {'name': self.id()}
+        CESInsightCacheService.set(self.id(), data)
+        self.assertEqual(CESInsightCacheService.get(self.id()), data)

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 04:58-0500\n"
+"POT-Creation-Date: 2019-07-30 07:24-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,42 +18,50 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: cx_metrics/surveys_defaults/models.py:17
+#: cx_metrics/surveys_defaults/models.py:19
 msgid "NPS"
 msgstr "NPS"
 
-#: cx_metrics/surveys_defaults/models.py:22
+#: cx_metrics/surveys_defaults/models.py:20
+msgid "CSAT"
+msgstr "CSAT"
+
+#: cx_metrics/surveys_defaults/models.py:21
+msgid "CES"
+msgstr "CES"
+
+#: cx_metrics/surveys_defaults/models.py:26
 msgid "Contra"
 msgstr "اعتراض"
 
-#: cx_metrics/surveys_defaults/models.py:26
+#: cx_metrics/surveys_defaults/models.py:30
 msgid "Industry"
 msgstr "صنعت"
 
-#: cx_metrics/surveys_defaults/models.py:29
+#: cx_metrics/surveys_defaults/models.py:33
 msgid "Survey Type"
 msgstr "نوع نظرسنجی"
 
-#: cx_metrics/surveys_defaults/models.py:30
+#: cx_metrics/surveys_defaults/models.py:34
 msgid "Question Type"
 msgstr "نوع سوال"
 
-#: cx_metrics/surveys_defaults/models.py:31
+#: cx_metrics/surveys_defaults/models.py:35
 msgid "Text"
 msgstr "متن"
 
-#: cx_metrics/surveys_defaults/models.py:32
+#: cx_metrics/surveys_defaults/models.py:36
 msgid "Order"
 msgstr "ترتیب"
 
-#: cx_metrics/surveys_defaults/models.py:33
+#: cx_metrics/surveys_defaults/models.py:37
 msgid "Is Active"
 msgstr "فعال"
 
-#: cx_metrics/surveys_defaults/models.py:39
+#: cx_metrics/surveys_defaults/models.py:43
 msgid "Default Option"
 msgstr "گزینه پیش فرض"
 
-#: cx_metrics/surveys_defaults/models.py:40
+#: cx_metrics/surveys_defaults/models.py:44
 msgid "Default Options"
 msgstr "گزینه های پیش فرض"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-21 01:53-0500\n"
+"POT-Creation-Date: 2019-07-30 07:24-0500\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -61,7 +61,7 @@ msgstr "منفعل"
 msgid "Detractors"
 msgstr "معترضان"
 
-#: cx_metrics/nps/models.py:28 cx_metrics/nps/models.py:46
+#: cx_metrics/nps/models.py:28
 msgid "NPS Survey"
 msgstr "نظرسنجی NPS"
 
@@ -69,50 +69,27 @@ msgstr "نظرسنجی NPS"
 msgid "NPS Surveys"
 msgstr "نظرسنجی های NPS"
 
-#: cx_metrics/nps/models.py:40 cx_metrics/nps/models.py:64
+#: cx_metrics/nps/models.py:46
 msgid "NPS Response"
 msgstr "پاسخ NPS"
 
-#: cx_metrics/nps/models.py:41
+#: cx_metrics/nps/models.py:47
 msgid "NPS Responses"
 msgstr "پاسخ های NPS"
 
-#: cx_metrics/nps/models.py:49
-msgid "Text"
-msgstr "متن"
-
-#: cx_metrics/nps/models.py:50
-msgid "Count"
-msgstr "تعداد"
-
-#: cx_metrics/nps/models.py:51 cx_metrics/nps/models.py:71
-msgid "Created at"
-msgstr "تاریخ ایجاد"
-
-#: cx_metrics/nps/models.py:54 cx_metrics/nps/models.py:68
-msgid "Contra Option"
-msgstr ""
-
-#: cx_metrics/nps/models.py:55
-msgid "Contra Options"
-msgstr ""
-
-#: cx_metrics/nps/models.py:65
-msgid "contra_responses"
-msgstr ""
-
-#: cx_metrics/nps/models.py:74
-msgid "Contra Response"
-msgstr ""
-
-#: cx_metrics/nps/models.py:75
-msgid "Contra Responses"
-msgstr ""
-
-#: cx_metrics/nps/serializers.py:141
+#: cx_metrics/nps/serializers.py:136
 msgid "Contra option and Survey not related!"
 msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."
 
-#: cx_metrics/nps/serializers.py:149
+#: cx_metrics/nps/serializers.py:144
 msgid "Contra is required!"
 msgstr "لطفا یکی از گزینه های زیر را انتخاب کنید."
+
+#~ msgid "Text"
+#~ msgstr "متن"
+
+#~ msgid "Count"
+#~ msgstr "تعداد"
+
+#~ msgid "Created at"
+#~ msgstr "تاریخ ایجاد"

@@ -3,11 +3,14 @@
 from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
+from rest_framework.exceptions import ValidationError
 from upkook_core.businesses.services import BusinessService
+from upkook_core.customers.services import CustomerService
 
-from cx_metrics.ces.models import CESSurvey
+from cx_metrics.ces.models import CESSurvey, CESResponse
+from cx_metrics.multiple_choices.models import Option
 from cx_metrics.multiple_choices.services import MultipleChoiceService
-from ..serializers import CESSerializer
+from ..serializers import CESSerializer, CESRespondSerializer
 from ..services.ces import CESService
 
 
@@ -175,3 +178,189 @@ class CESSerializerTestCase(TestCase):
         })
 
         self.assertDictEqual(serializer.to_representation(instance), expected)
+
+
+class CESRespondSerializerTestCase(TestCase):
+    fixtures = ['users', 'industries', 'businesses', 'ces']
+
+    def test_create(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': ces_survey.uuid,
+            'customer': customer,
+            'rate': 2,
+            'options': [option.id]
+        }
+        serializer = CESRespondSerializer(survey=ces_survey)
+        response = serializer.create(v_data)
+        self.assertIsInstance(response, CESResponse)
+        self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
+        self.assertEqual(response.customer_uuid, v_data['customer'].uuid)
+        self.assertEqual(response.rate, v_data['rate'])
+
+    def test_validate_options(self):
+        ces_survey = CESSurvey.objects.first()
+        option = Option.objects.first()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [option.id],
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        value = serializer.validate_options(data['options'])
+        self.assertListEqual(data['options'], value)
+
+    def test_validate_options_survey_and_contra_not_related(self):
+        ces_survey = CESSurvey.objects.first()
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1000]
+        }
+
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+
+    def test_validate_options_survey_has_no_contra(self):
+        ces_survey = CESSurvey.objects.first()
+        ces_survey.contra = None
+        ces_survey.save()
+        option = Option.objects.first()
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [option.id]
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate_options_contra_not_enabled(self):
+        ces_survey = CESSurvey.objects.first()
+        ces_survey.contra.enabled = False
+        ces_survey.save()
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1]
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate_options_none_value(self):
+        ces_survey = CESSurvey.objects.first()
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': None
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate_options_empty_list(self):
+        ces_survey = CESSurvey.objects.first()
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': []
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertIsNone(serializer.validate_options(data['options']))
+
+    def test_validate(self):
+        ces_survey = CESSurvey.objects.first()
+        data = {
+            'rate': 3,
+            'customer': {
+                'client_id': 1
+            }
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+
+        attrs = serializer.validate(data)
+        self.assertDictEqual(data, attrs)
+
+    def test_validate_raise_validation_error(self):
+        ces_survey = CESSurvey.objects.first()
+        data = {
+            'rate': 1,
+            'customer': {
+                'client_id': 1
+            }
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        self.assertRaises(ValidationError, serializer.validate, data)
+
+    def test_to_internal_value(self):
+        ces_survey = CESSurvey.objects.first()
+        option = Option.objects.first()
+        serializer = CESRespondSerializer(survey=ces_survey)
+        data = {
+            'rate': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [option.id]
+        }
+
+        v_data = serializer.to_internal_value(data)
+
+        self.assertIsNotNone(v_data['options'])
+        self.assertEqual(data['rate'], v_data['rate'])
+        self.assertEqual(data['options'], v_data['options'])
+
+    def test_to_internal_value_high_rate(self):
+        ces_survey = CESSurvey.objects.first()
+        serializer = CESRespondSerializer(survey=ces_survey)
+        data = {
+            'rate': 3,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1, 2, 3]
+        }
+        v_data = serializer.to_internal_value(data)
+        self.assertIsNone(v_data['options'])
+
+    def test_to_representation(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        data = {
+            'rate': 3,
+            'customer': {
+                'client_id': customer.client_id
+            }
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+
+        self.assertTrue(serializer.is_valid())
+
+        instance = CESResponse(rate=3, customer_uuid=customer.uuid)
+        representation = serializer.to_representation(instance)
+        self.assertEqual(data['customer']['client_id'], representation['client_id'])
+
+    def test_validate_rate(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        data = {
+            'rate': 4,
+            'customer': {
+                'client_id': customer.client_id
+            }
+        }
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+
+        self.assertRaises(ValidationError, serializer.validate_rate, data['rate'])

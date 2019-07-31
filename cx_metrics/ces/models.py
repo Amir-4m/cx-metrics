@@ -3,10 +3,11 @@
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from rest_framework.compat import MinValueValidator, MaxValueValidator
 
 from cx_metrics.multiple_choices.models import MultipleChoice
 from cx_metrics.surveys.decorators import register_survey
-from cx_metrics.surveys.models import SurveyModel
+from cx_metrics.surveys.models import SurveyModel, SurveyResponseBase
 
 
 @register_survey('CES')
@@ -36,3 +37,17 @@ class CESSurvey(SurveyModel):
     @cached_property
     def type(self):
         return 'CES'
+
+    @property
+    def contra_response_option_texts(self):
+        if self.contra:
+            return self.contra.option_texts.all()
+        return []
+
+
+class CESResponse(SurveyResponseBase):
+    rate = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(7)])
+
+    class Meta:
+        verbose_name = _('CES Response')
+        verbose_name_plural = _('CES Responses')
