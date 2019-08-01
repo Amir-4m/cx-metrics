@@ -1,3 +1,7 @@
+=== 1.0.3 (2019-08-01) ===
+
+- Changed private git server due to github US sanctions
+
 === 1.0.2 (2019-07-21) ===
 
 - Updated bug in Survey Public API for retrieving related NPS Survey
