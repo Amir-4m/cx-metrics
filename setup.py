@@ -37,7 +37,7 @@ setup(
     description="Django contrib apps",
     long_description=long_description,
     long_description_content_type='text/markdown',
-    url='https://github.com/upkook/cx-metrics',
+    url='https://bitbucket.org/upkook/cx-metrics',
     author=cx_metrics.__author__,
     author_email="saeed@upkook.com",
     python_requires=">=3.5",
@@ -50,8 +50,8 @@ setup(
     zip_safe=False,
     classifiers=CLASSIFIERS,
     dependency_links=[
-        'git+ssh://git@github.com/nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield',
-        'git+ssh://git@github.com/nargeel/django-contrib.git@master#egg=django-contrib',
-        'git+ssh://git@bitbucket.org/upkook/upkook-core.git@develop#egg=upkook-core'
+        'git+ssh://git@bitbucket.org/nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield',
+        'git+ssh://git@bitbucket.org/nargeel/django-contrib.git@master#egg=django-contrib',
+        'git+ssh://git@bitbucket.org/upkook/upkook-core.git@master#egg=upkook-core'
     ]
 )
