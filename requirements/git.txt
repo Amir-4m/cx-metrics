@@ -1,3 +1,3 @@
--e git+git@github.com:nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield
--e git+git@github.com:nargeel/django-contrib.git@master#egg=django-contrib
--e git+git@github.com:upkook/upkook-core.git@master#egg=upkook-core
+-e git+git@45.82.137.40:nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield
+-e git+git@45.82.137.40:nargeel/django-contrib.git@master#egg=django-contrib
+-e git+git@45.82.137.40:upkook/upkook-core.git@master#egg=upkook-core
