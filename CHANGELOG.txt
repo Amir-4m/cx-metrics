@@ -1,3 +1,7 @@
+=== 1.0.4 (2019-08-07) ===
+
+- Changed git private server
+
 === 1.0.3 (2019-08-01) ===
 
 - Changed private git server due to github US sanctions
