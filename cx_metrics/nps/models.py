@@ -4,6 +4,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.utils.functional import cached_property
 from django.utils.translation import ugettext_lazy as _
+from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.models import MultipleChoice
 from cx_metrics.surveys.decorators import register_survey
@@ -45,3 +46,7 @@ class NPSResponse(SurveyResponseBase):
     class Meta:
         verbose_name = _('NPS Response')
         verbose_name_plural = _('NPS Responses')
+
+    @cached_property
+    def customer(self):
+        return CustomerService.get_customer_by_uuid(self.customer_uuid)

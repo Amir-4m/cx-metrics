@@ -10,6 +10,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from upkook_core.customers.serializers import CustomerSerializer
+from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer, OptionTextSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
@@ -90,7 +91,7 @@ class CSATRespondSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'rate': instance.rate,
-            'client_id': self.validated_data['customer'].client_id
+            'client_id': instance.customer.client_id
         }
 
     def to_internal_value(self, data):
@@ -126,7 +127,8 @@ class CSATRespondSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        customer = validated_data['customer']
+        customer_data = validated_data.get('customer', {})
+        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'))
         rate = validated_data['rate']
         options = validated_data.get('options')
 

@@ -8,6 +8,7 @@ from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 from rest_framework.fields import empty
 from upkook_core.customers.serializers import CustomerSerializer
+from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer, OptionTextSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
@@ -99,16 +100,20 @@ class NPSRespondSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         return {
             'score': instance.score,
-            'client_id': self.validated_data['customer'].client_id
+            'client_id': instance.customer.client_id
         }
 
     def create(self, validated_data):
-        customer = validated_data['customer']
+        customer_data = validated_data.get('customer', {})
+        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'))
         score = validated_data['score']
+        options = validated_data.get('options')
+
         return NPSService.respond(
             survey=self.survey,
             customer_uuid=customer.uuid,
             score=score,
+            option_ids=options
         )
 
     def save(self, **kwargs):
@@ -143,15 +148,3 @@ class NPSRespondSerializerV11(NPSRespondSerializer):
         if score < 9 and self.survey.contra.required and not options:
             raise ValidationError(_("Contra is required!"))
         return attrs
-
-    def create(self, validated_data):
-        customer = validated_data['customer']
-        score = validated_data['score']
-        options = validated_data.get('options')
-
-        return NPSService.respond(
-            survey=self.survey,
-            customer_uuid=customer.uuid,
-            score=score,
-            option_ids=options
-        )

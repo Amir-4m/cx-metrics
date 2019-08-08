@@ -189,7 +189,9 @@ class CSATRespondSerializerTestCase(TestCase):
         option = Option.objects.first()
         v_data = {
             'survey_uuid': csat_survey.uuid,
-            'customer': customer,
+            'customer': {
+                "client_id": customer.client_id
+            },
             'rate': 2,
             'options': [option.id]
         }
@@ -197,7 +199,7 @@ class CSATRespondSerializerTestCase(TestCase):
         response = serializer.create(v_data)
         self.assertIsInstance(response, CSATResponse)
         self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
-        self.assertEqual(response.customer_uuid, v_data['customer'].uuid)
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
         self.assertEqual(response.rate, v_data['rate'])
 
     def test_validate_options(self):

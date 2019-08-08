@@ -3,6 +3,7 @@
 from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
+from mock import patch
 from rest_framework.exceptions import ValidationError
 from upkook_core.businesses.models import Business
 from upkook_core.businesses.services import BusinessService
@@ -10,6 +11,7 @@ from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.models import Option, MultipleChoice
 from cx_metrics.multiple_choices.services import MultipleChoiceService
+from cx_metrics.nps.tests import MockDateTime, mock_randint
 from cx_metrics.surveys.models import Survey
 from ..models import NPSSurvey, NPSResponse
 from ..serializers import NPSSerializer, NPSSerializerV11, NPSRespondSerializer, NPSRespondSerializerV11
@@ -184,7 +186,9 @@ class NPSRespondSerializerTestCase(TestCase):
     def test_create_return_nps_object(self):
         customer = CustomerService.create_customer()
         data = {
-            "customer": customer,
+            "customer": {
+                "client_id": customer.client_id
+            },
             "score": 10
         }
 
@@ -192,7 +196,7 @@ class NPSRespondSerializerTestCase(TestCase):
 
         self.assertEqual(created_nps_response.score, data['score'])
         self.assertEqual(created_nps_response.survey_uuid, self.serializer.survey.uuid)
-        self.assertEqual(created_nps_response.customer_uuid, data['customer'].uuid)
+        self.assertEqual(created_nps_response.customer.client_id, data['customer']['client_id'])
 
     def test_create_return_none(self):
         nps = NPSSurvey(
@@ -205,7 +209,9 @@ class NPSRespondSerializerTestCase(TestCase):
         customer = CustomerService.create_customer()
         serializer = NPSRespondSerializer(survey=nps)
         data = {
-            "customer": customer,
+            "customer": {
+                "client_id": customer.client_id
+            },
             "score": 10
         }
 
@@ -216,6 +222,8 @@ class NPSRespondSerializerTestCase(TestCase):
 class NPSRespondSerializerV11TestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses', 'multiple_choices', 'nps']
 
+    @patch('random.randint', mock_randint(1000))
+    @patch('upkook_core.customers.models.datetime', MockDateTime)
     def test_create(self):
         nps_survey = NPSSurvey.objects.first()
         mc = MultipleChoice.objects.first()
@@ -225,7 +233,9 @@ class NPSRespondSerializerV11TestCase(TestCase):
         option = Option.objects.first()
         v_data = {
             'survey_uuid': nps_survey.uuid,
-            'customer': customer,
+            'customer': {
+                "client_id": customer.client_id
+            },
             'score': 5,
             'options': [option.id]
         }
@@ -234,7 +244,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
 
         self.assertIsInstance(response, NPSResponse)
         self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
-        self.assertEqual(response.customer_uuid, v_data['customer'].uuid)
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
         self.assertEqual(response.score, v_data['score'])
 
     def test_validate_options_raise_validation_error_survey_and_contra_not_related(self):
