@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache, cache_control
 from rest_framework import generics
@@ -11,6 +10,7 @@ from upkook_core.auth.permissions import BusinessMemberPermissions
 
 from cx_metrics.csat.serializers import CSATSerializer, CSATRespondSerializer, CSATInsightSerializer
 from cx_metrics.csat.services.cache import CSATInsightCacheService
+from cx_metrics.surveys.views.api import SurveyResponseAPIView
 from ..services.csat import CSATService
 
 
@@ -41,22 +41,13 @@ class CSATAPIView(ModelViewSet):
 
 @method_decorator(cache_control(private=True), name='post')
 @method_decorator(never_cache, name='post')
-class CSATResponseAPIView(generics.CreateAPIView):
+class CSATResponseAPIView(SurveyResponseAPIView):
     serializer_class = CSATRespondSerializer
     filter_backends = (OrderingFilter,)
     ordering = ('-updated',)
 
     def get_survey(self):
-        survey = CSATService.get_csat_survey_by_uuid(self.kwargs['uuid'])
-        if survey is None:
-            raise Http404
-        return survey
-
-    def get_serializer(self, *args, **kwargs):
-        survey = self.get_survey()
-        default_kwargs = {'survey': survey}
-        default_kwargs.update(kwargs)
-        return super(CSATResponseAPIView, self).get_serializer(*args, **default_kwargs)
+        return CSATService.get_csat_survey_by_uuid(self.kwargs['uuid'])
 
 
 @method_decorator(cache_control(private=True, max_age=1 * 60), name='get')  # 1 minute

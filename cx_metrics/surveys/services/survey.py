@@ -16,5 +16,16 @@ class SurveyService(object):
         return Survey.objects.filter(uuid=survey_uuid).exists()
 
     @staticmethod
+    def get_survey(*args, **kwargs):
+        try:
+            return Survey.objects.get(*args, **kwargs)
+        except Survey.DoesNotExist:
+            return None
+
+    @staticmethod
+    def get_survey_by_uuid(uuid_):
+        return SurveyService.get_survey(uuid=uuid_)
+
+    @staticmethod
     def all():
         return Survey.objects.all()

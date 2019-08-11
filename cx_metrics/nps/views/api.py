@@ -1,21 +1,21 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.http import Http404
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache, cache_control
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
-
+from rest_framework.viewsets import ModelViewSet
 from upkook_core.auth.permissions import BusinessMemberPermissions
-from ..services.nps import NPSService
-from ..services.cache import NPSInsightCacheService
+
+from cx_metrics.surveys.views.api import SurveyResponseAPIView
 from ..serializers import (
     NPSSerializer, NPSSerializerV11,
     NPSInsightsSerializer,
     NPSRespondSerializer, NPSRespondSerializerV11
 )
+from ..services.cache import NPSInsightCacheService
+from ..services.nps import NPSService
 
 
 @method_decorator(cache_control(private=True), name='dispatch')
@@ -75,22 +75,13 @@ class NPSInsightsView(generics.RetrieveAPIView):
 
 @method_decorator(cache_control(private=True), name='post')
 @method_decorator(never_cache, name='post')
-class NPSResponseAPIView(generics.CreateAPIView):
+class NPSResponseAPIView(SurveyResponseAPIView):
     serializer_class = NPSRespondSerializer
     filter_backends = (OrderingFilter,)
     ordering = ('-updated',)
 
     def get_survey(self):
-        survey = NPSService.get_nps_survey_by_uuid(self.kwargs['uuid'])
-        if survey is None:
-            raise Http404
-        return survey
-
-    def get_serializer(self, *args, **kwargs):
-        survey = self.get_survey()
-        default_kwargs = {'survey': survey}
-        default_kwargs.update(kwargs)
-        return super(NPSResponseAPIView, self).get_serializer(*args, **default_kwargs)
+        return NPSService.get_nps_survey_by_uuid(self.kwargs['uuid'])
 
     def get_serializer_class(self):
         if self.request.version == '1.1':
