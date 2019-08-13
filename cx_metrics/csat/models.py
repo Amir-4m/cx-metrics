@@ -45,6 +45,9 @@ class CSATSurvey(SurveyModel):
             return self.contra.option_texts.all()
         return []
 
+    def has_contra(self):
+        return self.contra and self.contra.enabled
+
 
 class CSATResponse(SurveyResponseBase):
     rate = models.PositiveIntegerField(validators=[MinValueValidator(1), MaxValueValidator(7)])

@@ -341,15 +341,19 @@ class NPSRespondSerializerV11TestCase(TestCase):
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
-    def test_to_internal_value(self):
+    def test_validate_rate_gte_9(self):
         nps_survey = NPSSurvey.objects.first()
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        contra = MultipleChoice.objects.first()
+        contra.enabled = True
+        nps_survey.contra = contra
+        nps_survey.save()
         data = {
             'score': 10,
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2, 3]
+            'options': [1]
         }
-        v_data = serializer.to_internal_value(data)
-        self.assertIsNone(v_data['options'])
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer.is_valid()
+        self.assertEqual(serializer.validated_data['options'], [])

@@ -39,6 +39,9 @@ class NPSSurvey(SurveyModel):
             return self.contra.option_texts.all()
         return []
 
+    def has_contra(self):
+        return self.contra and self.contra.enabled
+
 
 class NPSResponse(SurveyResponseBase):
     score = models.PositiveIntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)])

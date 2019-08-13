@@ -94,17 +94,8 @@ class CSATRespondSerializer(serializers.ModelSerializer):
             'client_id': instance.customer.client_id
         }
 
-    def to_internal_value(self, data):
-        c_data = copy(data)
-        scale = int(self.survey.scale)
-        rate = c_data['rate']
-
-        if rate >= math.ceil(scale / 2):
-            c_data.update({'options': []})
-        return super(CSATRespondSerializer, self).to_internal_value(c_data)
-
     def validate_options(self, value):
-        if value and self.survey.contra and self.survey.contra.enabled:
+        if value and self.survey.has_contra():
             for option_id in value:
                 if not self.survey.contra.options.filter(id=option_id).exists():
                     raise ValidationError(_("Contra option and Survey not related!"))
@@ -121,8 +112,9 @@ class CSATRespondSerializer(serializers.ModelSerializer):
         scale = int(self.survey.scale)
         options = attrs.get('options')
         rate = attrs['rate']
-
-        if rate < math.ceil(scale / 2) and self.survey.contra.required and not options:
+        if rate and rate >= math.ceil(scale / 2):
+            attrs.update({'options': []})
+        if rate < math.ceil(scale / 2) and self.survey.has_contra() and self.survey.contra.required and not options:
             raise ValidationError(_('Contra is required'))
         return attrs
 

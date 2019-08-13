@@ -306,36 +306,18 @@ class CESRespondSerializerTestCase(TestCase):
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
-    def test_to_internal_value(self):
+    def test_validate_rate_gte_9(self):
         ces_survey = CESSurvey.objects.first()
-        option = Option.objects.first()
-        serializer = CESRespondSerializer(survey=ces_survey)
-        data = {
-            'rate': 1,
-            'customer': {
-                'client_id': 1
-            },
-            'options': [option.id]
-        }
-
-        v_data = serializer.to_internal_value(data)
-
-        self.assertIsNotNone(v_data['options'])
-        self.assertEqual(data['rate'], v_data['rate'])
-        self.assertEqual(data['options'], v_data['options'])
-
-    def test_to_internal_value_high_rate(self):
-        ces_survey = CESSurvey.objects.first()
-        serializer = CESRespondSerializer(survey=ces_survey)
         data = {
             'rate': 3,
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2, 3]
+            'options': [1]
         }
-        v_data = serializer.to_internal_value(data)
-        self.assertIsNone(v_data['options'])
+        serializer = CESRespondSerializer(data=data, survey=ces_survey)
+        serializer.is_valid()
+        self.assertEqual(serializer.validated_data['options'], [])
 
     def test_to_representation(self):
         ces_survey = CESSurvey.objects.first()

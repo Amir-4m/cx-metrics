@@ -128,14 +128,8 @@ class NPSRespondSerializerV11(NPSRespondSerializer):
         model = NPSResponse
         fields = ('score', 'customer', 'options', 'survey_uuid')
 
-    def to_internal_value(self, data):
-        c_data = copy(data)
-        if c_data['score'] >= 9:
-            c_data.update({'options': []})
-        return super(NPSRespondSerializerV11, self).to_internal_value(c_data)
-
     def validate_options(self, value):
-        if value and self.survey.contra and self.survey.contra.enabled:
+        if value and self.survey.has_contra():
             for option_id in value:
                 if not self.survey.contra.options.filter(id=option_id).exists():
                     raise ValidationError(_("Contra option and Survey not related!"))
@@ -145,6 +139,8 @@ class NPSRespondSerializerV11(NPSRespondSerializer):
     def validate(self, attrs):
         options = attrs.get('options')
         score = attrs['score']
-        if score < 9 and self.survey.contra.required and not options:
+        if score and score >= 9:
+            attrs.update({'options': []})
+        if score < 9 and self.survey.has_contra() and self.survey.contra.required and not options:
             raise ValidationError(_("Contra is required!"))
         return attrs

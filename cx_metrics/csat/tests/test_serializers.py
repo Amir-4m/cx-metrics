@@ -306,36 +306,18 @@ class CSATRespondSerializerTestCase(TestCase):
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
-    def test_to_internal_value(self):
+    def test_validate_rate_gte_9(self):
         csat_survey = CSATSurvey.objects.first()
-        option = Option.objects.first()
-        serializer = CSATRespondSerializer(survey=csat_survey)
-        data = {
-            'rate': 1,
-            'customer': {
-                'client_id': 1
-            },
-            'options': [option.id]
-        }
-
-        v_data = serializer.to_internal_value(data)
-
-        self.assertIsNotNone(v_data['options'])
-        self.assertEqual(data['rate'], v_data['rate'])
-        self.assertEqual(data['options'], v_data['options'])
-
-    def test_to_internal_value_high_rate(self):
-        csat_survey = CSATSurvey.objects.first()
-        serializer = CSATRespondSerializer(survey=csat_survey)
         data = {
             'rate': 3,
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2, 3]
+            'options': [1]
         }
-        v_data = serializer.to_internal_value(data)
-        self.assertIsNone(v_data['options'])
+        serializer = CSATRespondSerializer(data=data, survey=csat_survey)
+        serializer.is_valid()
+        self.assertEqual(serializer.validated_data['options'], [])
 
     def test_to_representation(self):
         csat_survey = CSATSurvey.objects.first()
