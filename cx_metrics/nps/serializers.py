@@ -105,10 +105,10 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         customer_data = validated_data.get('customer', {})
-        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'))
+        user_agent = validated_data.get('user_agent', None)
+        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'), user_agent=user_agent)
         score = validated_data['score']
         options = validated_data.get('options')
-
         return NPSService.respond(
             survey=self.survey,
             customer_uuid=customer.uuid,
@@ -118,7 +118,7 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         NPSInsightCacheService.delete(self.survey.uuid)
-        return super(NPSRespondSerializer, self).save()
+        return super(NPSRespondSerializer, self).save(**kwargs)
 
 
 class NPSRespondSerializerV11(NPSRespondSerializer):

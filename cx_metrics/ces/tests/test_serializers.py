@@ -184,8 +184,9 @@ class CESRespondSerializerTestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses', 'ces']
 
     def test_create(self):
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
         ces_survey = CESSurvey.objects.first()
-        customer = CustomerService.create_customer()
+        customer = CustomerService.create_customer(user_agent=user_agent)
         option = Option.objects.first()
         v_data = {
             'survey_uuid': ces_survey.uuid,
@@ -193,11 +194,13 @@ class CESRespondSerializerTestCase(TestCase):
                 "client_id": customer.client_id
             },
             'rate': 2,
-            'options': [option.id]
+            'options': [option.id],
+            'user_agent': user_agent,
         }
         serializer = CESRespondSerializer(survey=ces_survey)
         response = serializer.create(v_data)
         self.assertIsInstance(response, CESResponse)
+        self.assertEqual(response.customer.client.user_agent, user_agent)
         self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
         self.assertEqual(response.rate, v_data['rate'])

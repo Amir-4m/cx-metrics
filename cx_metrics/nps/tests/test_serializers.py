@@ -225,11 +225,12 @@ class NPSRespondSerializerV11TestCase(TestCase):
     @patch('random.randint', mock_randint(1000))
     @patch('upkook_core.customers.models.datetime', MockDateTime)
     def test_create(self):
+        user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
         nps_survey = NPSSurvey.objects.first()
         mc = MultipleChoice.objects.first()
         nps_survey.contra = mc
         nps_survey.save()
-        customer = CustomerService.create_customer()
+        customer = CustomerService.create_customer(user_agent=user_agent)
         option = Option.objects.first()
         v_data = {
             'survey_uuid': nps_survey.uuid,
@@ -237,12 +238,15 @@ class NPSRespondSerializerV11TestCase(TestCase):
                 "client_id": customer.client_id
             },
             'score': 5,
-            'options': [option.id]
+            'options': [option.id],
+            'user_agent': user_agent,
+
         }
         serializer = NPSRespondSerializerV11(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)
+        self.assertEqual(response.customer.client.user_agent, user_agent)
         self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
         self.assertEqual(response.score, v_data['score'])

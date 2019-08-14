@@ -184,7 +184,7 @@ class SurveyFactoryAPIViewTestCase(TestCase):
 
 
 class SurveyResponseAPIViewTestCase(TestCase):
-    fixtures = ['industries', 'businesses', 'nps']
+    fixtures = ['industries', 'businesses', 'nps', 'customers']
 
     @mock.patch('upkook_core.customers.models.generate_client_id')
     def test_get_data_cookie_not_exist(self, mock_generate_client_id):

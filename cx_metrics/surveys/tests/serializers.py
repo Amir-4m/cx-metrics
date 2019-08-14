@@ -18,3 +18,8 @@ class TestSurveyResponseSerializer(serializers.ModelSerializer):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
         super(TestSurveyResponseSerializer, self).__init__(instance, data, **c_kwargs)
+
+    def create(self, validated_data):
+        validated_data.pop('user_agent')
+
+        return super(TestSurveyResponseSerializer, self).create(validated_data)

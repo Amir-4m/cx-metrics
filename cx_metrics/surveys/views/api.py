@@ -109,3 +109,6 @@ class SurveyResponseAPIView(generics.CreateAPIView):
         response_client_id = serializer.data.get('client_id')
         self.set_client_id(self.request, response, response_client_id)
         return response
+
+    def perform_create(self, serializer):
+        serializer.save(user_agent=self.request.META.get('HTTP_USER_AGENT'))

@@ -120,7 +120,9 @@ class CESRespondSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         customer_data = validated_data.get('customer', {})
-        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'))
+        client_id = customer_data.get('client_id')
+        user_agent = validated_data.get('user_agent', None)
+        customer = CustomerService.create_customer(client_id=client_id, user_agent=user_agent)
         rate = validated_data['rate']
         options = validated_data.get('options')
 
