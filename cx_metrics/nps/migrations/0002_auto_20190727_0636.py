@@ -5,23 +5,40 @@ from django.db import migrations, models
 import django.db.models.deletion
 
 
-class Migration(migrations.Migration):
+def set_business_for_customers_with_null_business(apps, schema_editor):  # pragma: no cover
+    NPSResponse = apps.get_model('nps', 'NPSResponse')
+    Survey = apps.get_model('nps', 'NPSSurvey')
+    Customer = apps.get_model('customers', 'Customer')
+    for nps_response in NPSResponse.objects.all():
+        customer = Customer.objects.get(uuid=nps_response.customer_uuid)
+        survey = Survey.objects.get(uuid=nps_response.survey_uuid)
+        customer.business = survey.business
+        customer.save()
 
+
+class Migration(migrations.Migration):
     dependencies = [
         ('multiple_choices', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('nps', '0001_initial'),
+        ('customers', '0002_auto_20190805_0134')
     ]
 
     operations = [
         migrations.AddField(
             model_name='npssurvey',
             name='author',
-            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='npssurveys', related_query_name='npssurveys', to=settings.AUTH_USER_MODEL, verbose_name='Author'),
+            field=models.ForeignKey(default=None, null=True, on_delete=django.db.models.deletion.PROTECT,
+                                    related_name='npssurveys', related_query_name='npssurveys',
+                                    to=settings.AUTH_USER_MODEL, verbose_name='Author'),
         ),
         migrations.AddField(
             model_name='npssurvey',
             name='contra',
-            field=models.OneToOneField(default=None, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='nps_survey', to='multiple_choices.MultipleChoice', verbose_name='Contra'),
+            field=models.OneToOneField(default=None, null=True, on_delete=django.db.models.deletion.PROTECT,
+                                       related_name='nps_survey', to='multiple_choices.MultipleChoice',
+                                       verbose_name='Contra'),
         ),
+        migrations.RunPython(set_business_for_customers_with_null_business),
+
     ]
