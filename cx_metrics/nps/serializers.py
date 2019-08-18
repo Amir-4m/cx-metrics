@@ -105,8 +105,17 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         customer_data = validated_data.get('customer', {})
+
+        email = customer_data.get('email')
+        client_id = customer_data.get('client_id')
         user_agent = validated_data.get('user_agent', None)
-        customer = CustomerService.create_customer(client_id=customer_data.get('client_id'), user_agent=user_agent)
+
+        if email:
+            customer = CustomerService.identify_by_email(
+                business=self.survey.business, email=email, client_id=client_id, user_agent=user_agent
+            )
+        else:
+            customer = CustomerService.identify_anonymous(business=self.survey.business, client_id=client_id)
         score = validated_data['score']
         options = validated_data.get('options')
         return NPSService.respond(

@@ -3,7 +3,6 @@
 from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
-from mock import patch
 from rest_framework.exceptions import ValidationError
 from upkook_core.businesses.models import Business
 from upkook_core.businesses.services import BusinessService
@@ -11,7 +10,6 @@ from upkook_core.customers.services import CustomerService
 
 from cx_metrics.multiple_choices.models import Option, MultipleChoice
 from cx_metrics.multiple_choices.services import MultipleChoiceService
-from cx_metrics.nps.tests import MockDateTime, mock_randint
 from cx_metrics.surveys.models import Survey
 from ..models import NPSSurvey, NPSResponse
 from ..serializers import NPSSerializer, NPSSerializerV11, NPSRespondSerializer, NPSRespondSerializerV11
@@ -222,9 +220,31 @@ class NPSRespondSerializerTestCase(TestCase):
 class NPSRespondSerializerV11TestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses', 'multiple_choices', 'nps']
 
-    @patch('random.randint', mock_randint(1000))
-    @patch('upkook_core.customers.models.datetime', MockDateTime)
-    def test_create(self):
+    def test_create_anonymous(self):
+        nps_survey = NPSSurvey.objects.first()
+        mc = MultipleChoice.objects.first()
+        nps_survey.contra = mc
+        nps_survey.save()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id
+            },
+            'score': 5,
+            'options': [option.id],
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, NPSResponse)
+        self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+        self.assertEqual(response.score, v_data['score'])
+
+    def test_create_with_email(self):
         user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
         nps_survey = NPSSurvey.objects.first()
         mc = MultipleChoice.objects.first()
@@ -235,7 +255,8 @@ class NPSRespondSerializerV11TestCase(TestCase):
         v_data = {
             'survey_uuid': nps_survey.uuid,
             'customer': {
-                "client_id": customer.client_id
+                "client_id": customer.client_id,
+                "email": "test@test.com"
             },
             'score': 5,
             'options': [option.id],
@@ -245,11 +266,9 @@ class NPSRespondSerializerV11TestCase(TestCase):
         serializer = NPSRespondSerializerV11(survey=nps_survey)
         response = serializer.create(v_data)
 
-        self.assertIsInstance(response, NPSResponse)
-        self.assertEqual(response.customer.client.user_agent, user_agent)
-        self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
-        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+        self.assertEqual(response.customer.email, "test@test.com")
         self.assertEqual(response.score, v_data['score'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 
     def test_validate_options_raise_validation_error_survey_and_contra_not_related(self):
         nps_survey = NPSSurvey.objects.first()

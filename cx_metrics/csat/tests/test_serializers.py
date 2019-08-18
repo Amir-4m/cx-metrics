@@ -183,10 +183,9 @@ class CSATSerializerTestCase(TestCase):
 class CSATRespondSerializerTestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses', 'csat']
 
-    def test_create(self):
-        user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
+    def test_create_anonymous(self):
         csat_survey = CSATSurvey.objects.first()
-        customer = CustomerService.create_customer(user_agent=user_agent)
+        customer = CustomerService.create_customer()
         option = Option.objects.first()
         v_data = {
             'survey_uuid': csat_survey.uuid,
@@ -195,14 +194,33 @@ class CSATRespondSerializerTestCase(TestCase):
             },
             'rate': 2,
             'options': [option.id],
-            'user_agent': user_agent,
         }
         serializer = CSATRespondSerializer(survey=csat_survey)
         response = serializer.create(v_data)
         self.assertIsInstance(response, CSATResponse)
-        self.assertEqual(response.customer.client.user_agent, user_agent)
         self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+        self.assertEqual(response.rate, v_data['rate'])
+
+    def test_create_with_email(self):
+        csat_survey = CSATSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': csat_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+                "email": "test@test.com"
+            },
+            'rate': 2,
+            'options': [option.id],
+        }
+        serializer = CSATRespondSerializer(survey=csat_survey)
+        response = serializer.create(v_data)
+        self.assertIsInstance(response, CSATResponse)
+        self.assertEqual(response.survey_uuid, v_data['survey_uuid'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+        self.assertEqual(response.customer.email, v_data['customer']['email'])
         self.assertEqual(response.rate, v_data['rate'])
 
     def test_validate_options(self):
