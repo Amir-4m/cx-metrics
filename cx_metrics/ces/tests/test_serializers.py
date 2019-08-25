@@ -223,6 +223,27 @@ class CESRespondSerializerTestCase(TestCase):
         self.assertEqual(response.rate, v_data['rate'])
         self.assertEqual(response.customer.email, v_data['customer']['email'])
 
+    def test_create_with_mobile_number(self):
+        ces = CESService.get_ces_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': ces.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+                "mobile_number": "9121234567"
+            },
+            'rate': 3,
+
+        }
+        serializer = CESRespondSerializer(survey=ces)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, CESResponse)
+        self.assertEqual(response.customer.mobile_number, "+989121234567")
+        self.assertEqual(response.rate, v_data['rate'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
     def test_validate_options(self):
         ces_survey = CESSurvey.objects.first()
         option = Option.objects.first()

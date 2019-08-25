@@ -221,8 +221,8 @@ class NPSRespondSerializerV11TestCase(TestCase):
     fixtures = ['users', 'industries', 'businesses', 'multiple_choices', 'nps']
 
     def test_create_anonymous(self):
-        nps_survey = NPSSurvey.objects.first()
-        mc = MultipleChoice.objects.first()
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+        mc = MultipleChoiceService.get_by_id(1)
         nps_survey.contra = mc
         nps_survey.save()
         customer = CustomerService.create_customer()
@@ -246,8 +246,8 @@ class NPSRespondSerializerV11TestCase(TestCase):
 
     def test_create_with_email(self):
         user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
-        nps_survey = NPSSurvey.objects.first()
-        mc = MultipleChoice.objects.first()
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+        mc = MultipleChoiceService.get_by_id(1)
         nps_survey.contra = mc
         nps_survey.save()
         customer = CustomerService.create_customer(user_agent=user_agent)
@@ -267,6 +267,28 @@ class NPSRespondSerializerV11TestCase(TestCase):
         response = serializer.create(v_data)
 
         self.assertEqual(response.customer.email, "test@test.com")
+        self.assertEqual(response.score, v_data['score'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
+    def test_create_with_mobile_number(self):
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+        mc = MultipleChoiceService.get_by_id(1)
+        nps_survey.contra = mc
+        nps_survey.save()
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+                "mobile_number": "9121234567"
+            },
+            'score': 10,
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        response = serializer.create(v_data)
+
+        self.assertEqual(response.customer.mobile_number, "+989121234567")
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 

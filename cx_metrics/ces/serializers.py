@@ -123,11 +123,16 @@ class CESRespondSerializer(serializers.ModelSerializer):
 
         email = customer_data.get('email')
         client_id = customer_data.get('client_id')
+        mobile_number = customer_data.get('mobile_number')
         user_agent = validated_data.get('user_agent', None)
 
         if email:
             customer = CustomerService.identify_by_email(
                 business=self.survey.business, email=email, client_id=client_id, user_agent=user_agent
+            )
+        elif mobile_number:
+            customer = CustomerService.identify_by_mobile_number(
+                business=self.survey.business, mobile_number=mobile_number, client_id=client_id, user_agent=user_agent
             )
         else:
             customer = CustomerService.identify_anonymous(business=self.survey.business, client_id=client_id)

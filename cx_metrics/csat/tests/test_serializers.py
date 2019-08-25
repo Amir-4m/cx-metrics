@@ -223,6 +223,27 @@ class CSATRespondSerializerTestCase(TestCase):
         self.assertEqual(response.customer.email, v_data['customer']['email'])
         self.assertEqual(response.rate, v_data['rate'])
 
+    def test_create_with_mobile_number(self):
+        csat = CSATService.get_csat_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': csat.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+                "mobile_number": "9121234567"
+            },
+            'rate': 3,
+
+        }
+        serializer = CSATRespondSerializer(survey=csat)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, CSATResponse)
+        self.assertEqual(response.customer.mobile_number, "+989121234567")
+        self.assertEqual(response.rate, v_data['rate'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
     def test_validate_options(self):
         csat_survey = CSATSurvey.objects.first()
         option = Option.objects.first()
