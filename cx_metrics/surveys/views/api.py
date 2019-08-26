@@ -13,6 +13,7 @@ from upkook_core.auth.permissions import BusinessMemberPermissions
 from ..factory import survey_serializer_factory
 from ..serializers import SurveySerializer
 from ..services import SurveyService, SurveyCacheService
+from ..services.cache import SurveyInsightCacheService
 
 
 @method_decorator(cache_control(private=True), name='get')
@@ -56,6 +57,23 @@ class SurveyFactoryAPIView(generics.RetrieveAPIView):
             serializer = self.get_serializer(instance)
             data = serializer.data
             SurveyCacheService.set(cache_key, data)
+
+        return Response(data)
+
+
+class SurveyInsightsView(generics.RetrieveAPIView):
+    lookup_field = 'uuid'
+    survey_type = 'survey'
+
+    def retrieve(self, request, *args, **kwargs):
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        cache_key = self.kwargs[lookup_url_kwarg]
+        data = SurveyInsightCacheService.get(self.survey_type, cache_key)
+        if data is None:
+            instance = self.get_object()
+            serializer = self.get_serializer(instance)
+            data = serializer.data
+            SurveyInsightCacheService.set(self.survey_type, cache_key, data)
 
         return Response(data)
 

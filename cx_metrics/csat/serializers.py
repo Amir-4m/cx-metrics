@@ -17,6 +17,7 @@ from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
 from .models import CSATSurvey, CSATResponse
 from .services import CSATService
+from cx_metrics.surveys.services import SurveyInsightCacheService
 
 
 @register_survey_serializer('CSAT')
@@ -151,6 +152,10 @@ class CSATRespondSerializer(serializers.ModelSerializer):
             rate=rate,
             option_ids=options
         )
+
+    def save(self, **kwargs):
+        SurveyInsightCacheService.delete(self.survey.type, self.survey.uuid)
+        return super(CSATRespondSerializer, self).save(**kwargs)
 
 
 class CSATInsightSerializer(serializers.ModelSerializer):

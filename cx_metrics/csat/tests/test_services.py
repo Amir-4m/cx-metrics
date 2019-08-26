@@ -1,11 +1,9 @@
-from django.core.cache import cache
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.services import CustomerService
 from upkook_core.industries.services import IndustryService
 
 from cx_metrics.csat.models import CSATSurvey
-from cx_metrics.csat.services.cache import CSATInsightCacheService
 from cx_metrics.csat.services.csat import CSATService
 
 
@@ -70,23 +68,3 @@ class CSATServiceTestCase(TestCase):
         self.assertEqual(response.rate, rate)
         self.assertEqual(response.customer_uuid, customer.uuid)
         self.assertEqual(response.survey_uuid, csat_survey.uuid)
-
-
-@override_settings(
-    CACHES={
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        }
-    }
-)
-class CSATInsightCacheServiceTestCase(TestCase):
-
-    def test_set(self):
-        data = {'name': self.id()}
-        CSATInsightCacheService.set(self.id(), data)
-        self.assertEqual(cache.get('csat_insight-%s' % self.id()), data)
-
-    def test_get(self):
-        data = {'name': self.id()}
-        CSATInsightCacheService.set(self.id(), data)
-        self.assertEqual(CSATInsightCacheService.get(self.id()), data)

@@ -17,3 +17,20 @@ class SurveyCacheService:
     @staticmethod
     def delete(survey_uuid):
         cache.delete("survey-%s" % survey_uuid)
+
+
+class SurveyInsightCacheService:
+    TIMEOUT = 4 * 60 * 60  # 4 hours
+
+    @staticmethod
+    def get(survey_type, survey_uuid):
+        return cache.get("%s_insight-%s" % (survey_type, survey_uuid))
+
+    @staticmethod
+    def set(survey_type, survey_uuid, data, timeout=TIMEOUT):
+
+        cache.set("%s_insight-%s" % (survey_type, survey_uuid), data, timeout)
+
+    @staticmethod
+    def delete(survey_type, survey_uuid,):
+        cache.delete("%s_insight-%s" % (survey_type, survey_uuid))
