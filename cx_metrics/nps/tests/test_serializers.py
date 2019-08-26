@@ -266,6 +266,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
         serializer = NPSRespondSerializerV11(survey=nps_survey)
         response = serializer.create(v_data)
 
+        self.assertIsInstance(response, NPSResponse)
         self.assertEqual(response.customer.email, "test@test.com")
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
@@ -288,7 +289,32 @@ class NPSRespondSerializerV11TestCase(TestCase):
         serializer = NPSRespondSerializerV11(survey=nps_survey)
         response = serializer.create(v_data)
 
+        self.assertIsInstance(response, NPSResponse)
         self.assertEqual(response.customer.mobile_number, "+989121234567")
+        self.assertEqual(response.score, v_data['score'])
+        self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
+    def test_create_with_bizz_user_id(self):
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+        mc = MultipleChoiceService.get_by_id(1)
+        nps_survey.contra = mc
+        nps_survey.save()
+        customer = CustomerService.create_customer()
+        bizz_user_id = "test_bizz_user_id"
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+                "bizz_user_id": bizz_user_id
+            },
+            'score': 10,
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, NPSResponse)
+        self.assertEqual(response.customer.bizz_user_id, bizz_user_id)
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 
