@@ -2,19 +2,16 @@
 # vim: ai ts=4 sts=4 et sw=4
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache, cache_control
-from rest_framework import generics
 from rest_framework.filters import OrderingFilter
-from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 from upkook_core.auth.permissions import BusinessMemberPermissions
 
-from cx_metrics.surveys.views.api import SurveyResponseAPIView
+from cx_metrics.surveys.views.api import SurveyResponseAPIView, SurveyInsightsView
 from ..serializers import (
     NPSSerializer, NPSSerializerV11,
     NPSInsightsSerializer,
     NPSRespondSerializer, NPSRespondSerializerV11
 )
-from ..services.cache import NPSInsightCacheService
 from ..services.nps import NPSService
 
 
@@ -49,8 +46,8 @@ class NPSAPIView(ModelViewSet):
 
 
 @method_decorator(cache_control(private=True, max_age=1 * 60), name='get')  # 1 minute
-class NPSInsightsView(generics.RetrieveAPIView):
-    lookup_field = 'uuid'
+class NPSInsightsView(SurveyInsightsView):
+    survey_type = 'nps'
     serializer_class = NPSInsightsSerializer
     permission_classes = (
         BusinessMemberPermissions('nps', 'npssurvey'),
@@ -58,19 +55,6 @@ class NPSInsightsView(generics.RetrieveAPIView):
 
     def get_queryset(self):
         return NPSService.get_nps_surveys_by_business(self.request.user.business_id)
-
-    def retrieve(self, request, *args, **kwargs):
-        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
-        cache_key = self.kwargs[lookup_url_kwarg]
-        data = NPSInsightCacheService.get(cache_key)
-
-        if data is None:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            data = serializer.data
-            NPSInsightCacheService.set(cache_key, data)
-
-        return Response(data)
 
 
 @method_decorator(cache_control(private=True), name='post')

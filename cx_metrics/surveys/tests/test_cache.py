@@ -3,7 +3,7 @@
 from django.test import override_settings, TestCase
 from django.core.cache import cache
 
-from ..services import SurveyCacheService
+from ..services.cache import SurveyCacheService
 
 
 @override_settings(

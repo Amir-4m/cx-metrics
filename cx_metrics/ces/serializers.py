@@ -17,6 +17,7 @@ from cx_metrics.ces.services import CESService
 from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer, OptionTextSerializer
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
+from cx_metrics.surveys.services import SurveyInsightCacheService
 
 
 @register_survey_serializer('CES')
@@ -160,6 +161,10 @@ class CESRespondSerializer(serializers.ModelSerializer):
             rate=rate,
             option_ids=options
         )
+
+    def save(self, **kwargs):
+        SurveyInsightCacheService.delete(self.survey.type, self.survey.uuid)
+        return super(CESRespondSerializer, self).save(**kwargs)
 
 
 class CESInsightSerializer(serializers.ModelSerializer):

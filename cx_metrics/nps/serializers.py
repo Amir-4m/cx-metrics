@@ -15,7 +15,7 @@ from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
 from .models import NPSSurvey, NPSResponse
 from .services import NPSService
-from .services.cache import NPSInsightCacheService
+from cx_metrics.surveys.services import SurveyInsightCacheService
 
 
 @register_survey_serializer('NPS')
@@ -146,7 +146,7 @@ class NPSRespondSerializer(serializers.ModelSerializer):
         )
 
     def save(self, **kwargs):
-        NPSInsightCacheService.delete(self.survey.uuid)
+        SurveyInsightCacheService.delete(self.survey.type, self.survey.uuid)
         return super(NPSRespondSerializer, self).save(**kwargs)
 
 

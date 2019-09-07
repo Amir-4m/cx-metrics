@@ -5,6 +5,7 @@ coverage
 mock
 flake8
 flake8-print
+autoflake
 pygraphviz
 django-extensions
 markdown       # Markdown support for the browsable API.

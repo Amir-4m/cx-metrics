@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
-from django.core.cache import cache
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.services import CustomerService
 from upkook_core.industries.services import IndustryService
 
 from cx_metrics.ces.models import CESSurvey
-from cx_metrics.ces.services import CESInsightCacheService
 from cx_metrics.ces.services.ces import CESService
 
 
@@ -72,23 +70,3 @@ class CESServiceTestCase(TestCase):
         self.assertEqual(response.rate, rate)
         self.assertEqual(response.customer_uuid, customer.uuid)
         self.assertEqual(response.survey_uuid, ces_survey.uuid)
-
-
-@override_settings(
-    CACHES={
-        'default': {
-            'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
-        }
-    }
-)
-class CESInsightCacheServiceTestCase(TestCase):
-
-    def test_set(self):
-        data = {'name': self.id()}
-        CESInsightCacheService.set(self.id(), data)
-        self.assertEqual(cache.get('ces_insight-%s' % self.id()), data)
-
-    def test_get(self):
-        data = {'name': self.id()}
-        CESInsightCacheService.set(self.id(), data)
-        self.assertEqual(CESInsightCacheService.get(self.id()), data)
