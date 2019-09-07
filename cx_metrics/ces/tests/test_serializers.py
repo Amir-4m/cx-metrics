@@ -4,6 +4,7 @@ from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
+from upkook_core.businesses.models import Settings
 from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.services import CustomerService
 
@@ -203,17 +204,17 @@ class CESRespondSerializerTestCase(TestCase):
         self.assertEqual(response.rate, v_data['rate'])
 
     def test_create_with_email(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_EMAIL)
         ces_survey = CESSurvey.objects.first()
         customer = CustomerService.create_customer()
-        option = Option.objects.first()
         v_data = {
             'survey_uuid': ces_survey.uuid,
             'customer': {
                 "client_id": customer.client_id,
                 "email": "test@test.com"
             },
-            'rate': 2,
-            'options': [option.id],
+            'rate': 3,
         }
         serializer = CESRespondSerializer(survey=ces_survey)
         response = serializer.create(v_data)
@@ -223,7 +224,26 @@ class CESRespondSerializerTestCase(TestCase):
         self.assertEqual(response.rate, v_data['rate'])
         self.assertEqual(response.customer.email, v_data['customer']['email'])
 
+    def test_create_with_email_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_EMAIL)
+        ces_survey = CESSurvey.objects.first()
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': ces_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'rate': 3,
+        }
+        serializer = CESRespondSerializer(survey=ces_survey)
+
+        self.assertRaises(ValidationError, serializer.create, v_data)
+
     def test_create_with_mobile_number(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_MOBILE_NUMBER)
         ces = CESService.get_ces_survey_by_id(1)
 
         customer = CustomerService.create_customer()
@@ -244,7 +264,27 @@ class CESRespondSerializerTestCase(TestCase):
         self.assertEqual(response.rate, v_data['rate'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 
+    def test_create_with_mobile_number_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_MOBILE_NUMBER)
+        ces = CESService.get_ces_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': ces.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'rate': 3,
+
+        }
+        serializer = CESRespondSerializer(survey=ces)
+
+        self.assertRaises(ValidationError, serializer.create, v_data)
+
     def test_create_with_bizz_user_id(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_BIZZ_USER_ID)
         ces = CESService.get_ces_survey_by_id(1)
 
         customer = CustomerService.create_customer()
@@ -265,6 +305,23 @@ class CESRespondSerializerTestCase(TestCase):
         self.assertEqual(response.customer.bizz_user_id, bizz_user_id)
         self.assertEqual(response.rate, v_data['rate'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
+    def test_create_with_bizz_user_id_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_BIZZ_USER_ID)
+        ces = CESService.get_ces_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': ces.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'rate': 3,
+
+        }
+        serializer = CESRespondSerializer(survey=ces)
+        self.assertRaises(ValidationError, serializer.create, v_data)
 
     def test_validate_options(self):
         ces_survey = CESSurvey.objects.first()

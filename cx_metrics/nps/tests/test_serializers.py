@@ -4,7 +4,7 @@ from django.forms import model_to_dict
 from django.http import Http404
 from django.test import TestCase
 from rest_framework.exceptions import ValidationError
-from upkook_core.businesses.models import Business
+from upkook_core.businesses.models import Business, Settings
 from upkook_core.businesses.services import BusinessService
 from upkook_core.customers.services import CustomerService
 
@@ -245,6 +245,8 @@ class NPSRespondSerializerV11TestCase(TestCase):
         self.assertEqual(response.score, v_data['score'])
 
     def test_create_with_email(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_EMAIL)
         user_agent = "Mozilla/5.0 (Windows NT 10.0; …) Gecko/20100101 Firefox/68.0"
         nps_survey = NPSService.get_nps_survey_by_id(1)
         mc = MultipleChoiceService.get_by_id(1)
@@ -271,7 +273,27 @@ class NPSRespondSerializerV11TestCase(TestCase):
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 
+    def test_create_with_email_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_EMAIL)
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'score': 10,
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+
+        self.assertRaises(ValidationError, serializer.create, v_data)
+
     def test_create_with_mobile_number(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_MOBILE_NUMBER)
         nps_survey = NPSService.get_nps_survey_by_id(1)
         mc = MultipleChoiceService.get_by_id(1)
         nps_survey.contra = mc
@@ -294,7 +316,27 @@ class NPSRespondSerializerV11TestCase(TestCase):
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
 
+    def test_create_with_mobile_number_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_MOBILE_NUMBER)
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'score': 10,
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+
+        self.assertRaises(ValidationError, serializer.create, v_data)
+
     def test_create_with_bizz_user_id(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_BIZZ_USER_ID)
         nps_survey = NPSService.get_nps_survey_by_id(1)
         mc = MultipleChoiceService.get_by_id(1)
         nps_survey.contra = mc
@@ -317,6 +359,24 @@ class NPSRespondSerializerV11TestCase(TestCase):
         self.assertEqual(response.customer.bizz_user_id, bizz_user_id)
         self.assertEqual(response.score, v_data['score'])
         self.assertEqual(response.customer.client_id, v_data['customer']['client_id'])
+
+    def test_create_with_bizz_user_id_validation_error(self):
+        business = BusinessService.get_business_by_id(1)
+        Settings.objects.create(business=business, identify_by=Settings.IDENTIFY_BY_BIZZ_USER_ID)
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+
+        customer = CustomerService.create_customer()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id,
+            },
+            'score': 10,
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+
+        self.assertRaises(ValidationError, serializer.create, v_data)
 
     def test_validate_options_raise_validation_error_survey_and_contra_not_related(self):
         nps_survey = NPSSurvey.objects.first()

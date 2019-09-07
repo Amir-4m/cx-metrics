@@ -121,26 +121,35 @@ class CESRespondSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         customer_data = validated_data.get('customer', {})
 
-        email = customer_data.get('email')
         client_id = customer_data.get('client_id')
-        mobile_number = customer_data.get('mobile_number')
-        bizz_user_id = customer_data.get('bizz_user_id')
         user_agent = validated_data.get('user_agent', None)
 
-        if email:
+        business = self.survey.business
+        if business.is_identified_by_email():
+            email = customer_data.get('email')
+            if not email:
+                raise ValidationError(_('Email is required'))
             customer = CustomerService.identify_by_email(
                 business=self.survey.business, email=email, client_id=client_id, user_agent=user_agent
             )
-        elif mobile_number:
+        elif business.is_identified_by_mobile_number():
+            mobile_number = customer_data.get('mobile_number')
+            if not mobile_number:
+                raise ValidationError(_('Mobile number is required'))
             customer = CustomerService.identify_by_mobile_number(
                 business=self.survey.business, mobile_number=mobile_number, client_id=client_id, user_agent=user_agent
             )
-        elif bizz_user_id:
+        elif business.is_identified_by_bizz_user_id():
+            bizz_user_id = customer_data.get('bizz_user_id')
+            if not bizz_user_id:
+                raise ValidationError(_('Business UserID is required'))
             customer = CustomerService.identify_by_bizz_user_id(
                 business=self.survey.business, bizz_user_id=bizz_user_id, client_id=client_id, user_agent=user_agent
             )
         else:
-            customer = CustomerService.identify_anonymous(business=self.survey.business, client_id=client_id)
+            customer = CustomerService.identify_anonymous(
+                business=self.survey.business, client_id=client_id
+            )
 
         rate = validated_data['rate']
         options = validated_data.get('options')
