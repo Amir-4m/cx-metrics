@@ -12,7 +12,11 @@ from rest_framework.fields import empty
 from upkook_core.customers.serializers import CustomerSerializer
 from upkook_core.customers.services import CustomerService
 
-from cx_metrics.multiple_choices.serializers import CachedMultipleChoiceSerializer, OptionTextSerializer
+from cx_metrics.multiple_choices.serializers import (
+    CachedMultipleChoiceSerializer,
+    OptionTextSerializer,
+    MultipleChoiceRespondSerializer
+)
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
 from .models import CSATSurvey, CSATResponse
@@ -88,6 +92,7 @@ class CSATRespondSerializer(serializers.ModelSerializer):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
         super(CSATRespondSerializer, self).__init__(instance, data, **c_kwargs)
+        self.fields["options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
 
     def to_representation(self, instance):
         return {
@@ -97,9 +102,6 @@ class CSATRespondSerializer(serializers.ModelSerializer):
 
     def validate_options(self, value):
         if value and self.survey.has_contra():
-            for option_id in value:
-                if not self.survey.contra.options.filter(id=option_id).exists():
-                    raise ValidationError(_("Contra option and Survey not related!"))
             return value
         return None
 

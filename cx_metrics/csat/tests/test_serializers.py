@@ -331,6 +331,8 @@ class CSATRespondSerializerTestCase(TestCase):
                 'client_id': 1
             },
             'options': [option.id],
+            'rate': 1
+
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
         value = serializer.validate_options(data['options'])
@@ -347,7 +349,12 @@ class CSATRespondSerializerTestCase(TestCase):
         }
 
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertRaisesMessage(
+            ValidationError,
+            "Contra option and Survey not related!",
+            serializer.is_valid,
+            raise_exception=True
+        )
 
     def test_validate_options_survey_has_no_contra(self):
         csat_survey = CSATSurvey.objects.first()

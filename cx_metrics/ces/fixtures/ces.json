@@ -66,5 +66,45 @@
       "created": "2019-07-02T12:01:00.036Z",
       "updated": "2019-07-02T12:01:00.036Z"
     }
+  },
+  {
+    "model": "multiple_choices.optiontext",
+    "pk": 1,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "option text 1",
+      "count": 1,
+      "created": "2019-07-23T07:33:01.906Z"
+    }
+  },
+  {
+    "model": "multiple_choices.optiontext",
+    "pk": 2,
+    "fields": {
+      "multiple_choice": 1,
+      "text": "option text 2",
+      "count": 1,
+      "created": "2019-07-23T07:33:01.906Z"
+    }
+  },
+  {
+    "model": "multiple_choices.optionresponse",
+    "pk": 1,
+    "fields": {
+      "option_text": 1,
+      "customer_uuid": "0a11d817-54cc-403c-af32-d05b75b2c0f9",
+      "updated": "2019-07-23T07:33:01.907Z",
+      "created": "2019-07-23T07:33:01.907Z"
+    }
+  },
+  {
+    "model": "multiple_choices.optionresponse",
+    "pk": 2,
+    "fields": {
+      "option_text": 1,
+      "customer_uuid": "0a11d817-54cc-403c-af32-d05b75b2c0f9",
+      "updated": "2019-07-23T07:33:01.907Z",
+      "created": "2019-07-23T07:33:01.907Z"
+    }
   }
 ]

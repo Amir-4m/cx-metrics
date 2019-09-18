@@ -4,9 +4,9 @@ from django.test import TestCase, override_settings
 from mock import patch
 from rest_framework.exceptions import ValidationError
 
-from ..models import MultipleChoice
+from ..models import MultipleChoice, Option
 from ..services import MultipleChoiceService
-from ..serializers import MultipleChoiceSerializer, CachedMultipleChoiceSerializer
+from ..serializers import MultipleChoiceSerializer, CachedMultipleChoiceSerializer, MultipleChoiceRespondSerializer
 
 
 class MultipleChoiceSerializerTestCase(TestCase):
@@ -209,3 +209,79 @@ class CachedMultipleChoiceSerializerTestCase(TestCase):
         representation = cache_serializer.to_representation(mc)
 
         self.assertEqual(representation, expected_representation)
+
+
+class MultipleChoiceRespondSerializerTestCase(TestCase):
+    fixtures = ['multiple_choices']
+
+    def test_validate(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        option = Option.objects.first()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [option.id],
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+        value = serializer.validate(data['options'])
+        self.assertListEqual(data['options'], value)
+
+    def test_validate_raise_validation_error_contra_and_option_not_related(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1000],
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            "Contra option and Survey not related!",
+            serializer.validate,
+            data['options']
+        )
+
+    def test_validate_raise_validation_error_has_no_contra(self):
+        option = Option.objects.first()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [option.id],
+        }
+        serializer = MultipleChoiceRespondSerializer()
+        self.assertRaisesMessage(
+            ValidationError,
+            "Contra could not be none !",
+            serializer.validate,
+            data['options'])
+
+    def test_validate_none_value(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': None
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+        self.assertIsNone(serializer.validate(data['options']))
+
+    def test_validate_options_empty_list(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        data = {
+            'rate': 2,
+            'customer': {
+                'client_id': 1
+            },
+            'options': []
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+        self.assertEqual(serializer.validate(data['options']), [])

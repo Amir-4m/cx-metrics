@@ -348,7 +348,13 @@ class CESRespondSerializerTestCase(TestCase):
         }
 
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertRaisesMessage(
+            ValidationError,
+            "Contra option and Survey not related!",
+            serializer.is_valid,
+            raise_exception=True
+
+        )
 
     def test_validate_options_survey_has_no_contra(self):
         ces_survey = CESSurvey.objects.first()

@@ -17,6 +17,28 @@ class OptionSerializer(serializers.ModelSerializer):
         fields = ('id', 'text', 'enabled', 'order')
 
 
+class MultipleChoiceRespondSerializer(serializers.ListSerializer):
+
+    def __init__(self, **kwargs):
+        default_kwargs = {'child': serializers.IntegerField()}
+        default_kwargs.update(**kwargs)
+        contra_id = default_kwargs.pop("mc_id", None)
+        self.contra = MultipleChoiceService.get_by_id(contra_id)
+        print(self.contra)
+
+        super(MultipleChoiceRespondSerializer, self).__init__(**default_kwargs)
+
+    def validate(self, value):
+        if value and self.contra:
+            for option_id in value:
+                if not self.contra.options.filter(id=option_id).exists():
+                    raise ValidationError(_("Contra option and Survey not related!"))
+        elif value and self.contra is None:
+            raise ValidationError(_("Contra could not be none !"))
+
+        return value
+
+
 class MultipleChoiceSerializer(serializers.ModelSerializer):
     options = OptionSerializer(many=True, required=True)
 

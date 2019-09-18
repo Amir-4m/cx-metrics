@@ -391,7 +391,12 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'options': [1000],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertRaises(ValidationError, serializer.validate_options, data['options'])
+        self.assertRaisesMessage(
+            ValidationError,
+            "Contra option and Survey not related!",
+            serializer.is_valid,
+            raise_exception=True
+        )
 
     def test_validate_options_raise_validation_error_survey_has_no_contra(self):
         nps_survey = NPSSurvey.objects.first()
