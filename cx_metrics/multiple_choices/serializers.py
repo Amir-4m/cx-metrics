@@ -24,8 +24,6 @@ class MultipleChoiceRespondSerializer(serializers.ListSerializer):
         default_kwargs.update(**kwargs)
         contra_id = default_kwargs.pop("mc_id", None)
         self.contra = MultipleChoiceService.get_by_id(contra_id)
-        print(self.contra)
-
         super(MultipleChoiceRespondSerializer, self).__init__(**default_kwargs)
 
     def validate(self, value):
