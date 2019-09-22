@@ -228,6 +228,42 @@ class MultipleChoiceRespondSerializerTestCase(TestCase):
         value = serializer.validate(data['options'])
         self.assertListEqual(data['options'], value)
 
+    def test_validate_raise_validation_error_contra_required_no_option(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [],
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            "At least 1 option should be chosen !",
+            serializer.validate,
+            data['options']
+        )
+
+    def test_validate_raise_validation_error_radio_select_contra_option_more_than_1(self):
+        multiple_choice_id = MultipleChoice.objects.first().id
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1, 2],
+        }
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            "Only 1 option can be chosen !",
+            serializer.validate,
+            data['options']
+        )
+
     def test_validate_raise_validation_error_contra_and_option_not_related(self):
         multiple_choice_id = MultipleChoice.objects.first().id
         data = {
@@ -262,8 +298,10 @@ class MultipleChoiceRespondSerializerTestCase(TestCase):
             serializer.validate,
             data['options'])
 
-    def test_validate_none_value(self):
-        multiple_choice_id = MultipleChoice.objects.first().id
+    def test_validate_none_value_not_required(self):
+        multiple_choice = MultipleChoice.objects.first()
+        multiple_choice.required = False
+        multiple_choice.save()
         data = {
             'rate': 2,
             'customer': {
@@ -271,11 +309,14 @@ class MultipleChoiceRespondSerializerTestCase(TestCase):
             },
             'options': None
         }
-        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice.id)
         self.assertIsNone(serializer.validate(data['options']))
 
-    def test_validate_options_empty_list(self):
-        multiple_choice_id = MultipleChoice.objects.first().id
+    def test_validate_options_empty_list_not_required(self):
+        multiple_choice = MultipleChoice.objects.first()
+        multiple_choice.required = False
+        multiple_choice.save()
+
         data = {
             'rate': 2,
             'customer': {
@@ -283,5 +324,5 @@ class MultipleChoiceRespondSerializerTestCase(TestCase):
             },
             'options': []
         }
-        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice_id)
+        serializer = MultipleChoiceRespondSerializer(mc_id=multiple_choice.id)
         self.assertEqual(serializer.validate(data['options']), [])

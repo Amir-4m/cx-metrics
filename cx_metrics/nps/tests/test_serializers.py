@@ -398,6 +398,47 @@ class NPSRespondSerializerV11TestCase(TestCase):
             raise_exception=True
         )
 
+    def test_validate_raise_validation_error_survey_contra_required_no_option(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [],
+        }
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        self.assertRaisesMessage(
+            ValidationError,
+            "At least 1 option should be chosen !",
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_validate_raise_validation_error_survey_radio_select_contra_option_more_than_1(self):
+        nps_survey = NPSSurvey.objects.first()
+        contra = MultipleChoice.objects.first()
+        nps_survey.contra = contra
+        nps_survey.save()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1, 2],
+        }
+        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            "Only 1 option can be chosen !",
+            serializer.is_valid,
+            raise_exception=True
+        )
+
     def test_validate_options_raise_validation_error_survey_has_no_contra(self):
         nps_survey = NPSSurvey.objects.first()
         nps_survey.contra = None

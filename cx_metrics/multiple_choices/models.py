@@ -27,6 +27,21 @@ class MultipleChoice(Question):
         verbose_name = _('Multiple Choice Question')
         verbose_name_plural = _('Multiple Choice Questions')
 
+    def is_radio(self):
+        return self.type == "R"
+
+    def is_select(self):
+        return self.type == "S"
+
+    def is_checkbox(self):
+        return self.type == "C"
+
+    def is_multi_select(self):
+        return self.type == "M"
+
+    def one_option_accept_type(self):
+        return self.type == "R" or self.type == "S"
+
 
 class Option(models.Model):
     multiple_choice = models.ForeignKey(

@@ -27,12 +27,20 @@ class MultipleChoiceRespondSerializer(serializers.ListSerializer):
         super(MultipleChoiceRespondSerializer, self).__init__(**default_kwargs)
 
     def validate(self, value):
-        if value and self.contra:
+
+        if self.contra is None:
+            raise ValidationError(_("Contra could not be none !"))
+
+        elif not value and self.contra.required:
+            raise ValidationError(_("At least 1 option should be chosen !"))
+
+        elif value:
+            if len(value) > 1 and self.contra.one_option_accept_type():
+                raise ValidationError(_("Only 1 option can be chosen !"))
+
             for option_id in value:
                 if not self.contra.options.filter(id=option_id).exists():
                     raise ValidationError(_("Contra option and Survey not related!"))
-        elif value and self.contra is None:
-            raise ValidationError(_("Contra could not be none !"))
 
         return value
 

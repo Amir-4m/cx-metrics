@@ -338,6 +338,43 @@ class CSATRespondSerializerTestCase(TestCase):
         value = serializer.validate_options(data['options'])
         self.assertListEqual(data['options'], value)
 
+    def test_validate_raise_validation_error_survey_contra_required_no_option(self):
+        csat_survey = CSATSurvey.objects.first()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [],
+            'rate': 1
+        }
+        serializer = CSATRespondSerializer(data=data, survey=csat_survey)
+        self.assertRaisesMessage(
+            ValidationError,
+            "At least 1 option should be chosen !",
+            serializer.is_valid,
+            raise_exception=True
+        )
+
+    def test_validate_raise_validation_error_survey_radio_select_contra_option_more_than_1(self):
+        csat_survey = CSATSurvey.objects.first()
+        data = {
+            'score': 1,
+            'customer': {
+                'client_id': 1
+            },
+            'options': [1, 2],
+            'rate': 1
+        }
+        serializer = CSATRespondSerializer(data=data, survey=csat_survey)
+
+        self.assertRaisesMessage(
+            ValidationError,
+            "Only 1 option can be chosen !",
+            serializer.is_valid,
+            raise_exception=True
+        )
+
     def test_validate_options_survey_and_contra_not_related(self):
         csat_survey = CSATSurvey.objects.first()
         data = {
