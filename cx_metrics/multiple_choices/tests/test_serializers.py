@@ -10,6 +10,22 @@ from ..serializers import MultipleChoiceSerializer, CachedMultipleChoiceSerializ
 
 
 class MultipleChoiceSerializerTestCase(TestCase):
+    fixtures = ['multiple_choices']
+
+    def test_validate_options_raise_validation_error_duplicate_order(self):
+
+        mc = MultipleChoiceService.get_by_id(1)
+        serializer = MultipleChoiceSerializer(instance=mc)
+        options = [
+            {'id': 1, 'text': 'Option 1', 'order': 100}, {'id': 2, 'text': 'Option 2', 'order': 100}
+        ]
+
+        self.assertRaises(
+            ValidationError,
+            serializer.validate_options,
+            options
+        )
+
     def test_validate_options(self):
         serializer = MultipleChoiceSerializer()
         options = [

@@ -58,6 +58,9 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
             if option_id and not (self.instance and MultipleChoiceService.option_exists(self.instance, option_id)):
                 raise ValidationError(_('Option %(id)s does not exists') % {'id': option_id})
 
+        orders = [option.get('order') for option in options]
+        if len(orders) != len(set(orders)):
+            raise ValidationError(_('You should not have duplicate option orders'))
         texts = [option['text'] for option in options]
         if len(texts) != len(set(texts)):
             raise ValidationError(_('You should not have duplicate option texts'))
