@@ -10,7 +10,7 @@ from .services import MultipleChoiceService
 
 
 class OptionSerializer(serializers.ModelSerializer):
-    id = serializers.IntegerField(required=False)
+    id = serializers.IntegerField(required=False, allow_null=True)
 
     class Meta:
         model = Option
