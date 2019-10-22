@@ -105,6 +105,10 @@ class MultipleChoiceService(object):
 
         MultipleChoiceService.create_options(multiple_choice, new_options)
 
+    @staticmethod
+    def delete_option(multiple_choice, option_id):
+        multiple_choice.options.filter(id=option_id).delete()
+
 
 class OptionResponseService(object):
 

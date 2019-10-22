@@ -27,6 +27,16 @@ class MultipleChoiceTestCase(TestCase):
 
 
 class OptionTestCase(TestCase):
+    fixtures = ['multiple_choices']
+
     def test_str(self):
         option = Option(text=self.id())
         self.assertEqual(str(option), self.id())
+
+    def test_delete_option(self):
+        option = Option.objects.first()
+        self.assertTrue(option.delete_option(True))
+
+    def test_delete_option_false(self):
+        option = Option.objects.first()
+        self.assertFalse(option.delete_option(False))

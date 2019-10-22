@@ -130,6 +130,94 @@ class MultipleChoiceSerializerTestCase(TestCase):
             attrs,
         )
 
+    def test_validate_delete_enabled_options_remaining_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': True},
+                {'text': 'Option 3', 'order': 3, 'enabled': True, 'delete_option': True},
+            ]
+        }
+
+        self.assertDictEqual(serializer.validate(attrs), attrs)
+
+    def test_validate_delete_enabled_options_remaining_less_than_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': True, 'delete_option': True},
+                {'text': 'Option 3', 'order': 3, 'enabled': True, 'delete_option': True},
+            ]
+        }
+        self.assertRaisesMessage(
+            ValidationError,
+            'You should provide at least 2 enabled options.',
+            serializer.validate,
+            attrs,
+        )
+
+    def test_validate_delete_disabled_options_remaining_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': True},
+                {'text': 'Option 3', 'order': 3, 'enabled': False, 'delete_option': True},
+            ]
+        }
+
+        self.assertDictEqual(serializer.validate(attrs), attrs)
+
+    def test_validate_delete_disabled_options_remaining_less_than_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': False},
+                {'text': 'Option 3', 'order': 3, 'enabled': False, 'delete_option': True},
+                {'text': 'Option 4', 'order': 4, 'enabled': False, 'delete_option': True},
+            ]
+        }
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'You should provide at least 2 enabled options.',
+            serializer.validate,
+            attrs,
+        )
+
+    def test_validate_delete_disabled_and_enabled_options_remaining_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': True},
+                {'text': 'Option 3', 'order': 3, 'enabled': False, 'delete_option': True},
+                {'text': 'Option 4', 'order': 4, 'enabled': True, 'delete_option': True},
+            ]
+        }
+        self.assertDictEqual(serializer.validate(attrs), attrs)
+
+    def test_validate_delete_disabled_and_enabled_options_remaining_less_than_two_enabled_options(self):
+        serializer = MultipleChoiceSerializer()
+        attrs = {
+            'options': [
+                {'text': 'Option 1', 'order': 1, 'enabled': True},
+                {'text': 'Option 2', 'order': 2, 'enabled': False},
+                {'text': 'Option 3', 'order': 3, 'enabled': False, 'delete_option': True},
+                {'text': 'Option 4', 'order': 4, 'enabled': True, 'delete_option': True},
+            ]
+        }
+
+        self.assertRaisesMessage(
+            ValidationError,
+            'You should provide at least 2 enabled options.',
+            serializer.validate,
+            attrs,
+        )
+
     def test_create(self):
         v_data = {
             'type': MultipleChoice.TYPE_RADIO,
@@ -140,6 +228,36 @@ class MultipleChoiceSerializerTestCase(TestCase):
             'options': [
                 {'text': 'Option 1', 'order': 1},
                 {'text': 'Option 2', 'order': 2},
+            ]
+        }
+
+        serializer = MultipleChoiceSerializer()
+        multiple_choice = serializer.create(v_data)
+
+        self.assertIsInstance(multiple_choice, MultipleChoice)
+        self.assertEqual(multiple_choice.type, v_data['type'])
+        self.assertEqual(multiple_choice.text, v_data['text'])
+        self.assertEqual(multiple_choice.enabled, v_data['enabled'])
+        self.assertEqual(multiple_choice.required, v_data['required'])
+        self.assertEqual(multiple_choice.other_enabled, v_data['other_enabled'])
+
+        self.assertEqual(multiple_choice.options.count(), len(v_data['options']))
+
+        for i, option in enumerate(multiple_choice.options.all()):
+            self.assertEqual(option.enabled, v_data['options'][i].get('enabled', True))
+            self.assertEqual(option.text, v_data['options'][i]['text'])
+            self.assertEqual(option.order, v_data['options'][i]['order'])
+
+    def test_create_with_deleted_options(self):
+        v_data = {
+            'type': MultipleChoice.TYPE_RADIO,
+            'text': self.id(),
+            'enabled': True,
+            'required': True,
+            'other_enabled': False,
+            'options': [
+                {'text': 'Option 1', 'order': 1},
+                {'text': 'Option 2', 'order': 2, 'delete_option': True},
             ]
         }
 
@@ -192,6 +310,33 @@ class MultipleChoiceSerializerTestCase(TestCase):
             self.assertEqual(option.enabled, v_data['options'][i].get('enabled', True))
             self.assertEqual(option.text, v_data['options'][i]['text'])
             self.assertEqual(option.order, v_data['options'][i]['order'])
+
+    def test_update_with_deleted_options(self):
+        mc = MultipleChoiceService.create(text=self.id())
+        option = MultipleChoiceService.create_option(mc, 'Option', 1)
+        v_data = {
+            'type': MultipleChoice.TYPE_RADIO,
+            'text': self.id(),
+            'enabled': True,
+            'required': True,
+            'other_enabled': False,
+            'options': [
+                {'id': option.pk, 'text': option.text, 'order': option.order, 'delete_option': True},
+                {'text': 'New Option', 'order': 4},
+            ]
+        }
+
+        serializer = MultipleChoiceSerializer(instance=mc)
+        multiple_choice = serializer.update(mc, v_data)
+
+        self.assertIsInstance(multiple_choice, MultipleChoice)
+        self.assertEqual(multiple_choice.type, v_data['type'])
+        self.assertEqual(multiple_choice.text, v_data['text'])
+        self.assertEqual(multiple_choice.enabled, v_data['enabled'])
+        self.assertEqual(multiple_choice.required, v_data['required'])
+        self.assertEqual(multiple_choice.other_enabled, v_data['other_enabled'])
+
+        self.assertEqual(multiple_choice.options.count(), len(v_data['options']) - 1)
 
 
 @override_settings(

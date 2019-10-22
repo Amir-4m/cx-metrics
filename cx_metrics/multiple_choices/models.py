@@ -65,6 +65,12 @@ class Option(models.Model):
     def __str__(self):
         return self.text
 
+    # FIXME: Implement a seperate API for deleting an option
+    def delete_option(self, value):
+        if value:
+            return True
+        return False
+
 
 class OptionText(models.Model):
     multiple_choice = models.ForeignKey(

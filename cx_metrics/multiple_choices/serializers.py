@@ -11,10 +11,19 @@ from .services import MultipleChoiceService
 
 class OptionSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False, allow_null=True)
+    delete_option = serializers.BooleanField(required=False, default=False)
 
     class Meta:
         model = Option
-        fields = ('id', 'text', 'enabled', 'order')
+        fields = ('id', 'text', 'enabled', 'order', 'delete_option')
+
+    def to_representation(self, instance):
+        return {
+            'id': instance.id,
+            'text': instance.text,
+            'enabled': instance.enabled,
+            'order': instance.order
+        }
 
 
 class MultipleChoiceRespondSerializer(serializers.ListSerializer):
@@ -70,6 +79,12 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         v_data = copy(validated_data)
         options = v_data.pop('options', [])
+
+        for option in options:
+            if option.get('delete_option', False):
+                options.remove(option)
+            option.pop('delete_option', None)
+
         instance = super(MultipleChoiceSerializer, self).create(v_data)
         MultipleChoiceService.create_options(instance, options)
         serializer = MultipleChoiceSerializer(instance)
@@ -79,8 +94,19 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         v_data = copy(validated_data)
-        options = v_data.pop('options', [])
+        raw_options = v_data.pop('options', [])
         instance = super(MultipleChoiceSerializer, self).update(instance, v_data)
+
+        options = []
+        for option in raw_options:
+            delete_option = option.get('delete_option', False)
+            option_id = option.get('id', None)
+            if delete_option and option_id:
+                MultipleChoiceService.delete_option(instance, option_id)
+            else:
+                options.append(option)
+            option.pop('delete_option', None)
+
         MultipleChoiceService.update_options(instance, options)
         serializer = MultipleChoiceSerializer(instance)
         representation = serializer.to_representation(instance)
@@ -98,7 +124,8 @@ class MultipleChoiceSerializer(serializers.ModelSerializer):
                 if MultipleChoiceService.option_text_exists(self.instance, text, option_id):
                     raise ValidationError(_('You should not have duplicate option texts'))
 
-        if enabled and sum([1 for option in options if option.get('enabled', True)]) < 2:
+        if enabled and sum(
+                [1 for option in options if option.get('enabled', True) and not option.get('delete_option')]) < 2:
             raise ValidationError(_('You should provide at least 2 enabled options.'))
 
         return attrs
