@@ -302,3 +302,6 @@ SIMPLE_JWT = {
 # django_cities_light
 CITIES_LIGHT_TRANSLATION_LANGUAGES = ['fa', 'en']
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['IR']
+
+DRF_RECAPTCHA_VERIFY_ENDPOINT = "https://www.google.com/recaptcha/api/siteverify"
+DRF_RECAPTCHA_SECRET_KEY = '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe'
