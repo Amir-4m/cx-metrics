@@ -16,41 +16,41 @@ def gettext_noop(s):
 # http://celery.readthedocs.org/en/latest/userguide/monitoring.html
 
 # Broker settings
-BROKER_URL = 'amqp://guest:guest@localhost//'
+CELERY_BROKER_URL = 'amqp://guest:guest@localhost//'
 
 #: Only add pickle to this list if your broker is secured
 #: from unwanted access (see userguide/security.html)
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ALWAYS_EAGER = True
+CELERY_TASK_ALWAYS_EAGER = True
 
-CELERY_DEFAULT_QUEUE = 'default'
-CELERY_DEFAULT_EXCHANGE_TYPE = 'direct'
-CELERY_DEFAULT_ROUTING_KEY = 'default'
+CELERY_TASK_DEFAULT_QUEUE = 'default'
+CELERY_TASK_DEFAULT_EXCHANGE_TYPE = 'direct'
+CELERY_TASK_DEFAULT_ROUTING_KEY = 'default'
 
 # http://docs.celeryproject.org/en/latest/configuration.html#celery-queues
-CELERY_QUEUES = (
+CELERY_TASK_QUEUES = (
     Queue('default', Exchange('upkook', type='direct'), routing_key='default'),
 )
 
-CELERYBEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseScheduler'
 
 # http://docs.celeryproject.org/en/latest/configuration.html#celery-routes
-# CELERY_ROUTES = {}
+# CELERY_TASK_ROUTES = {}
 
 # Whether to store the task return values or not.
-CELERY_IGNORE_RESULT = True
+CELERY_TASK_IGNORE_RESULT = True
 
 # If you still want to store errors, just not successful return values
-CELERY_STORE_ERRORS_EVEN_IF_IGNORED = False
+CELERY_TASK_STORE_ERRORS_EVEN_IF_IGNORED = False
 
 # The backend used to store task results.
 # CELERY_RESULT_BACKEND = ''
 
 # Time (in seconds, or a timedelta object) for when after stored task
 # tombstones will be deleted.
-# CELERY_TASK_RESULT_EXPIRES = 0
+# CELERY_RESULT_EXPIRES = 0
 
 # Django settings for upkook core project.
 
