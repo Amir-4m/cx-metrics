@@ -512,3 +512,26 @@ class CESRespondSerializerTestCase(TestCase):
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
 
         self.assertRaises(ValidationError, serializer.validate_rate, data['rate'])
+
+    def test_duplicate_response(self):
+        ces_survey = CESSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': ces_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id
+            },
+            'rate': 2,
+            'options': [option.id],
+        }
+        serializer = CESRespondSerializer(survey=ces_survey)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, CESResponse)
+        self.assertRaisesMessage(
+            ValidationError,
+            "You could not submit responses within specific time !",
+            serializer.create,
+            v_data
+        )

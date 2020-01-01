@@ -71,3 +71,7 @@ class NPSService(object):
                     OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
                 return nps_response
             return None
+
+    @staticmethod
+    def get_last_response(customer):
+        return NPSResponse.objects.filter(customer_uuid=customer.uuid).order_by('-created').first()

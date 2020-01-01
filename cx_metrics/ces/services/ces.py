@@ -50,3 +50,7 @@ class CESService(object):
         if option_ids:
             OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
         return ces_response
+
+    @staticmethod
+    def get_last_response(customer):
+        return CESResponse.objects.filter(customer_uuid=customer.uuid).order_by('-created').first()

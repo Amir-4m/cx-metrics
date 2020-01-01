@@ -1,5 +1,9 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+from django.conf import settings
+from django.utils import timezone
+from datetime import datetime
+
 from ..models import Survey
 
 
@@ -29,3 +33,11 @@ class SurveyService(object):
     @staticmethod
     def all():
         return Survey.objects.all()
+
+    @staticmethod
+    def is_duplicate_response(last_response):
+        if last_response:
+            ts = datetime.timestamp(last_response.created)
+            if datetime.timestamp(timezone.now()) - ts < int(settings.RESPONSE_DUPLICATE_BLOCK_TIME):
+                return True
+        return False

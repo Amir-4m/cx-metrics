@@ -534,3 +534,30 @@ class NPSRespondSerializerV11TestCase(TestCase):
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         serializer.is_valid()
         self.assertEqual(serializer.validated_data['options'], [])
+
+    def test_duplicate_response(self):
+        nps_survey = NPSService.get_nps_survey_by_id(1)
+        mc = MultipleChoiceService.get_by_id(1)
+        nps_survey.contra = mc
+        nps_survey.save()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': nps_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id
+            },
+            'score': 5,
+            'options': [option.id],
+
+        }
+        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, NPSResponse)
+        self.assertRaisesMessage(
+            ValidationError,
+            "You could not submit responses within specific time !",
+            serializer.create,
+            v_data
+        )

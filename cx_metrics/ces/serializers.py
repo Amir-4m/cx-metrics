@@ -21,7 +21,7 @@ from cx_metrics.multiple_choices.serializers import (
 )
 from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
-from cx_metrics.surveys.services import SurveyInsightCacheService
+from cx_metrics.surveys.services import SurveyInsightCacheService, SurveyService
 
 
 @register_survey_serializer('CES')
@@ -153,6 +153,10 @@ class CESRespondSerializer(serializers.ModelSerializer):
             customer = CustomerService.identify_anonymous(
                 business=self.survey.business, client_id=client_id
             )
+
+        last_response = CESService.get_last_response(customer)
+        if SurveyService.is_duplicate_response(last_response):
+            raise ValidationError(_("You could not submit responses within specific time !"))
 
         rate = validated_data['rate']
         options = validated_data.get('options')

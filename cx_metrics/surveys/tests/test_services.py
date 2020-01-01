@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # vim: ai ts=4 sts=4 et sw=4
+import datetime
 from uuid import uuid4
 from django.test import TestCase
 from upkook_core.businesses.services import BusinessService
@@ -7,6 +8,11 @@ from upkook_core.industries.services import IndustryService
 
 from ..models import Survey
 from ..services import SurveyService
+
+
+class MockResponse(object):
+    def __init__(self, created):
+        self.created = created
 
 
 class SurveyServiceTestCase(TestCase):
@@ -47,3 +53,8 @@ class SurveyServiceTestCase(TestCase):
 
     def test_survey_with_uuid_exists_false(self):
         self.assertFalse(SurveyService.survey_with_uuid_exists(uuid4()))
+
+    def test_is_duplicate_response(self):
+        response = MockResponse(created=datetime.datetime(2016, 11, 15, 9, 59, 25, 608206))
+
+        self.assertFalse(SurveyService.is_duplicate_response(response))

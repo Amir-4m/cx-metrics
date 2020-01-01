@@ -19,7 +19,7 @@ from cx_metrics.surveys.decorators import register_survey_serializer
 from cx_metrics.surveys.models import Survey
 from .models import NPSSurvey, NPSResponse
 from .services import NPSService
-from cx_metrics.surveys.services import SurveyInsightCacheService
+from cx_metrics.surveys.services import SurveyInsightCacheService, SurveyService
 
 
 @register_survey_serializer('NPS')
@@ -139,6 +139,9 @@ class NPSRespondSerializer(serializers.ModelSerializer):
             customer = CustomerService.identify_anonymous(
                 business=self.survey.business, client_id=client_id
             )
+
+        if SurveyService.is_duplicate_response(NPSService.get_last_response(customer)):
+            raise ValidationError(_("You could not submit responses within specific time !"))
 
         score = validated_data['score']
         options = validated_data.get('options')

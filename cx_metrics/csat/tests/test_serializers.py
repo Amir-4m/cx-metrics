@@ -512,3 +512,26 @@ class CSATRespondSerializerTestCase(TestCase):
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
 
         self.assertRaises(ValidationError, serializer.validate_rate, data['rate'])
+
+    def test_duplicate_response(self):
+        csat_survey = CSATSurvey.objects.first()
+        customer = CustomerService.create_customer()
+        option = Option.objects.first()
+        v_data = {
+            'survey_uuid': csat_survey.uuid,
+            'customer': {
+                "client_id": customer.client_id
+            },
+            'rate': 2,
+            'options': [option.id],
+        }
+        serializer = CSATRespondSerializer(survey=csat_survey)
+        response = serializer.create(v_data)
+
+        self.assertIsInstance(response, CSATResponse)
+        self.assertRaisesMessage(
+            ValidationError,
+            "You could not submit responses within specific time !",
+            serializer.create,
+            v_data
+        )
