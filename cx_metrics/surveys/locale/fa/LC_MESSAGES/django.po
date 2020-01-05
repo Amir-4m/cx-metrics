@@ -1,13 +1,13 @@
 # UPKOOK Core
 # Copyright (C) 2019 UPKOOK
 # Saeed Salehian <saeed@upkook.com>, 2019.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-13 04:58-0500\n"
+"POT-Creation-Date: 2020-01-05 05:30-0600\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -26,7 +26,7 @@ msgstr "<a href=\"%(url)s\" target=\"_blank\">باز کردن نظرسنجی</a>
 msgid "Survey Link"
 msgstr "لینک نظرسنجی"
 
-#: cx_metrics/surveys/apps.py:12 cx_metrics/surveys/models.py:42
+#: cx_metrics/surveys/apps.py:12 cx_metrics/surveys/models.py:46
 msgid "Surveys"
 msgstr "نظرسنجی ها"
 
@@ -42,30 +42,30 @@ msgstr "نام"
 msgid "Business"
 msgstr "کسب و کار"
 
-#: cx_metrics/surveys/models.py:22 cx_metrics/surveys/models.py:121
+#: cx_metrics/surveys/models.py:22 cx_metrics/surveys/models.py:125
 msgid "Created at"
 msgstr "تاریخ ایجاد"
 
-#: cx_metrics/surveys/models.py:23 cx_metrics/surveys/models.py:122
+#: cx_metrics/surveys/models.py:23 cx_metrics/surveys/models.py:126
 msgid "Updated at"
 msgstr "تاریخ بروزرسانی"
 
-#: cx_metrics/surveys/models.py:37
+#: cx_metrics/surveys/models.py:41
 msgid "Type"
 msgstr "نوع نظرسنجی"
 
-#: cx_metrics/surveys/models.py:41 cx_metrics/surveys/models.py:73
+#: cx_metrics/surveys/models.py:45 cx_metrics/surveys/models.py:77
 msgid "Survey"
 msgstr "نظرسنجی"
 
-#: cx_metrics/surveys/models.py:80
+#: cx_metrics/surveys/models.py:84
 msgid "Author"
 msgstr "ناشر نظرسنجی"
 
-#: cx_metrics/surveys/models.py:119
+#: cx_metrics/surveys/models.py:123
 msgid "Survey UUID"
 msgstr ""
 
-#: cx_metrics/surveys/models.py:120
+#: cx_metrics/surveys/models.py:124
 msgid "Customer UUID"
 msgstr ""

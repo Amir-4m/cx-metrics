@@ -153,8 +153,13 @@ class CSATRespondSerializer(serializers.ModelSerializer):
             customer = CustomerService.identify_anonymous(
                 business=self.survey.business, client_id=client_id
             )
-        if SurveyService.is_duplicate_response(CSATService.get_last_response(customer)):
-            raise ValidationError(_("You could not submit responses within specific time !"))
+        last_response = CSATService.get_last_response(customer)
+        if SurveyService.is_duplicate_response(last_response):
+            raise ValidationError(
+                {
+                    "non_field_errors": _("You could not submit responses within specific time !")
+                }
+            )
         rate = validated_data['rate']
         options = validated_data.get('options')
 

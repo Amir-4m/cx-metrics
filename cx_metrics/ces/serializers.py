@@ -156,7 +156,11 @@ class CESRespondSerializer(serializers.ModelSerializer):
 
         last_response = CESService.get_last_response(customer)
         if SurveyService.is_duplicate_response(last_response):
-            raise ValidationError(_("You could not submit responses within specific time !"))
+            raise ValidationError(
+                {
+                    "non_field_errors": _("You could not submit responses within specific time !")
+                }
+            )
 
         rate = validated_data['rate']
         options = validated_data.get('options')

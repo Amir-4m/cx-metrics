@@ -1,13 +1,13 @@
 # UPKOOK CX Metrics
 # Copyright (C) 2019 UPKOOK
 # Saeed Salehian <saeed@upkook.com>, 2019.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-17 07:34-0500\n"
+"POT-Creation-Date: 2020-01-05 05:30-0600\n"
 "PO-Revision-Date: 2019-06-17 02:07-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"

@@ -139,9 +139,13 @@ class NPSRespondSerializer(serializers.ModelSerializer):
             customer = CustomerService.identify_anonymous(
                 business=self.survey.business, client_id=client_id
             )
-
-        if SurveyService.is_duplicate_response(NPSService.get_last_response(customer)):
-            raise ValidationError(_("You could not submit responses within specific time !"))
+        last_response = NPSService.get_last_response(customer)
+        if SurveyService.is_duplicate_response(last_response):
+            raise ValidationError(
+                {
+                    "non_field_errors": _("You could not submit responses within specific time !")
+                }
+            )
 
         score = validated_data['score']
         options = validated_data.get('options')

@@ -2,13 +2,13 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-30 07:24-0500\n"
+"POT-Creation-Date: 2020-01-05 05:30-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
 #: cx_metrics/ces/admin.py:26
 msgid "Advanced options"
 msgstr ""
@@ -25,62 +26,77 @@ msgstr ""
 msgid "More..."
 msgstr ""
 
-#: cx_metrics/ces/admin.py:43 cx_metrics/ces/models.py:30
+#: cx_metrics/ces/admin.py:43 cx_metrics/ces/models.py:31
 msgid "Contra"
 msgstr "اعتراض"
 
-#: cx_metrics/ces/models.py:19
+#: cx_metrics/ces/models.py:20
 msgid "3 Choices"
 msgstr ""
 
-#: cx_metrics/ces/models.py:20
+#: cx_metrics/ces/models.py:21
 msgid "5 Choices"
 msgstr ""
 
-#: cx_metrics/ces/models.py:21
+#: cx_metrics/ces/models.py:22
 msgid "7 Choices"
 msgstr ""
 
-#: cx_metrics/ces/models.py:23
+#: cx_metrics/ces/models.py:24
 msgid "Intro Text"
 msgstr "متن پیام نظرسنجی"
 
-#: cx_metrics/ces/models.py:24
+#: cx_metrics/ces/models.py:25
 msgid "Is Intro Enabled"
 msgstr "فعال بودن یا نبودن متن پیام نظرسنجی"
 
-#: cx_metrics/ces/models.py:25
+#: cx_metrics/ces/models.py:26
 msgid "Question"
 msgstr "سوال"
 
-#: cx_metrics/ces/models.py:26
+#: cx_metrics/ces/models.py:27
 msgid "Thank You Message"
 msgstr "پیام تشکر"
 
-#: cx_metrics/ces/models.py:27
+#: cx_metrics/ces/models.py:28
 msgid "Scale"
 msgstr "مقیاس"
 
-#: cx_metrics/ces/models.py:34 cx_metrics/ces/models.py:35
+#: cx_metrics/ces/models.py:35 cx_metrics/ces/models.py:36
 msgid "CES Survey"
 msgstr "نطرسنجی CES"
 
-#: cx_metrics/ces/models.py:52
+#: cx_metrics/ces/models.py:56
 msgid "CES Response"
 msgstr "پاسخ CES"
 
-#: cx_metrics/ces/models.py:53
+#: cx_metrics/ces/models.py:57
 msgid "CES Responses"
 msgstr "پاسخ های CES"
 
-#: cx_metrics/ces/serializers.py:109
-msgid "Contra option and Survey not related!"
-msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."
-
-#: cx_metrics/ces/serializers.py:116
+#: cx_metrics/ces/serializers.py:111
 msgid "Rate is out of range!"
 msgstr "عدد انتخابی خارح از محدوده ی مقیاس تعیین شده است."
 
-#: cx_metrics/ces/serializers.py:125
+#: cx_metrics/ces/serializers.py:121
 msgid "Contra is required"
 msgstr "لطفا یکی از گزینه های زیر را انتخاب کنید."
+
+#: cx_metrics/ces/serializers.py:134
+msgid "Email is required"
+msgstr "ایمیل الزامیست"
+
+#: cx_metrics/ces/serializers.py:141
+msgid "Mobile number is required"
+msgstr "شماره موبایل الزامیست"
+
+#: cx_metrics/ces/serializers.py:148
+msgid "Business UserID is required"
+msgstr "شناسه کاربری کسب و کار الزامیست"
+
+#: cx_metrics/ces/serializers.py:159
+msgid "You could not submit responses within specific time !"
+msgstr "شما نمی توانید در یک زمان مشخص چند بار نظر خود را ثبت کنید !"
+
+#~ msgid "Contra option and Survey not related!"
+#~ msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."

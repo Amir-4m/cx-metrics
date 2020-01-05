@@ -1,13 +1,13 @@
 # UPKOOK CX Metrics
 # Copyright (C) 2019 UPKOOK
 # Saeed Salehian <saeed@upkook.com>, 2019.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-30 07:24-0500\n"
+"POT-Creation-Date: 2020-01-05 05:30-0600\n"
 "PO-Revision-Date: 2019-05-23 01:54-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -25,7 +25,7 @@ msgstr ""
 msgid "More..."
 msgstr ""
 
-#: cx_metrics/nps/admin.py:41 cx_metrics/nps/models.py:24
+#: cx_metrics/nps/admin.py:41 cx_metrics/nps/models.py:25
 msgid "Contra"
 msgstr "اعتراض"
 
@@ -33,57 +33,72 @@ msgstr "اعتراض"
 msgid "NPS"
 msgstr "NPS"
 
-#: cx_metrics/nps/models.py:15
+#: cx_metrics/nps/models.py:16
 msgid "Intro Text"
 msgstr "متن پیام نظرسنجی"
 
-#: cx_metrics/nps/models.py:16
+#: cx_metrics/nps/models.py:17
 msgid "Is Intro Enabled"
 msgstr "فعال بودن یا نبودن متن پیام نظرسنجی"
 
-#: cx_metrics/nps/models.py:17
+#: cx_metrics/nps/models.py:18
 msgid "Question"
 msgstr "سوال"
 
-#: cx_metrics/nps/models.py:18
+#: cx_metrics/nps/models.py:19
 msgid "Thank You Message"
 msgstr "پیام تشکر"
 
-#: cx_metrics/nps/models.py:19
+#: cx_metrics/nps/models.py:20
 msgid "Promoters"
 msgstr "مروجان"
 
-#: cx_metrics/nps/models.py:20
+#: cx_metrics/nps/models.py:21
 msgid "Passives"
 msgstr "منفعل"
 
-#: cx_metrics/nps/models.py:21
+#: cx_metrics/nps/models.py:22
 msgid "Detractors"
 msgstr "معترضان"
 
-#: cx_metrics/nps/models.py:28
+#: cx_metrics/nps/models.py:29
 msgid "NPS Survey"
 msgstr "نظرسنجی NPS"
 
-#: cx_metrics/nps/models.py:29
+#: cx_metrics/nps/models.py:30
 msgid "NPS Surveys"
 msgstr "نظرسنجی های NPS"
 
-#: cx_metrics/nps/models.py:46
+#: cx_metrics/nps/models.py:50
 msgid "NPS Response"
 msgstr "پاسخ NPS"
 
-#: cx_metrics/nps/models.py:47
+#: cx_metrics/nps/models.py:51
 msgid "NPS Responses"
 msgstr "پاسخ های NPS"
 
-#: cx_metrics/nps/serializers.py:136
-msgid "Contra option and Survey not related!"
-msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."
+#: cx_metrics/nps/serializers.py:120
+msgid "Email is required"
+msgstr "ایمیل الزامیست"
+
+#: cx_metrics/nps/serializers.py:127
+msgid "Mobile number is required"
+msgstr "شماره موبایل الزامیست"
+
+#: cx_metrics/nps/serializers.py:134
+msgid "Business UserID is required"
+msgstr "شناسه کاربری کسب و کار الزامیست"
 
 #: cx_metrics/nps/serializers.py:144
+msgid "You could not submit responses within specific time !"
+msgstr "شما نمی توانید در یک زمان مشخص چند بار نظر خود را ثبت کنید !"
+
+#: cx_metrics/nps/serializers.py:184
 msgid "Contra is required!"
 msgstr "لطفا یکی از گزینه های زیر را انتخاب کنید."
+
+#~ msgid "Contra option and Survey not related!"
+#~ msgstr "گزینه انتخابی با نظرسنجی مطابقت ندارد."
 
 #~ msgid "Text"
 #~ msgstr "متن"
