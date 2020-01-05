@@ -1,13 +1,13 @@
 # UPKOOK CX Metrics
 # Copyright (C) 2019 UPKOOK
 # Saeed Salehian <saeed@upkook.com>, 2019.
-#
+# 
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-30 07:24-0500\n"
+"POT-Creation-Date: 2020-01-05 05:30-0600\n"
 "PO-Revision-Date: 2019-06-17 02:07-0500\n"
 "Last-Translator: Saeed Salehian <saeed@upkook.com>\n"
 "Language-Team: Upkook <info@upkook.com>\n"
@@ -49,88 +49,110 @@ msgstr "سوال چند گزینه ای"
 msgid "Multiple Choice Questions"
 msgstr "سوالات چند گزینه ای"
 
-#: cx_metrics/multiple_choices/models.py:33
-#: cx_metrics/multiple_choices/models.py:56
+#: cx_metrics/multiple_choices/models.py:48
+#: cx_metrics/multiple_choices/models.py:77
 msgid "Multiple Choice"
 msgstr "چند گزینه ای"
 
-#: cx_metrics/multiple_choices/models.py:36
-#: cx_metrics/multiple_choices/models.py:59
+#: cx_metrics/multiple_choices/models.py:51
+#: cx_metrics/multiple_choices/models.py:80
 msgid "Text"
 msgstr "متن"
 
-#: cx_metrics/multiple_choices/models.py:37
+#: cx_metrics/multiple_choices/models.py:52
 msgid "Is Enabled"
 msgstr "فعال"
 
-#: cx_metrics/multiple_choices/models.py:38
+#: cx_metrics/multiple_choices/models.py:53
 msgid "Order"
 msgstr "ترتیب"
 
-#: cx_metrics/multiple_choices/models.py:39
-#: cx_metrics/multiple_choices/models.py:61
-#: cx_metrics/multiple_choices/models.py:79
+#: cx_metrics/multiple_choices/models.py:54
+#: cx_metrics/multiple_choices/models.py:82
+#: cx_metrics/multiple_choices/models.py:100
 msgid "Created at"
 msgstr "ایجاد شده در"
 
-#: cx_metrics/multiple_choices/models.py:40
-#: cx_metrics/multiple_choices/models.py:78
+#: cx_metrics/multiple_choices/models.py:55
+#: cx_metrics/multiple_choices/models.py:99
 msgid "Updated at"
 msgstr "بروزرسانی در"
 
-#: cx_metrics/multiple_choices/models.py:43
+#: cx_metrics/multiple_choices/models.py:58
 msgid "Option"
 msgstr "گزینه"
 
-#: cx_metrics/multiple_choices/models.py:44
+#: cx_metrics/multiple_choices/models.py:59
 msgid "Options"
 msgstr "گزینه ها"
 
-#: cx_metrics/multiple_choices/models.py:60
+#: cx_metrics/multiple_choices/models.py:81
 msgid "Count"
 msgstr ""
 
-#: cx_metrics/multiple_choices/models.py:64
+#: cx_metrics/multiple_choices/models.py:85
 #, fuzzy
 #| msgid "Option"
 msgid "Option Text"
 msgstr "گزینه"
 
-#: cx_metrics/multiple_choices/models.py:65
+#: cx_metrics/multiple_choices/models.py:86
 #, fuzzy
 #| msgid "Options"
 msgid "Option Texts"
 msgstr "گزینه ها"
 
-#: cx_metrics/multiple_choices/models.py:74
-#: cx_metrics/multiple_choices/models.py:82
+#: cx_metrics/multiple_choices/models.py:95
+#: cx_metrics/multiple_choices/models.py:103
 #, fuzzy
 #| msgid "Options"
 msgid "Option Response"
 msgstr "گزینه ها"
 
-#: cx_metrics/multiple_choices/models.py:77
+#: cx_metrics/multiple_choices/models.py:98
 msgid "Customer UUID"
 msgstr ""
 
-#: cx_metrics/multiple_choices/models.py:83
+#: cx_metrics/multiple_choices/models.py:104
 #, fuzzy
 #| msgid "Options"
 msgid "Option Responses"
 msgstr "گزینه ها"
 
-#: cx_metrics/multiple_choices/serializers.py:31
+#: cx_metrics/multiple_choices/serializers.py:41
+msgid "Contra could not be none !"
+msgstr ""
+
+#: cx_metrics/multiple_choices/serializers.py:44
+msgid "At least 1 option should be chosen !"
+msgstr ""
+
+#: cx_metrics/multiple_choices/serializers.py:48
+msgid "Only 1 option can be chosen !"
+msgstr ""
+
+#: cx_metrics/multiple_choices/serializers.py:52
+msgid "Contra option and Survey not related!"
+msgstr ""
+
+#: cx_metrics/multiple_choices/serializers.py:68
 #, fuzzy, python-format
 #| msgid "Option %(id)s does not exists"
 msgid "Option %(id)s does not exists"
 msgstr "گزینه مورد نظر وجود ندارد. "
 
-#: cx_metrics/multiple_choices/serializers.py:35
-#: cx_metrics/multiple_choices/serializers.py:68
+#: cx_metrics/multiple_choices/serializers.py:72
+#, fuzzy
+#| msgid "You should not have duplicate option texts"
+msgid "You should not have duplicate option orders"
+msgstr "نباید گزینه تکراری داشته باشید."
+
+#: cx_metrics/multiple_choices/serializers.py:75
+#: cx_metrics/multiple_choices/serializers.py:125
 msgid "You should not have duplicate option texts"
 msgstr "نباید گزینه تکراری داشته باشید."
 
-#: cx_metrics/multiple_choices/serializers.py:71
+#: cx_metrics/multiple_choices/serializers.py:129
 msgid "You should provide at least 2 enabled options."
 msgstr "حداقل 2 گزینه فعال تعریف نمایید."
 
