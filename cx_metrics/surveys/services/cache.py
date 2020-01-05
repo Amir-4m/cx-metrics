@@ -24,13 +24,12 @@ class SurveyInsightCacheService:
 
     @staticmethod
     def get(survey_type, survey_uuid):
-        return cache.get("%s_insight-%s" % (survey_type, survey_uuid))
+        return cache.get("%s_insight-%s" % (survey_type.lower(), survey_uuid))
 
     @staticmethod
     def set(survey_type, survey_uuid, data, timeout=TIMEOUT):
-
-        cache.set("%s_insight-%s" % (survey_type, survey_uuid), data, timeout)
+        cache.set("%s_insight-%s" % (survey_type.lower(), survey_uuid), data, timeout)
 
     @staticmethod
-    def delete(survey_type, survey_uuid,):
-        cache.delete("%s_insight-%s" % (survey_type, survey_uuid))
+    def delete(survey_type, survey_uuid):
+        cache.delete("%s_insight-%s" % (survey_type.lower(), survey_uuid))
