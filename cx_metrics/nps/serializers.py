@@ -148,12 +148,12 @@ class NPSRespondSerializer(serializers.ModelSerializer):
             )
 
         score = validated_data['score']
-        options = validated_data.get('options')
+        contra_options = validated_data.get('contra_options')
         return NPSService.respond(
             survey=self.survey,
             customer_uuid=customer.uuid,
             score=score,
-            option_ids=options
+            contra_options_ids=contra_options
         )
 
     def save(self, **kwargs):
@@ -162,28 +162,28 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
 
 class NPSRespondSerializerV11(NPSRespondSerializer):
-    options = serializers.ListField(child=serializers.IntegerField(), required=False)
+    contra_options = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     def __init__(self, instance=None, data=empty, **kwargs):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
         super(NPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
-        self.fields["options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
+        self.fields["contra_options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
 
     class Meta:
         model = NPSResponse
-        fields = ('score', 'customer', 'options', 'survey_uuid')
+        fields = ('score', 'customer', 'contra_options', 'survey_uuid')
 
-    def validate_options(self, value):
+    def validate_contra_options(self, value):
         if value and self.survey.has_contra():
             return value
         return None
 
     def validate(self, attrs):
-        options = attrs.get('options')
+        contra_options = attrs.get('contra_options')
         score = attrs['score']
         if score and score >= 9:
-            attrs.update({'options': []})
-        if score < 9 and self.survey.has_contra() and self.survey.contra.required and not options:
+            attrs.update({'contra_options': []})
+        if score < 9 and self.survey.has_contra() and self.survey.contra.required and not contra_options:
             raise ValidationError(_("Contra is required!"))
         return attrs

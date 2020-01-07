@@ -300,7 +300,7 @@ class NPSResponseAPIViewTestCase(TestCase):
             "customer": {
                 "client_id": customer.client_id
             },
-            "options": [1]
+            "contra_options": [1]
         }
         contra = MultipleChoiceService.get_by_id(1)
         nps = NPSService.get_nps_survey_by_id(1)

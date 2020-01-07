@@ -51,7 +51,7 @@ class NPSService(object):
         return NPSSurvey.objects.filter(uuid=survey_uuid).update(**kwargs)
 
     @staticmethod
-    def respond(survey, customer_uuid, score, option_ids=None):
+    def respond(survey, customer_uuid, score, contra_options_ids=None):
         field_name = NPSService.PROMOTERS
         if score <= 6:
             field_name = NPSService.DETRACTORS
@@ -67,8 +67,8 @@ class NPSService(object):
                     score=score
                 )
 
-                if option_ids:
-                    OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
+                if contra_options_ids:
+                    OptionResponseService.store_option_response(survey.contra, customer_uuid, contra_options_ids)
                 return nps_response
             return None
 

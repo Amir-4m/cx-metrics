@@ -233,7 +233,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
                 "client_id": customer.client_id
             },
             'score': 5,
-            'options': [option.id],
+            'contra_options': [option.id],
 
         }
         serializer = NPSRespondSerializerV11(survey=nps_survey)
@@ -261,7 +261,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
                 "email": "test@test.com"
             },
             'score': 5,
-            'options': [option.id],
+            'contra_options': [option.id],
             'user_agent': user_agent,
 
         }
@@ -388,7 +388,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1000],
+            'contra_options': [1000],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaisesMessage(
@@ -408,7 +408,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [],
+            'contra_options': [],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaisesMessage(
@@ -428,7 +428,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2],
+            'contra_options': [1, 2],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
 
@@ -449,10 +449,10 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate_options_contra_not_enabled(self):
         nps_survey = NPSSurvey.objects.first()
@@ -465,11 +465,11 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1],
+            'contra_options': [1],
         }
 
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate_options_none_value(self):
         nps_survey = NPSSurvey.objects.first()
@@ -482,7 +482,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': None
+            'contra_options': None
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
@@ -498,7 +498,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': []
+            'contra_options': []
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
@@ -529,11 +529,11 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1]
+            'contra_options': [1]
         }
         serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
         serializer.is_valid()
-        self.assertEqual(serializer.validated_data['options'], [])
+        self.assertEqual(serializer.validated_data['contra_options'], [])
 
     def test_duplicate_response(self):
         nps_survey = NPSService.get_nps_survey_by_id(1)
@@ -548,7 +548,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
                 "client_id": customer.client_id
             },
             'score': 5,
-            'options': [option.id],
+            'contra_options': [option.id],
 
         }
         serializer = NPSRespondSerializerV11(survey=nps_survey)
