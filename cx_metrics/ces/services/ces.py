@@ -40,15 +40,15 @@ class CESService(object):
         return CESService.get_ces_survey(uuid=uuid_)
 
     @staticmethod
-    def respond(survey, customer_uuid, rate, option_ids=None):
+    def respond(survey, customer_uuid, rate, contra_options_ids=None):
         ces_response = CESResponse.objects.create(
             survey_uuid=survey.uuid,
             customer_uuid=customer_uuid,
             rate=rate
         )
 
-        if option_ids:
-            OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
+        if contra_options_ids:
+            OptionResponseService.store_option_response(survey.contra, customer_uuid, contra_options_ids)
         return ces_response
 
     @staticmethod

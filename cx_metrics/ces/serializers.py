@@ -82,17 +82,17 @@ class CESSerializer(serializers.ModelSerializer):
 
 class CESRespondSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
-    options = serializers.ListField(child=serializers.IntegerField(), required=False)
+    contra_options = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     class Meta:
         model = CESResponse
-        fields = ('rate', 'customer', 'options', 'survey_uuid')
+        fields = ('rate', 'customer', 'contra_options', 'survey_uuid')
 
     def __init__(self, instance=None, data=empty, **kwargs):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
         super(CESRespondSerializer, self).__init__(instance, data, **c_kwargs)
-        self.fields["options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
+        self.fields["contra_options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
 
     def to_representation(self, instance):
         return {
@@ -100,7 +100,7 @@ class CESRespondSerializer(serializers.ModelSerializer):
             'client_id': instance.customer.client_id
         }
 
-    def validate_options(self, value):
+    def validate_contra_options(self, value):
         if value and self.survey.has_contra():
             return value
         return None
@@ -113,11 +113,11 @@ class CESRespondSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         scale = int(self.survey.scale)
-        options = attrs.get('options')
+        contra_options = attrs.get('contra_options')
         rate = attrs['rate']
         if rate and rate >= math.ceil(scale / 2):
-            attrs.update({'options': []})
-        if rate < math.ceil(scale / 2) and self.survey.has_contra() and self.survey.contra.required and not options:
+            attrs.update({'contra_options': []})
+        if rate < math.ceil(scale / 2) and self.survey.has_contra() and self.survey.contra.required and not contra_options:
             raise ValidationError(_('Contra is required'))
         return attrs
 
@@ -163,13 +163,13 @@ class CESRespondSerializer(serializers.ModelSerializer):
             )
 
         rate = validated_data['rate']
-        options = validated_data.get('options')
+        contra_options = validated_data.get('contra_options')
 
         return CESService.respond(
             survey=self.survey,
             customer_uuid=customer.uuid,
             rate=rate,
-            option_ids=options
+            contra_options_ids=contra_options
         )
 
     def save(self, **kwargs):

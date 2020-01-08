@@ -194,7 +194,7 @@ class CESRespondSerializerTestCase(TestCase):
                 "client_id": customer.client_id
             },
             'rate': 2,
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = CESRespondSerializer(survey=ces_survey)
         response = serializer.create(v_data)
@@ -323,7 +323,7 @@ class CESRespondSerializerTestCase(TestCase):
         serializer = CESRespondSerializer(survey=ces)
         self.assertRaises(ValidationError, serializer.create, v_data)
 
-    def test_validate_options(self):
+    def test_validate_contra_options(self):
         ces_survey = CESSurvey.objects.first()
         option = Option.objects.first()
         data = {
@@ -331,11 +331,11 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        value = serializer.validate_options(data['options'])
-        self.assertListEqual(data['options'], value)
+        value = serializer.validate_contra_options(data['contra_options'])
+        self.assertListEqual(data['contra_options'], value)
 
     def test_validate_raise_validation_error_survey_contra_required_no_option(self):
         ces_survey = CESSurvey.objects.first()
@@ -344,7 +344,7 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [],
+            'contra_options': [],
             'rate': 1
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
@@ -362,7 +362,7 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2],
+            'contra_options': [1, 2],
             'rate': 1
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
@@ -374,14 +374,14 @@ class CESRespondSerializerTestCase(TestCase):
             raise_exception=True
         )
 
-    def test_validate_options_survey_and_contra_not_related(self):
+    def test_validate_contra_options_survey_and_contra_not_related(self):
         ces_survey = CESSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': [1000]
+            'contra_options': [1000]
         }
 
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
@@ -393,7 +393,7 @@ class CESRespondSerializerTestCase(TestCase):
 
         )
 
-    def test_validate_options_survey_has_no_contra(self):
+    def test_validate_contra_options_survey_has_no_contra(self):
         ces_survey = CESSurvey.objects.first()
         ces_survey.contra = None
         ces_survey.save()
@@ -403,12 +403,12 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [option.id]
+            'contra_options': [option.id]
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_contra_not_enabled(self):
+    def test_validate_contra_options_contra_not_enabled(self):
         ces_survey = CESSurvey.objects.first()
         ces_survey.contra.enabled = False
         ces_survey.save()
@@ -417,34 +417,34 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1]
+            'contra_options': [1]
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_none_value(self):
+    def test_validate_contra_options_none_value(self):
         ces_survey = CESSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': None
+            'contra_options': None
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_empty_list(self):
+    def test_validate_contra_options_empty_list(self):
         ces_survey = CESSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': []
+            'contra_options': []
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate(self):
         ces_survey = CESSurvey.objects.first()
@@ -477,11 +477,11 @@ class CESRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1]
+            'contra_options': [1]
         }
         serializer = CESRespondSerializer(data=data, survey=ces_survey)
         serializer.is_valid()
-        self.assertEqual(serializer.validated_data['options'], [])
+        self.assertEqual(serializer.validated_data['contra_options'], [])
 
     def test_to_representation(self):
         ces_survey = CESSurvey.objects.first()
@@ -523,7 +523,7 @@ class CESRespondSerializerTestCase(TestCase):
                 "client_id": customer.client_id
             },
             'rate': 2,
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = CESRespondSerializer(survey=ces_survey)
         response = serializer.create(v_data)
