@@ -117,7 +117,8 @@ class CESRespondSerializer(serializers.ModelSerializer):
         rate = attrs['rate']
         if rate and rate >= math.ceil(scale / 2):
             attrs.update({'contra_options': []})
-        if rate < math.ceil(scale / 2) and self.survey.has_contra() and self.survey.contra.required and not contra_options:
+        if rate < math.ceil(
+                scale / 2) and self.survey.has_contra() and self.survey.contra.required and not contra_options:
             raise ValidationError(_('Contra is required'))
         return attrs
 
