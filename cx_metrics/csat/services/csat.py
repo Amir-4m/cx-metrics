@@ -41,15 +41,15 @@ class CSATService(object):
         return csat_surveys
 
     @staticmethod
-    def respond(survey, customer_uuid, rate, option_ids=None):
+    def respond(survey, customer_uuid, rate, contra_options_ids=None):
         csat_response = CSATResponse.objects.create(
             survey_uuid=survey.uuid,
             customer_uuid=customer_uuid,
             rate=rate
         )
 
-        if option_ids:
-            OptionResponseService.store_option_response(survey.contra, customer_uuid, option_ids)
+        if contra_options_ids:
+            OptionResponseService.store_option_response(survey.contra, customer_uuid, contra_options_ids)
         return csat_response
 
     @staticmethod

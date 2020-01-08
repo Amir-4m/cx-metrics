@@ -194,7 +194,7 @@ class CSATRespondSerializerTestCase(TestCase):
                 "client_id": customer.client_id
             },
             'rate': 2,
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = CSATRespondSerializer(survey=csat_survey)
         response = serializer.create(v_data)
@@ -322,7 +322,7 @@ class CSATRespondSerializerTestCase(TestCase):
         serializer = CSATRespondSerializer(survey=csat)
         self.assertRaises(ValidationError, serializer.create, v_data)
 
-    def test_validate_options(self):
+    def test_validate_contra_options(self):
         csat_survey = CSATSurvey.objects.first()
         option = Option.objects.first()
         data = {
@@ -330,13 +330,13 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [option.id],
+            'contra_options': [option.id],
             'rate': 1
 
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        value = serializer.validate_options(data['options'])
-        self.assertListEqual(data['options'], value)
+        value = serializer.validate_contra_options(data['contra_options'])
+        self.assertListEqual(data['contra_options'], value)
 
     def test_validate_raise_validation_error_survey_contra_required_no_option(self):
         csat_survey = CSATSurvey.objects.first()
@@ -345,7 +345,7 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [],
+            'contra_options': [],
             'rate': 1
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
@@ -363,7 +363,7 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1, 2],
+            'contra_options': [1, 2],
             'rate': 1
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
@@ -375,14 +375,14 @@ class CSATRespondSerializerTestCase(TestCase):
             raise_exception=True
         )
 
-    def test_validate_options_survey_and_contra_not_related(self):
+    def test_validate_contra_options_survey_and_contra_not_related(self):
         csat_survey = CSATSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': [1000]
+            'contra_options': [1000]
         }
 
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
@@ -393,7 +393,7 @@ class CSATRespondSerializerTestCase(TestCase):
             raise_exception=True
         )
 
-    def test_validate_options_survey_has_no_contra(self):
+    def test_validate_contra_options_survey_has_no_contra(self):
         csat_survey = CSATSurvey.objects.first()
         csat_survey.contra = None
         csat_survey.save()
@@ -403,12 +403,12 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [option.id]
+            'contra_options': [option.id]
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_contra_not_enabled(self):
+    def test_validate_contra_options_contra_not_enabled(self):
         csat_survey = CSATSurvey.objects.first()
         csat_survey.contra.enabled = False
         csat_survey.save()
@@ -417,34 +417,34 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1]
+            'contra_options': [1]
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_none_value(self):
+    def test_validate_contra_options_none_value(self):
         csat_survey = CSATSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': None
+            'contra_options': None
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
-    def test_validate_options_empty_list(self):
+    def test_validate_contra_options_empty_list(self):
         csat_survey = CSATSurvey.objects.first()
         data = {
             'rate': 2,
             'customer': {
                 'client_id': 1
             },
-            'options': []
+            'contra_options': []
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
-        self.assertIsNone(serializer.validate_options(data['options']))
+        self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate(self):
         csat_survey = CSATSurvey.objects.first()
@@ -477,11 +477,11 @@ class CSATRespondSerializerTestCase(TestCase):
             'customer': {
                 'client_id': 1
             },
-            'options': [1]
+            'contra_options': [1]
         }
         serializer = CSATRespondSerializer(data=data, survey=csat_survey)
         serializer.is_valid()
-        self.assertEqual(serializer.validated_data['options'], [])
+        self.assertEqual(serializer.validated_data['contra_options'], [])
 
     def test_to_representation(self):
         csat_survey = CSATSurvey.objects.first()
@@ -523,7 +523,7 @@ class CSATRespondSerializerTestCase(TestCase):
                 "client_id": customer.client_id
             },
             'rate': 2,
-            'options': [option.id],
+            'contra_options': [option.id],
         }
         serializer = CSATRespondSerializer(survey=csat_survey)
         response = serializer.create(v_data)
