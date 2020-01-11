@@ -143,7 +143,7 @@ class NPSRespondSerializer(serializers.ModelSerializer):
         if SurveyService.is_duplicate_response(last_response):
             raise ValidationError(
                 {
-                    "non_field_errors": _("You could not submit responses within specific time !")
+                    "non_field_errors": [_("You could not submit responses within specific time !")]
                 }
             )
 
