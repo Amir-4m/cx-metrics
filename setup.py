@@ -51,7 +51,7 @@ setup(
     classifiers=CLASSIFIERS,
     dependency_links=[
         'git+ssh://git@bitbucket.org/nargeel/django-fancy-imagefield.git@master#egg=django-fancy-imagefield',
-        'git+ssh://git@bitbucket.org/nargeel/django-contrib.git@master#egg=django-contrib',
-        'git+ssh://git@bitbucket.org/upkook/upkook-core.git@master#egg=upkook-core'
+        'git+ssh://git@bitbucket.org/nargeel/django-contrib.git@develop#egg=django-contrib',
+        'git+ssh://git@bitbucket.org/upkook/upkook-core.git@develop#egg=upkook-core'
     ]
 )
