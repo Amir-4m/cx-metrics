@@ -1,3 +1,8 @@
+=== 1.1.0 (2020-01-20) ===
+
+- Prevent duplicate Survey response
+- Added support for NPS contra reason
+
 === 1.0.4 (2019-08-07) ===
 
 - Changed git private server
