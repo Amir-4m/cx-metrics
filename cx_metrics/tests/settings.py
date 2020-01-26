@@ -52,7 +52,7 @@ CELERY_TASK_STORE_ERRORS_EVEN_IF_IGNORED = False
 # tombstones will be deleted.
 # CELERY_RESULT_EXPIRES = 0
 
-# Django settings for upkook core project.
+# Django settings for upkook CX metrics project.
 
 # The top directory for this project. Contains requirements/, manage.py,
 # and README.rst, a cx_metrics directory with settings etc (see
