@@ -255,8 +255,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CursorPagination',
     'PAGE_SIZE': 24,
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.AcceptHeaderVersioning',
-    'DEFAULT_VERSION': '1.0',
-    'ALLOWED_VERSIONS': ['1.0', '1.1'],
+    'DEFAULT_VERSION': '1.1',
+    'ALLOWED_VERSIONS': ['1.0', '1.1', '1.2'],
     'VERSION_PARAM': 'version',
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
