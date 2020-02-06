@@ -8,9 +8,9 @@ from upkook_core.auth.permissions import BusinessMemberPermissions
 
 from cx_metrics.surveys.views.api import SurveyResponseAPIView, SurveyInsightsView
 from ..serializers import (
-    NPSSerializer, NPSSerializerV11,
+    OldNPSSerializer, NPSSerializer,
     NPSInsightsSerializer,
-    NPSRespondSerializer, NPSRespondSerializerV11
+    OldNPSRespondSerializer, NPSRespondSerializer
 )
 from ..services.nps import NPSService
 
@@ -19,7 +19,7 @@ from ..services.nps import NPSService
 @method_decorator(never_cache, name='dispatch')
 class NPSAPIView(ModelViewSet):
     lookup_field = 'uuid'
-    serializer_class = NPSSerializer
+    serializer_class = OldNPSSerializer
     filter_backends = (OrderingFilter,)
     ordering_fields = ('name', 'id')
     ordering = ('-updated',)
@@ -28,8 +28,8 @@ class NPSAPIView(ModelViewSet):
     )
 
     def get_serializer_class(self):
-        if self.request.version == '1.1':
-            return NPSSerializerV11
+        if self.request.version >= '1.1':
+            return NPSSerializer
         return self.serializer_class
 
     def perform_create(self, serializer):
@@ -60,7 +60,7 @@ class NPSInsightsView(SurveyInsightsView):
 @method_decorator(cache_control(private=True), name='post')
 @method_decorator(never_cache, name='post')
 class NPSResponseAPIView(SurveyResponseAPIView):
-    serializer_class = NPSRespondSerializer
+    serializer_class = OldNPSRespondSerializer
     filter_backends = (OrderingFilter,)
     ordering = ('-updated',)
 
@@ -68,6 +68,6 @@ class NPSResponseAPIView(SurveyResponseAPIView):
         return NPSService.get_nps_survey_by_uuid(self.kwargs['uuid'])
 
     def get_serializer_class(self):
-        if self.request.version == '1.1':
-            return NPSRespondSerializerV11
+        if self.request.version >= '1.1':
+            return NPSRespondSerializer
         return self.serializer_class

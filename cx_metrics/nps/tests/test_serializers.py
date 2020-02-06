@@ -12,7 +12,7 @@ from cx_metrics.multiple_choices.models import Option, MultipleChoice
 from cx_metrics.multiple_choices.services import MultipleChoiceService
 from cx_metrics.surveys.models import Survey
 from ..models import NPSSurvey, NPSResponse
-from ..serializers import NPSSerializer, NPSSerializerV11, NPSRespondSerializer, NPSRespondSerializerV11
+from ..serializers import OldNPSSerializer, NPSSerializer, OldNPSRespondSerializer, NPSRespondSerializer
 from ..services import NPSService
 
 
@@ -21,7 +21,7 @@ class NPSSerializerTestCase(TestCase):
 
     def test_to_representation_nps_survey_instance(self):
         instance = NPSService.get_nps_survey_by_id(1)
-        serializer = NPSSerializer()
+        serializer = OldNPSSerializer()
         fields = ('name', 'text', 'text_enabled', 'question', 'message')
         expected = model_to_dict(instance, fields=fields)
         expected.update({
@@ -35,7 +35,7 @@ class NPSSerializerTestCase(TestCase):
 
     def test_to_representation_survey_instance(self):
         instance = NPSService.get_nps_survey_by_id(1)
-        serializer = NPSSerializer()
+        serializer = OldNPSSerializer()
         fields = ('name', 'text', 'text_enabled', 'question', 'message')
         expected = model_to_dict(instance, fields=fields)
         expected.update({
@@ -52,7 +52,7 @@ class NPSSerializerTestCase(TestCase):
             name='name',
             business=BusinessService.get_business_by_id(1)
         )
-        serializer = NPSSerializer()
+        serializer = OldNPSSerializer()
         self.assertRaises(Http404, serializer.to_representation, survey)
 
 
@@ -74,7 +74,7 @@ class NPSSerializerV11TestCase(TestCase):
             'message': 'Thanks you',
             'business': self.business,
         }
-        serializer = NPSSerializerV11()
+        serializer = NPSSerializer()
 
         nps_survey = serializer.create(v_data)
 
@@ -101,7 +101,7 @@ class NPSSerializerV11TestCase(TestCase):
         }
         instance = NPSService.get_nps_survey_by_id(1)
         instance.contra = MultipleChoiceService.create(text=self.id())
-        serializer = NPSSerializerV11()
+        serializer = NPSSerializer()
 
         nps_survey = serializer.update(instance, v_data)
 
@@ -128,7 +128,7 @@ class NPSSerializerV11TestCase(TestCase):
             'message': 'Thanks you',
         }
         instance = NPSService.get_nps_survey_by_id(1)
-        serializer = NPSSerializerV11()
+        serializer = NPSSerializer()
 
         nps_survey = serializer.update(instance, v_data)
 
@@ -144,7 +144,7 @@ class NPSSerializerV11TestCase(TestCase):
 
     def test_serializer_with_survey_instance(self):
         instance = NPSService.get_nps_survey_by_id(1)
-        serializer = NPSSerializerV11(instance.survey)
+        serializer = NPSSerializer(instance.survey)
         fields = ('name', 'text', 'text_enabled', 'question', 'message')
         expected = model_to_dict(instance, fields=fields)
         expected.update({
@@ -161,7 +161,7 @@ class NPSRespondSerializerTestCase(TestCase):
 
     def setUp(self):
         nps = NPSService.get_nps_survey_by_id(1)
-        self.serializer = NPSRespondSerializer(survey=nps)
+        self.serializer = OldNPSRespondSerializer(survey=nps)
 
     def test_to_representation(self):
         nps = NPSSurvey.objects.first()
@@ -173,7 +173,7 @@ class NPSRespondSerializerTestCase(TestCase):
             "score": 10,
         }
 
-        serializer = NPSRespondSerializer(data=data, survey=nps)
+        serializer = OldNPSRespondSerializer(data=data, survey=nps)
         self.assertTrue(serializer.is_valid())
 
         instance = NPSResponse(score=10, customer_uuid=customer.uuid)
@@ -205,7 +205,7 @@ class NPSRespondSerializerTestCase(TestCase):
             message="message",
         )
         customer = CustomerService.create_customer()
-        serializer = NPSRespondSerializer(survey=nps)
+        serializer = OldNPSRespondSerializer(survey=nps)
         data = {
             "customer": {
                 "client_id": customer.client_id
@@ -236,7 +236,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'contra_options': [option.id],
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)
@@ -265,7 +265,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'user_agent': user_agent,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)
@@ -287,7 +287,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'score': 10,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
 
         self.assertRaises(ValidationError, serializer.create, v_data)
 
@@ -308,7 +308,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'score': 10,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)
@@ -330,7 +330,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'score': 10,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
 
         self.assertRaises(ValidationError, serializer.create, v_data)
 
@@ -352,7 +352,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'score': 10,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)
@@ -374,7 +374,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'score': 10,
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
 
         self.assertRaises(ValidationError, serializer.create, v_data)
 
@@ -390,7 +390,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': [1000],
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertRaisesMessage(
             ValidationError,
             "Contra option and Survey not related!",
@@ -410,7 +410,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': [],
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertRaisesMessage(
             ValidationError,
             "At least 1 option should be chosen !",
@@ -430,7 +430,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': [1, 2],
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
 
         self.assertRaisesMessage(
             ValidationError,
@@ -451,7 +451,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': [option.id],
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate_options_contra_not_enabled(self):
@@ -468,7 +468,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'contra_options': [1],
         }
 
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertIsNone(serializer.validate_contra_options(data['contra_options']))
 
     def test_validate_options_none_value(self):
@@ -484,7 +484,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': None
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
     def test_validate_options_empty_list(self):
@@ -500,7 +500,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': []
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
     def test_validate_raise_validation_error(self):
@@ -515,7 +515,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
                 'client_id': 1
             }
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         self.assertRaises(ValidationError, serializer.validate, data)
 
     def test_validate_rate_gte_9(self):
@@ -531,7 +531,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             },
             'contra_options': [1]
         }
-        serializer = NPSRespondSerializerV11(data=data, survey=nps_survey)
+        serializer = NPSRespondSerializer(data=data, survey=nps_survey)
         serializer.is_valid()
         self.assertEqual(serializer.validated_data['contra_options'], [])
 
@@ -551,7 +551,7 @@ class NPSRespondSerializerV11TestCase(TestCase):
             'contra_options': [option.id],
 
         }
-        serializer = NPSRespondSerializerV11(survey=nps_survey)
+        serializer = NPSRespondSerializer(survey=nps_survey)
         response = serializer.create(v_data)
 
         self.assertIsInstance(response, NPSResponse)

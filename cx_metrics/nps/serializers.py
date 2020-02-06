@@ -23,7 +23,7 @@ from cx_metrics.surveys.services import SurveyInsightCacheService, SurveyService
 
 
 @register_survey_serializer('NPS')
-class NPSSerializer(serializers.ModelSerializer):
+class OldNPSSerializer(serializers.ModelSerializer):
     id = serializers.UUIDField(source='uuid', read_only=True)
     url = serializers.URLField(read_only=True)
     contra_reason = CachedMultipleChoiceSerializer(source='contra', read_only=True)
@@ -45,15 +45,15 @@ class NPSSerializer(serializers.ModelSerializer):
             obj = NPSService.get_nps_survey(survey_id=instance.id)
             if obj is None:
                 raise Http404
-        return super(NPSSerializer, self).to_representation(obj)
+        return super(OldNPSSerializer, self).to_representation(obj)
 
 
-class NPSSerializerV11(NPSSerializer):
+class NPSSerializer(OldNPSSerializer):
 
     def __init__(self, instance=None, data=empty, **kwargs):
         if isinstance(instance, Survey):
             instance = NPSService.get_nps_survey(survey_id=instance.id)
-        super(NPSSerializerV11, self).__init__(instance, data, **kwargs)
+        super(NPSSerializer, self).__init__(instance, data, **kwargs)
         contra = instance and instance.contra
         self.fields['contra_reason'] = CachedMultipleChoiceSerializer(source='contra', instance=contra)
 
@@ -64,7 +64,7 @@ class NPSSerializerV11(NPSSerializer):
         contra_serializer = self.fields['contra_reason']
         contra = contra_serializer.create(contra_data)
         v_data.update({'contra': contra})
-        return super(NPSSerializerV11, self).create(v_data)
+        return super(NPSSerializer, self).create(v_data)
 
     def update(self, instance, validated_data):
         v_data = copy(validated_data)
@@ -77,7 +77,7 @@ class NPSSerializerV11(NPSSerializer):
             contra = contra_serializer.create(contra_data)
 
         v_data.update({'contra': contra})
-        return super(NPSSerializerV11, self).update(instance, v_data)
+        return super(NPSSerializer, self).update(instance, v_data)
 
 
 class NPSInsightsSerializer(serializers.ModelSerializer):
@@ -89,7 +89,7 @@ class NPSInsightsSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'promoters', 'passives', 'detractors', 'contra_options')
 
 
-class NPSRespondSerializer(serializers.ModelSerializer):
+class OldNPSRespondSerializer(serializers.ModelSerializer):
     customer = CustomerSerializer()
 
     class Meta:
@@ -99,7 +99,7 @@ class NPSRespondSerializer(serializers.ModelSerializer):
     def __init__(self, instance=None, data=empty, **kwargs):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
-        super(NPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
+        super(OldNPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
 
     def to_representation(self, instance):
         return {
@@ -158,16 +158,16 @@ class NPSRespondSerializer(serializers.ModelSerializer):
 
     def save(self, **kwargs):
         SurveyInsightCacheService.delete(self.survey.type, self.survey.uuid)
-        return super(NPSRespondSerializer, self).save(**kwargs)
+        return super(OldNPSRespondSerializer, self).save(**kwargs)
 
 
-class NPSRespondSerializerV11(NPSRespondSerializer):
+class NPSRespondSerializer(OldNPSRespondSerializer):
     contra_options = serializers.ListField(child=serializers.IntegerField(), required=False)
 
     def __init__(self, instance=None, data=empty, **kwargs):
         c_kwargs = copy(kwargs)
         self.survey = c_kwargs.pop('survey')
-        super(NPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
+        super(OldNPSRespondSerializer, self).__init__(instance, data, **c_kwargs)
         self.fields["contra_options"] = MultipleChoiceRespondSerializer(mc_id=self.survey.contra_id, required=False)
 
     class Meta:
