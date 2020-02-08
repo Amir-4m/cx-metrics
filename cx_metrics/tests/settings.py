@@ -223,6 +223,7 @@ INSTALLED_APPS = (
     'django_cleanup',
     'colorfield',
     'cities_light',
+    'phonenumber_field',
     'django.contrib.sites',
     'rest_framework',
     'corsheaders',
@@ -247,6 +248,8 @@ INSTALLED_APPS = (
 
 # Set model for using in authentication
 AUTH_USER_MODEL = 'django_auth.User'
+
+PHONENUMBER_DEFAULT_REGION = 'IR'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
