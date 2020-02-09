@@ -73,7 +73,7 @@ ALLOWED_HOSTS = []
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'django-contrib.sqlite3',
+        'NAME': 'cx-metrics.sqlite3',
     }
 }
 
